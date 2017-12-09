@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:paddingTop="@dimen/activity_horizontal_margin"
+    android:id="@+id/container"
+    android:gravity="center_horizontal"
+    android:background="@drawable/submenu_item_hover"
+    android:foreground="?attr/selectableItemBackground">
+
+    <ImageView
+        android:id="@+id/item_icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/image_description" />
+
+    <TextView
+        android:id="@+id/item_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text=""
+        android:padding="@dimen/size_5_dp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/text_size_15_sp" />
+
+    <!-- Never use here : it's for item_resource -->
+    <TextView
+        android:id="@+id/item_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/text_size_15_sp"
+        android:visibility="gone"/>
+
+</LinearLayout>

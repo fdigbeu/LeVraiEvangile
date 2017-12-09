@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+       android:background="@android:color/transparent"
+   	xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:id="@+id/image_verset"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:scaleType="fitXY"
+        android:contentDescription="@string/image_description"
+        android:src="@mipmap/image_rectangle" />
+
+    <ImageView
+        android:id="@+id/image_download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="@dimen/size_10_dp"
+        android:clickable="true"
+        android:contentDescription="@string/image_description"
+        android:src="@drawable/btn_month_news" />
+
+</RelativeLayout>

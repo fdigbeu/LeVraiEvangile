@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">Le Vrai Évangile</string>
+    <string name="tab_text_video">VIDÉOS</string>
+    <string name="tab_text_audio">AUDIOS</string>
+    <string name="tab_text_pdf">PDF</string>
+    <string name="tab_text_news">ACTUALITÉS</string>
+    <string name="tab_text_goodtoknow">BON A SAVOIR</string>
+    <string name="tab_text_images">IMAGES</string>ring>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="ws_url_good_toknow_detail">http://www.levraievangile.org/webservice/bon-a-savoir/webview/lire/id/{ID}/</string>
+    <string name="ws_url_news_detail">http://www.levraievangile.org/webservice/actualites/webview/{ANNEE}/{MOIS}/id/{ID}/</string>
+    <string name="lb_audio_player_title">Chargement en cours...</string>
+    <string name="lb_audio_player_date_auteur">Veuillez patienter quelques instants...</string>
+    <string name="lb_audio_player_time_progress">0 min, 4 sec</string>
+    <string name="lb_audio_player_time_end">40 min, 19 sec</string>
+    <string name="unstable_connection">Connexion internet instable</string>
+    <string name="no_connection">Aucune connexion internet</string>
+    <string name="detail_no_connection">Les données mobiles sont désactivées. Connectez-vous au réseau Wi-Fi à la place ou activez les données mobiles et réessayez.</string>
+
+    <!-- lb notification radio2vie -->
+    <string name="lb_buffering_title">CHARGEMENT EN COURS...</string>
+    <string name="lb_buffering_detail">Mise en mémoire tempon...</string>
+
+    <string name="lb_impossible_toplay">LECTURE IMPOSSIBLE</string>
+    <string name="lb_impossible_toplay_detail">Le fichier audio n\'a pu être lu.</string>
+
+    <string name="lb_fermer">FERMER</string>
+    <string name="image_description"></string>
+</resources>

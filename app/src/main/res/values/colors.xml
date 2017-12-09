@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#1F65A5</color>
+    <color name="colorPrimaryOpacity90">#E61F65A5</color>
+    <color name="colorPrimaryOpacity70">#B31F65A5</color>
+    <color name="colorPrimaryOpacity50">#801F65A5</color>
+    <color name="colorPrimaryOpacity30">#4D1F65A5</color>
+    <color name="colorPrimaryOpacity10">#1A1F65A5</color>
+    <color name="colorPrimaryDark">#165d9f</color>
+    <color name="colorAccent">#549FD6</color>
+    <color name="colorAccentOpacity50">#80549FD6</color>
+    <color name="colorAccentOpacity35">#59549FD6</color>
+    <color name="colorAccentOpacity15">#26549FD6</color>
+    <color name="colorHover">#549FD6</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorWhiteOpacity60">#99FFFFFF</color>
+    <color name="colorWhiteOpacity40">#66FFFFFF</color>
+    <color name="colorWhiteOpacity10">#1AFFFFFF</color>
+    <color name="colorWhiteOpacity30">#4DFFFFFF</color>
+    <color name="colorWhiteOpacity70">#B3FFFFFF</color>
+    <color name="colorWhiteOpacity90">#E6FFFFFF</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorBlackOpacity90">#E6000000</color>
+    <color name="colorBlackOpacity60">#99000000</color>
+    <color name="colorBlackOpacity40">#66000000</color>
+    <color name="colorBlackOpacity35">#59000000</color>
+    <color name="colorBlackOpacity10">#1A000000</color>
+    <color name="colorAudio">#C2C2C2</color>
+    <color name="colorLayout">#D0E2F4</color>
+</resources>

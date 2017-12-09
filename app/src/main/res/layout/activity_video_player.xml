@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBlack"
+    android:keepScreenOn="true"
+    tools:context="org.levraievangile.View.Activities.VideoPlayerActivity">
+
+    <VideoView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:id="@+id/player_video" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/progress_player_video" />
+
+    <TextView
+        android:id="@+id/titre_video"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorWhite"
+        android:layout_margin="@dimen/size_10_dp"
+        android:padding="@dimen/size_10_dp"
+        android:gravity="center"
+        android:text="@string/lb_audio_player_title"
+        android:layout_gravity="center_vertical"
+        android:textSize="@dimen/text_size_18_sp"
+        android:background="@drawable/btn_video_header"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="@dimen/size_5_dp"
+        android:orientation="horizontal"
+        android:id="@+id/fab_player_layout"
+        android:background="@drawable/btn_video_header">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_player_download"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_fab_download_32dp"
+            android:layout_gravity="center"
+            fab:fab_size="mini"
+            android:layout_weight="1"
+            fab:fab_colorNormal="@color/colorWhite"
+            fab:fab_colorPressed="@color/colorAccentOpacity50"
+            fab:fab_colorRipple="@color/colorAccent" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_player_share_app"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_fab_share_32dp"
+            android:layout_gravity="center"
+            fab:fab_size="mini"
+            android:layout_weight="1"
+            fab:fab_colorNormal="@color/colorWhite"
+            fab:fab_colorPressed="@color/colorAccentOpacity50"
+            fab:fab_colorRipple="@color/colorAccent" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_player_favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_player_favorite_32dp"
+            android:layout_gravity="center"
+            fab:fab_size="mini"
+            android:layout_weight="1"
+            fab:fab_colorNormal="@color/colorWhite"
+            fab:fab_colorPressed="@color/colorAccentOpacity50"
+            fab:fab_colorRipple="@color/colorAccent" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_player_volume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_player_volume_32dp"
+            android:layout_gravity="center"
+            fab:fab_size="mini"
+            android:layout_weight="1"
+            fab:fab_colorNormal="@color/colorWhite"
+            fab:fab_colorPressed="@color/colorAccentOpacity50"
+            fab:fab_colorRipple="@color/colorAccent" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_player_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_media_player_down_32dp"
+            android:layout_gravity="center"
+            fab:fab_size="mini"
+            android:layout_weight="1"
+            fab:fab_colorNormal="@color/colorWhite"
+            fab:fab_colorPressed="@color/colorAccentOpacity50"
+            fab:fab_colorRipple="@color/colorAccent" />
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btn_video_nav_left"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/btn_video_nav_left"/>
+
+    <ImageButton
+        android:id="@+id/btn_video_nav_right"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/btn_video_nav_right"/>
+
+</RelativeLayout>
