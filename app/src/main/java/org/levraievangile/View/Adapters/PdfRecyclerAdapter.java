@@ -10,13 +10,17 @@ import android.widget.TextView;
 import org.levraievangile.Model.Pdf;
 import org.levraievangile.Presenter.CommonPresenter;
 import org.levraievangile.Presenter.HomePresenter;
+import org.levraievangile.Presenter.PdfPresenter;
 import org.levraievangile.R;
 import org.levraievangile.View.Activities.PdfActivity;
+import org.levraievangile.View.Activities.WebActivity;
 import org.levraievangile.View.Interfaces.HomeView;
 import org.levraievangile.View.Interfaces.PdfView;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+
+import static org.levraievangile.Presenter.CommonPresenter.GOOGLE_DRIVE_READER;
 
 /**
  * Created by Maranatha on 10/10/2017.
@@ -28,8 +32,8 @@ public class PdfRecyclerAdapter extends RecyclerView.Adapter<PdfRecyclerAdapter.
     private Hashtable<Integer, PdfRecyclerAdapter.MyViewHolder> mViewHolder;
     private HomeView.IPlaceholder iPlaceholder;
     private PdfView.IPdf iPdf;
-    private Pdf pdfSelected;
     private int resLayout;
+    private int positionSelected;
 
     public PdfRecyclerAdapter(ArrayList<Pdf> pdfItems, int resLayout, HomeView.IPlaceholder iPlaceholder) {
         this.iPlaceholder = iPlaceholder;
@@ -95,14 +99,15 @@ public class PdfRecyclerAdapter extends RecyclerView.Adapter<PdfRecyclerAdapter.
             container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
-                    pdfSelected = pdfItems.get(positionItem);
+                    positionSelected = positionItem;
+                    //pdfSelected = pdfItems.get(positionSelected);
                     if(iPlaceholder != null){
                         HomePresenter homePresenter = new HomePresenter(iPlaceholder);
-                        homePresenter.launchActivity(pdfSelected.getType_shortcode(), PdfActivity.class);
+                        homePresenter.launchActivity(pdfItems.get(positionSelected).getType_shortcode(), PdfActivity.class);
                     }
                     else if(iPdf != null){
-
+                        PdfPresenter pdfPresenter = new PdfPresenter(iPdf);
+                        pdfPresenter.launchActivity(GOOGLE_DRIVE_READER+pdfItems.get(positionSelected).getUrlacces()+pdfItems.get(positionSelected).getSrc());
                     }
                     else{}
                 }

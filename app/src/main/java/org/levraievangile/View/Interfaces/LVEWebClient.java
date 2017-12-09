@@ -25,7 +25,8 @@ public class LVEWebClient extends WebViewClient {
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
         if (Uri.parse(url).getHost().endsWith("levraievangile.org")
-                || Uri.parse(url).getHost().endsWith("levraievangile.com")) {
+                || Uri.parse(url).getHost().endsWith("levraievangile.com")
+                || Uri.parse(url).getHost().endsWith("google.com")) {
             return false;
         }
         //--
@@ -40,7 +41,8 @@ public class LVEWebClient extends WebViewClient {
     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
         String url = request.getUrl().toString();
         if (Uri.parse(url).getHost().endsWith("levraievangile.org")
-                || Uri.parse(url).getHost().endsWith("levraievangile.com")) {
+                || Uri.parse(url).getHost().endsWith("levraievangile.com")
+                || Uri.parse(url).getHost().endsWith("google.com")) {
             return false;
         }
         //--

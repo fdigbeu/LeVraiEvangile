@@ -1,6 +1,7 @@
 package org.levraievangile.View.Activities;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -21,6 +22,7 @@ import org.levraievangile.View.Interfaces.PdfView;
 
 import java.util.ArrayList;
 
+import static org.levraievangile.Presenter.CommonPresenter.KEY_SHORT_CODE;
 import static org.levraievangile.Presenter.CommonPresenter.VALUE_PERMISSION_TO_SAVE_FILE;
 
 public class PdfActivity extends AppCompatActivity implements PdfView.IPdf{
@@ -59,6 +61,14 @@ public class PdfActivity extends AppCompatActivity implements PdfView.IPdf{
         int resLayout = R.layout.item_ressource;
         PdfRecyclerAdapter adapter = new PdfRecyclerAdapter(pdfs, resLayout, this);
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void launchActivity(String value) {
+        Intent intent = new Intent(PdfActivity.this, WebActivity.class);
+        intent.putExtra(KEY_SHORT_CODE, value);
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
 

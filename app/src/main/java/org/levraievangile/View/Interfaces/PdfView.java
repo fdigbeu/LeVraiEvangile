@@ -19,6 +19,7 @@ public class PdfView {
         public void initialize();
         public void events();
         public void loadPdfData(ArrayList<Pdf> pdfs, int numberColumns);
+        public void launchActivity(String value);
         public void progressBarVisibility(int visibility);
         public void askPermissionToSaveFile();
         public void closeActivity();

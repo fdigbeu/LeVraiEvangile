@@ -61,6 +61,8 @@ public class CommonPresenter {
 
     public static final String KEY_AUDIO_SELECTED = "KEY_AUDIO_SELECTED";
 
+    public static final String GOOGLE_DRIVE_READER = "https://drive.google.com/viewer?url=";
+
     public static final String KEY_VIDEO_PLAYER_SEND_DATA = "KEY_VIDEO_PLAYER_SEND_DATA";
     public static final String KEY_VIDEO_PLAYER_RETURN_DATA = "KEY_VIDEO_PLAYER_RETURN_DATA";
     public static final String KEY_VALUE_POSITION_VIDEO_SELECTED = "KEY_VALUE_POSITION_VIDEO_SELECTED";

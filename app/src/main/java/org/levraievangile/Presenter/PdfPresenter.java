@@ -67,4 +67,9 @@ public class PdfPresenter {
             }
         }
     }
+
+    // Launch activity
+    public void launchActivity(String value){
+        iPdf.launchActivity(value);
+    }
 }

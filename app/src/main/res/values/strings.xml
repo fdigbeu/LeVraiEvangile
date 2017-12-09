@@ -33,6 +33,5 @@
     <string name="url_play_store">https://play.google.com/store/apps/details?id=org.levraievangile</string>
     <string name="url_partager_video">http://www.levraievangile.org/videos/lire/{TYPE}/{ID}/</string>
     <string name="url_partager_audio">http://www.levraievangile.org/audios/lire/{TYPE}/{ID}/</string>
-    <string name="ws_url_pdf_typeliste">http://www.levraievangile.org/webservice/ressources/pdf/{TYPE}/</string>
     <string name="url_actualite_image">http://www.levraievangile.org/uploads/</string>
 </resources>
