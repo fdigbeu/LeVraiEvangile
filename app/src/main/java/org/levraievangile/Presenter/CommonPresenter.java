@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -79,6 +80,16 @@ public class CommonPresenter {
     public static final int VALUE_PERMISSION_TO_SAVE_FILE = 103;
 
     private static final String FOLDER_NAME[] = {"LVE", "LVE/Audios", "LVE/Videos", "LVE/Pdfs"};
+
+    // Attributes database
+    private static SQLiteDatabase db;
+    private static final String database = "questionsreponses.db";
+    public static void buildDataBase(Context context){
+        db = context.openOrCreateDatabase(database, context.MODE_PRIVATE, null);
+    }
+    public static SQLiteDatabase getDb() {
+        return db;
+    }
 
     public CommonPresenter(){}
 

@@ -1,375 +1,143 @@
-package crud;
+package org.levraievangile.Model;
 
 import android.content.Context;
 import android.database.Cursor;
 
-import java.util.ArrayList;
+import org.levraievangile.Presenter.CommonPresenter;
 
-import classes.Audio;
-import classes.Connexion;
-import classes.Favoris;
-import classes.Pdf;
-import classes.Video;
+import java.util.ArrayList;
 
 /**
  * Created by JESUS EST YAHWEH on 07/01/2017.
  */
 
-public class CRUDFavoris {
+public class DAOFavoris {
 
-    private final String table_name = "lve_favoris";
-    private Connexion connexion;
     private Context context;
-    private Favoris favoris;
-    private String orderSql = "DESC";
+    private final String TABLE_NAME = "lve_favoris";
 
-    public CRUDFavoris(Context context){
+    private final String COL_1 = "id";
+    private final String COL_2 = "type";
+    private final String COL_3 = "mipmap";
+    private final String COL_4 = "urlacces";
+    private final String COL_5 = "src";
+    private final String COL_6 = "titre";
+    private final String COL_7 = "auteur";
+    private final String COL_8 = "duree";
+    private final String COL_9 = "date";
+    private final String COL_10 = "type_libelle";
+    private final String COL_11 = "type_shortcode";
+    private final String COL_12 = "ressource_id";
+
+    public DAOFavoris(Context context){
         this.context = context;
     }
 
-    public CRUDFavoris(Context context, Favoris favoris){
-        this.context = context;
-        this.favoris = favoris;
+    public void createTable(){
+        String sql = "CREATE TABLE IF NOT EXISTS "+TABLE_NAME+" ("+COL_1+" INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                ""+COL_2+" VARCHAR, " +
+                ""+COL_3+" VARCHAR, " +
+                ""+COL_4+" VARCHAR, " +
+                ""+COL_5+" VARCHAR, " +
+                ""+COL_6+" VARCHAR, " +
+                ""+COL_7+" VARCHAR, " +
+                ""+COL_8+" VARCHAR, " +
+                ""+COL_9+" VARCHAR, " +
+                ""+COL_10+" VARCHAR, " +
+                ""+COL_11+" VARCHAR, " +
+                ""+COL_12+" VARCHAR);";
+
+        CommonPresenter.buildDataBase(context);
+        CommonPresenter.getDb().execSQL(sql);
     }
 
-
-    public void creerTable(){
-        String sql = "CREATE TABLE IF NOT EXISTS "+table_name+" (id INTEGER PRIMARY KEY AUTOINCREMENT, type VARCHAR, mipmap VARCHAR, urlacces VARCHAR, src VARCHAR, titre VARCHAR, auteur VARCHAR, duree VARCHAR, date VARCHAR, type_libelle VARCHAR, type_shortcode VARCHAR, ressource_id VARCHAR);";
-        connexion = new Connexion(context);
-        connexion.getDb().execSQL(sql);
+    public void insertData(String type, String mipmap, String urlacces, String src,  String titre,  String auteur,  String duree,  String type_libelle,  String type_shortcode, String ressource_id){
+        createTable();
+        String sql = "INSERT INTO "+TABLE_NAME+" ("+COL_2+", "+COL_3+", "+COL_4+", "+COL_5+", "+COL_6+", "+COL_7+", "+COL_8+", "+COL_9+", "+COL_10+", "+COL_11+", "+COL_12+")" +
+                " VALUES ('"+type+"', " +
+                "'"+mipmap.replace("'","''")+"',  " +
+                "'"+urlacces.replace("'","''")+"',  " +
+                "'"+src.replace("'","''")+"',  " +
+                "'"+titre.replace("'","''")+"',  " +
+                "'"+auteur.replace("'","''")+"',  " +
+                "'"+duree.replace("'","''")+"',  " +
+                "CURRENT_DATE,  " +
+                "'"+type_libelle.replace("'","''")+"',  " +
+                "'"+type_shortcode.replace("'","''")+"',  " +
+                "'"+ressource_id.replace("'","''")+"');";
+        CommonPresenter.getDb().execSQL(sql);
     }
 
-    public void ajouter(){
-        creerTable();
-        String sql = "";
-        switch (favoris.getType()){
-            case "video":
-                sql = "INSERT INTO " + table_name + " (type, mipmap, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, ressource_id)" +
-                        " VALUES ('"+favoris.getType()+"', '"+favoris.getVideo().getMipmap()+"', '"+favoris.getVideo().getUrlacces()+"', '"+favoris.getVideo().getSrc()+"', '"+favoris.getVideo().getTitre().replace("'", "''")+"', '"+favoris.getVideo().getAuteur().replace("'", "''")+"', '"+favoris.getVideo().getDuree()+"', '"+favoris.getVideo().getDate()+"', '"+favoris.getVideo().getType_libelle()+"', '"+favoris.getVideo().getType_shortcode()+"', '"+favoris.getVideo().getId()+"');";
-                break;
-            case "audio":
-                sql = "INSERT INTO " + table_name + " (type, mipmap, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, ressource_id)" +
-                        " VALUES ('"+favoris.getType()+"', '"+favoris.getAudio().getMipmap()+"', '"+favoris.getAudio().getUrlacces()+"', '"+favoris.getAudio().getSrc()+"', '"+favoris.getAudio().getTitre().replace("'", "''")+"', '"+favoris.getAudio().getAuteur().replace("'", "''")+"', '"+favoris.getAudio().getDuree()+"', '"+favoris.getAudio().getDate()+"', '"+favoris.getAudio().getType_libelle()+"', '"+favoris.getAudio().getType_shortcode()+"', '"+favoris.getAudio().getId()+"');";
-                break;
-            case "pdf":
-                sql = "INSERT INTO " + table_name + " (type, mipmap, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, ressource_id)" +
-                        " VALUES ('"+favoris.getType()+"', '"+favoris.getPdf().getMipmap()+"', '"+favoris.getPdf().getUrlacces()+"', '"+favoris.getPdf().getSrc()+"', '"+favoris.getPdf().getTitre().replace("'", "''")+"', '"+favoris.getPdf().getAuteur().replace("'", "''")+"', '00:00:00', '"+favoris.getPdf().getDate()+"', '"+favoris.getPdf().getType_libelle()+"', '"+favoris.getPdf().getType_shortcode()+"', '"+favoris.getPdf().getId()+"');";
-                break;
-        }
-        connexion.getDb().execSQL(sql);
-    }
-
-    public void ajouterVideo(String type, String mipmap, String urlacces, String src, String titre, String auteur, String duree, String date, String type_libelle, String type_shortcode, String ressource_id){
-        creerTable();
-        String sql = "INSERT INTO " + table_name + " (type, mipmap, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, ressource_id)" +
-                " VALUES ('"+type+"', '"+mipmap+"', '"+urlacces+"', '"+src+"', '"+titre.replace("'", "''")+"', '"+auteur.replace("'", "''")+"', '"+duree+"', '"+date+"', '"+type_libelle+"', '"+type_shortcode+"', '"+ressource_id+"');";
-        connexion.getDb().execSQL(sql);
-    }
-
-    public void ajouterAudio(String type, String mipmap, String urlacces, String src, String titre, String auteur, String duree, String date, String type_libelle, String type_shortcode, String ressource_id){
-        creerTable();
-        String sql = "INSERT INTO " + table_name + " (type, mipmap, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, ressource_id)" +
-                " VALUES ('"+type+"', '"+mipmap+"', '"+urlacces+"', '"+src+"', '"+titre.replace("'", "''")+"', '"+auteur.replace("'", "''")+"', '"+duree+"', '"+date+"', '"+type_libelle+"', '"+type_shortcode+"', '"+ressource_id+"');";
-        connexion.getDb().execSQL(sql);
-    }
-
-    public void ajouterPdf(String type, String mipmap, String urlacces, String src, String titre, String auteur, String date, String type_libelle, String type_shortcode, String ressource_id){
-        creerTable();
-        String sql = "INSERT INTO " + table_name + " (type, mipmap, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, ressource_id)" +
-                " VALUES ('"+type+"', '"+mipmap+"', '"+urlacces+"', '"+src+"', '"+titre.replace("'", "''")+"', '"+auteur.replace("'", "''")+"', '00:00:00', '"+date+"', '"+type_libelle+"', '"+type_shortcode+"', '"+ressource_id+"');";
-        connexion.getDb().execSQL(sql);
-    }
-
-    public ArrayList<Favoris> listerVideo(){
-        creerTable();
+    public ArrayList<Favoris> getAllData(String type){
+        createTable();
         ArrayList<Favoris> resultat = new ArrayList<>();
-        Cursor cursor = connexion.getDb().rawQuery("Select * FROM " + table_name + " WHERE type LIKE 'video' ORDER BY id "+orderSql, null);
+        Cursor cursor = CommonPresenter.getDb().rawQuery("SELECT * FROM "+TABLE_NAME+" WHERE "+COL_2+" LIKE '"+type+"' ORDER BY "+COL_1+" DESC", null);
         int count = cursor.getCount();
         cursor.moveToFirst();
         //--
         for(Integer j=0; j<count; j++){
-            String id = cursor.getString(cursor.getColumnIndex("id"));
-            String type = cursor.getString(cursor.getColumnIndex("type"));
-            String mipmap = cursor.getString(cursor.getColumnIndex("mipmap"));
-            String urlacces = cursor.getString(cursor.getColumnIndex("urlacces"));
-            String src = cursor.getString(cursor.getColumnIndex("src"));
-            String titre = cursor.getString(cursor.getColumnIndex("titre"));
-            String auteur = cursor.getString(cursor.getColumnIndex("auteur"));
-            String duree = cursor.getString(cursor.getColumnIndex("duree"));
-            String date = cursor.getString(cursor.getColumnIndex("date"));
-            String type_libelle = cursor.getString(cursor.getColumnIndex("type_libelle"));
-            String type_shortcode = cursor.getString(cursor.getColumnIndex("type_shortcode"));
-            String ressource_id = cursor.getString(cursor.getColumnIndex("ressource_id"));
+            int id = cursor.getInt(cursor.getColumnIndex(COL_1));
+            //String type = cursor.getString(cursor.getColumnIndex(COL_2));
+            String mipmap = cursor.getString(cursor.getColumnIndex(COL_3));
+            String urlacces = cursor.getString(cursor.getColumnIndex(COL_4));
+            String src = cursor.getString(cursor.getColumnIndex(COL_5));
+            String titre = cursor.getString(cursor.getColumnIndex(COL_6));
+            String auteur = cursor.getString(cursor.getColumnIndex(COL_7));
+            String duree = cursor.getString(cursor.getColumnIndex(COL_8));
+            String date = cursor.getString(cursor.getColumnIndex(COL_9));
+            String type_libelle = cursor.getString(cursor.getColumnIndex(COL_10));
+            String type_shortcode = cursor.getString(cursor.getColumnIndex(COL_11));
+            String ressourec_id = cursor.getString(cursor.getColumnIndex(COL_12));
             //--
-            resultat.add(new Favoris(Integer.parseInt(id), type, new Video(Integer.parseInt(ressource_id), Integer.parseInt(mipmap), urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode)));
+            int mMipmap = CommonPresenter.getMipmapByTypeShortcode(type_shortcode);
+            resultat.add(new Favoris(id, type, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, mMipmap, Integer.parseInt(ressourec_id)));
+            //--
             cursor.moveToNext();
         }
-        connexion.getDb().close();
+        CommonPresenter.getDb().close();
         return resultat;
     }
 
-    public ArrayList<Favoris> listerAudio(){
-        creerTable();
+    public boolean isFavorisExists(String src){
+        createTable();
         ArrayList<Favoris> resultat = new ArrayList<>();
-        Cursor cursor = connexion.getDb().rawQuery("Select * FROM " + table_name + " WHERE type LIKE 'audio' ORDER BY id "+orderSql, null);
+        Cursor cursor = CommonPresenter.getDb().rawQuery("SELECT * FROM "+TABLE_NAME+" WHERE "+COL_5+" LIKE '"+src+"'", null);
         int count = cursor.getCount();
         cursor.moveToFirst();
         //--
         for(Integer j=0; j<count; j++){
-            String id = cursor.getString(cursor.getColumnIndex("id"));
-            String type = cursor.getString(cursor.getColumnIndex("type"));
-            String mipmap = cursor.getString(cursor.getColumnIndex("mipmap"));
-            String urlacces = cursor.getString(cursor.getColumnIndex("urlacces"));
-            String src = cursor.getString(cursor.getColumnIndex("src"));
-            String titre = cursor.getString(cursor.getColumnIndex("titre"));
-            String auteur = cursor.getString(cursor.getColumnIndex("auteur"));
-            String duree = cursor.getString(cursor.getColumnIndex("duree"));
-            String date = cursor.getString(cursor.getColumnIndex("date"));
-            String type_libelle = cursor.getString(cursor.getColumnIndex("type_libelle"));
-            String type_shortcode = cursor.getString(cursor.getColumnIndex("type_shortcode"));
-            String ressource_id = cursor.getString(cursor.getColumnIndex("ressource_id"));
+            int id = cursor.getInt(cursor.getColumnIndex(COL_1));
+            String type = cursor.getString(cursor.getColumnIndex(COL_2));
+            String mipmap = cursor.getString(cursor.getColumnIndex(COL_3));
+            String urlacces = cursor.getString(cursor.getColumnIndex(COL_4));
+            //String src = cursor.getString(cursor.getColumnIndex(COL_5));
+            String titre = cursor.getString(cursor.getColumnIndex(COL_6));
+            String auteur = cursor.getString(cursor.getColumnIndex(COL_7));
+            String duree = cursor.getString(cursor.getColumnIndex(COL_8));
+            String date = cursor.getString(cursor.getColumnIndex(COL_9));
+            String type_libelle = cursor.getString(cursor.getColumnIndex(COL_10));
+            String type_shortcode = cursor.getString(cursor.getColumnIndex(COL_11));
+            String ressourec_id = cursor.getString(cursor.getColumnIndex(COL_12));
             //--
-            resultat.add(new Favoris(Integer.parseInt(id), type, new Audio(Integer.parseInt(ressource_id), Integer.parseInt(mipmap), urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode)));
+            int mMipmap = CommonPresenter.getMipmapByTypeShortcode(type_shortcode);
+            resultat.add(new Favoris(id, type, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, mMipmap, Integer.parseInt(ressourec_id)));
+            //--
             cursor.moveToNext();
         }
-        connexion.getDb().close();
-        return resultat;
+        CommonPresenter.getDb().close();
+        return (resultat.size() > 0);
     }
 
-    public ArrayList<Favoris> listerPdf(){
-        creerTable();
-        ArrayList<Favoris> resultat = new ArrayList<>();
-        Cursor cursor = connexion.getDb().rawQuery("Select * FROM " + table_name + " WHERE type LIKE 'pdf' ORDER BY id "+orderSql, null);
-        int count = cursor.getCount();
-        cursor.moveToFirst();
-        //--
-        for(Integer j=0; j<count; j++){
-            String id = cursor.getString(cursor.getColumnIndex("id"));
-            String type = cursor.getString(cursor.getColumnIndex("type"));
-            String mipmap = cursor.getString(cursor.getColumnIndex("mipmap"));
-            String urlacces = cursor.getString(cursor.getColumnIndex("urlacces"));
-            String src = cursor.getString(cursor.getColumnIndex("src"));
-            String titre = cursor.getString(cursor.getColumnIndex("titre"));
-            String auteur = cursor.getString(cursor.getColumnIndex("auteur"));
-            String date = cursor.getString(cursor.getColumnIndex("date"));
-            String type_libelle = cursor.getString(cursor.getColumnIndex("type_libelle"));
-            String type_shortcode = cursor.getString(cursor.getColumnIndex("type_shortcode"));
-            String ressource_id = cursor.getString(cursor.getColumnIndex("ressource_id"));
-            //--
-            resultat.add(new Favoris(Integer.parseInt(id), type, new Pdf(Integer.parseInt(ressource_id), Integer.parseInt(mipmap), urlacces, src, titre, auteur, date, type_libelle, type_shortcode)));
-            cursor.moveToNext();
-        }
-        connexion.getDb().close();
-        return resultat;
+    public void dropAllData(){
+        createTable();
+        String sql = "DROP TABLE IF EXISTS " + TABLE_NAME;
+        CommonPresenter.getDb().execSQL(sql);
     }
 
-    public Favoris infosBy(String src){
-        creerTable();
-        ArrayList<Favoris> resultat = new ArrayList<>();
-        Cursor cursor = connexion.getDb().rawQuery("Select * FROM " + table_name + " WHERE type LIKE '"+favoris.getType()+"' AND src LIKE '"+src+"'", null);
-        int count = cursor.getCount();
-        cursor.moveToFirst();
-        //--
-        for(Integer j=0; j<count; j++){
-            String id = cursor.getString(cursor.getColumnIndex("id"));
-            String type = cursor.getString(cursor.getColumnIndex("type"));
-            String mipmap = cursor.getString(cursor.getColumnIndex("mipmap"));
-            String urlacces = cursor.getString(cursor.getColumnIndex("urlacces"));
-            //String src = cursor.getString(cursor.getColumnIndex("src"));
-            String titre = cursor.getString(cursor.getColumnIndex("titre"));
-            String auteur = cursor.getString(cursor.getColumnIndex("auteur"));
-            String duree = cursor.getString(cursor.getColumnIndex("duree"));
-            String date = cursor.getString(cursor.getColumnIndex("date"));
-            String type_libelle = cursor.getString(cursor.getColumnIndex("type_libelle"));
-            String type_shortcode = cursor.getString(cursor.getColumnIndex("type_shortcode"));
-            String ressource_id = cursor.getString(cursor.getColumnIndex("ressource_id"));
-            //--
-            switch (favoris.getType()){
-                case "video":
-                    favoris.getVideo().setMipmap(Integer.parseInt(mipmap));
-                    favoris.getVideo().setUrlacces(urlacces);
-                    favoris.getVideo().setSrc(src);
-                    favoris.getVideo().setTitre(titre);
-                    favoris.getVideo().setAuteur(auteur);
-                    favoris.getVideo().setDuree(duree);
-                    favoris.getVideo().setDate(date);
-                    favoris.getVideo().setType_libelle(type_libelle);
-                    favoris.getVideo().setType_shortcode(type_shortcode);
-                    favoris.getVideo().setId(Integer.parseInt(ressource_id));
-                    resultat.add(new Favoris(Integer.parseInt(id), type, favoris.getVideo()));
-                    break;
-                case "audio":
-                    favoris.getAudio().setMipmap(Integer.parseInt(mipmap));
-                    favoris.getAudio().setUrlacces(urlacces);
-                    favoris.getAudio().setSrc(src);
-                    favoris.getAudio().setTitre(titre);
-                    favoris.getAudio().setAuteur(auteur);
-                    favoris.getAudio().setDuree(duree);
-                    favoris.getAudio().setDate(date);
-                    favoris.getAudio().setType_libelle(type_libelle);
-                    favoris.getAudio().setType_shortcode(type_shortcode);
-                    favoris.getAudio().setId(Integer.parseInt(ressource_id));
-                    resultat.add(new Favoris(Integer.parseInt(id), type, favoris.getAudio()));
-                    break;
-                case "pdf":
-                    favoris.getPdf().setMipmap(Integer.parseInt(mipmap));
-                    favoris.getPdf().setUrlacces(urlacces);
-                    favoris.getPdf().setSrc(src);
-                    favoris.getPdf().setTitre(titre);
-                    favoris.getPdf().setAuteur(auteur);
-                    favoris.getPdf().setDate(date);
-                    favoris.getPdf().setType_libelle(type_libelle);
-                    favoris.getPdf().setType_shortcode(type_shortcode);
-                    favoris.getPdf().setId(Integer.parseInt(ressource_id));
-                    resultat.add(new Favoris(Integer.parseInt(id), type, favoris.getPdf()));
-                    break;
-            }
-            cursor.moveToNext();
-        }
-        connexion.getDb().close();
-        return (resultat.size() > 0 ? resultat.get(0) : null);
-    }
-
-    public Favoris infosAudioBy(String src){
-        creerTable();
-        ArrayList<Favoris> resultat = new ArrayList<>();
-        Cursor cursor = connexion.getDb().rawQuery("Select * FROM " + table_name + " WHERE type LIKE 'audio' AND src LIKE '"+src+"'", null);
-        int count = cursor.getCount();
-        cursor.moveToFirst();
-        //--
-        for(Integer j=0; j<count; j++){
-            String id = cursor.getString(cursor.getColumnIndex("id"));
-            String type = cursor.getString(cursor.getColumnIndex("type"));
-            String mipmap = cursor.getString(cursor.getColumnIndex("mipmap"));
-            String urlacces = cursor.getString(cursor.getColumnIndex("urlacces"));
-            //String src = cursor.getString(cursor.getColumnIndex("src"));
-            String titre = cursor.getString(cursor.getColumnIndex("titre"));
-            String auteur = cursor.getString(cursor.getColumnIndex("auteur"));
-            String duree = cursor.getString(cursor.getColumnIndex("duree"));
-            String date = cursor.getString(cursor.getColumnIndex("date"));
-            String type_libelle = cursor.getString(cursor.getColumnIndex("type_libelle"));
-            String type_shortcode = cursor.getString(cursor.getColumnIndex("type_shortcode"));
-            String ressource_id = cursor.getString(cursor.getColumnIndex("ressource_id"));
-            //--
-            favoris.getAudio().setMipmap(Integer.parseInt(mipmap));
-            favoris.getAudio().setUrlacces(urlacces);
-            favoris.getAudio().setSrc(src);
-            favoris.getAudio().setTitre(titre);
-            favoris.getAudio().setAuteur(auteur);
-            favoris.getAudio().setDuree(duree);
-            favoris.getAudio().setDate(date);
-            favoris.getAudio().setType_libelle(type_libelle);
-            favoris.getAudio().setType_shortcode(type_shortcode);
-            favoris.getAudio().setId(Integer.parseInt(ressource_id));
-            resultat.add(new Favoris(Integer.parseInt(id), type, favoris.getAudio()));
-            cursor.moveToNext();
-        }
-        connexion.getDb().close();
-        return (resultat.size() > 0 ? resultat.get(0) : null);
-    }
-
-    public Favoris infosVideoBy(String src){
-        creerTable();
-        ArrayList<Favoris> resultat = new ArrayList<>();
-        Cursor cursor = connexion.getDb().rawQuery("Select * FROM " + table_name + " WHERE type LIKE 'video' AND src LIKE '"+src+"'", null);
-        int count = cursor.getCount();
-        cursor.moveToFirst();
-        //--
-        for(Integer j=0; j<count; j++){
-            String id = cursor.getString(cursor.getColumnIndex("id"));
-            String type = cursor.getString(cursor.getColumnIndex("type"));
-            String mipmap = cursor.getString(cursor.getColumnIndex("mipmap"));
-            String urlacces = cursor.getString(cursor.getColumnIndex("urlacces"));
-            //String src = cursor.getString(cursor.getColumnIndex("src"));
-            String titre = cursor.getString(cursor.getColumnIndex("titre"));
-            String auteur = cursor.getString(cursor.getColumnIndex("auteur"));
-            String duree = cursor.getString(cursor.getColumnIndex("duree"));
-            String date = cursor.getString(cursor.getColumnIndex("date"));
-            String type_libelle = cursor.getString(cursor.getColumnIndex("type_libelle"));
-            String type_shortcode = cursor.getString(cursor.getColumnIndex("type_shortcode"));
-            String ressource_id = cursor.getString(cursor.getColumnIndex("ressource_id"));
-            //--
-            favoris.getVideo().setMipmap(Integer.parseInt(mipmap));
-            favoris.getVideo().setUrlacces(urlacces);
-            favoris.getVideo().setSrc(src);
-            favoris.getVideo().setTitre(titre);
-            favoris.getVideo().setAuteur(auteur);
-            favoris.getVideo().setDuree(duree);
-            favoris.getVideo().setDate(date);
-            favoris.getVideo().setType_libelle(type_libelle);
-            favoris.getVideo().setType_shortcode(type_shortcode);
-            favoris.getVideo().setId(Integer.parseInt(ressource_id));
-            resultat.add(new Favoris(Integer.parseInt(id), type, favoris.getVideo()));
-            cursor.moveToNext();
-        }
-        connexion.getDb().close();
-        return (resultat.size() > 0 ? resultat.get(0) : null);
-    }
-
-    public Favoris infosPdfBy(String src){
-        creerTable();
-        ArrayList<Favoris> resultat = new ArrayList<>();
-        Cursor cursor = connexion.getDb().rawQuery("Select * FROM " + table_name + " WHERE type LIKE 'pdf' AND src LIKE '"+src+"'", null);
-        int count = cursor.getCount();
-        cursor.moveToFirst();
-        //--
-        for(Integer j=0; j<count; j++){
-            String id = cursor.getString(cursor.getColumnIndex("id"));
-            String type = cursor.getString(cursor.getColumnIndex("type"));
-            String mipmap = cursor.getString(cursor.getColumnIndex("mipmap"));
-            String urlacces = cursor.getString(cursor.getColumnIndex("urlacces"));
-            //String src = cursor.getString(cursor.getColumnIndex("src"));
-            String titre = cursor.getString(cursor.getColumnIndex("titre"));
-            String auteur = cursor.getString(cursor.getColumnIndex("auteur"));
-            String duree = cursor.getString(cursor.getColumnIndex("duree"));
-            String date = cursor.getString(cursor.getColumnIndex("date"));
-            String type_libelle = cursor.getString(cursor.getColumnIndex("type_libelle"));
-            String type_shortcode = cursor.getString(cursor.getColumnIndex("type_shortcode"));
-            String ressource_id = cursor.getString(cursor.getColumnIndex("ressource_id"));
-            //--
-            favoris.getPdf().setMipmap(Integer.parseInt(mipmap));
-            favoris.getPdf().setUrlacces(urlacces);
-            favoris.getPdf().setSrc(src);
-            favoris.getPdf().setTitre(titre);
-            favoris.getPdf().setAuteur(auteur);
-            favoris.getPdf().setDate(date);
-            favoris.getPdf().setType_libelle(type_libelle);
-            favoris.getPdf().setType_shortcode(type_shortcode);
-            favoris.getPdf().setId(Integer.parseInt(ressource_id));
-            resultat.add(new Favoris(Integer.parseInt(id), type, favoris.getPdf()));
-            cursor.moveToNext();
-        }
-        connexion.getDb().close();
-        return (resultat.size() > 0 ? resultat.get(0) : null);
-    }
-
-
-    public void vider(){
-        creerTable();
-        String sql = "DROP TABLE IF EXISTS " + table_name;
-        connexion.getDb().execSQL(sql);
-    }
-
-    public void supprimer()
+    public void deleteDataBy(int id)
     {
-        creerTable();
-        String sql = "DELETE FROM " + table_name + " WHERE id LIKE '%"+favoris.getId()+"%'";
-        connexion.getDb().execSQL(sql);
-    }
-
-    public Favoris getFavoris() {
-        return favoris;
-    }
-
-    public void setFavoris(Favoris favoris) {
-        this.favoris = favoris;
-    }
-
-    public String getOrderSql() {
-        return orderSql;
-    }
-
-    public void setOrderSql(String orderSql) {
-        this.orderSql = orderSql;
+        createTable();
+        String sql = "DELETE FROM " + TABLE_NAME + " WHERE "+COL_1+" = '"+id+"'";
+        CommonPresenter.getDb().execSQL(sql);
     }
 }

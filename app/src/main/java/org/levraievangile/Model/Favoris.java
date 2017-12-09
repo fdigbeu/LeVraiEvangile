@@ -8,35 +8,23 @@ import java.io.Serializable;
  * Created by JESUS EST YAHWEH on 03/01/2017.
  */
 
-public class Audio implements Serializable{
-    @SerializedName("id")
+public class Favoris implements Serializable{
     private int id;
-    @SerializedName("urlacces")
+    private String type;
     private String urlacces;
-    @SerializedName("src")
     private String src;
-    @SerializedName("titre")
     private String titre;
-    @SerializedName("auteur")
     private String auteur;
-    @SerializedName("duree")
     private String duree;
-    @SerializedName("date")
     private String date;
-    @SerializedName("type_libelle")
     private String type_libelle;
-    @SerializedName("type_shortcode")
     private String type_shortcode;
     private int mipmap;
+    private int ressource_id; // VideoId, AudioId
 
-    public Audio(int mipmap, String type_libelle, String type_shortcode) {
-        this.mipmap = mipmap;
-        this.type_libelle = type_libelle;
-        this.type_shortcode = type_shortcode;
-    }
-
-    public Audio(int id, String urlacces, String src, String titre, String auteur, String duree, String date, String type_libelle, String type_shortcode, int mipmap) {
+    public Favoris(int id, String type, String urlacces, String src, String titre, String auteur, String duree, String date, String type_libelle, String type_shortcode, int mipmap, int ressource_id) {
         this.id = id;
+        this.type = type;
         this.urlacces = urlacces;
         this.src = src;
         this.titre = titre;
@@ -46,12 +34,14 @@ public class Audio implements Serializable{
         this.type_libelle = type_libelle;
         this.type_shortcode = type_shortcode;
         this.mipmap = mipmap;
+        this.ressource_id = ressource_id;
     }
 
     @Override
     public String toString() {
         return "{\"auteur\":\""+auteur+"\"," +
                 "\"date\":\""+date+"\"," +
+                "\"type\":\""+type+"\"," +
                 "\"duree\":\""+duree+"\"," +
                 "\"urlacces\":\""+urlacces+"\"," +
                 "\"type_shortcode\":\""+type_shortcode+"\"," +
@@ -59,6 +49,7 @@ public class Audio implements Serializable{
                 "\"titre\":\""+titre+"\"," +
                 "\"type_libelle\":\""+type_libelle+"\"," +
                 "\"mipmap\":"+mipmap+"," +
+                "\"ressource_id\":"+ressource_id+"," +
                 "\"id\":"+id+"}";
     }
 
@@ -132,6 +123,22 @@ public class Audio implements Serializable{
 
     public void setType_shortcode(String type_shortcode) {
         this.type_shortcode = type_shortcode;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public int getRessource_id() {
+        return ressource_id;
+    }
+
+    public void setRessource_id(int ressource_id) {
+        this.ressource_id = ressource_id;
     }
 
     public int getId() {

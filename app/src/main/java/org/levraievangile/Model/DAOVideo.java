@@ -1,286 +1,132 @@
-package crud;
+package org.levraievangile.Model;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.levraievangile.Presenter.CommonPresenter;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
-import classes.Animation;
-import classes.Connexion;
-import classes.Parametrage;
-import classes.SousMenu;
-import classes.Video;
-
-
 /**
- * Created by JESUS EST YAHWEH on 21/03/2016.
+ * Created by JESUS EST YAHWEH on 10/12/2017.
  */
-public class CRUDVideo {
+public class DAOVideo {
 
-    private final String table_name = "lve_video";
-    private Connexion connexion;
     private Context context;
-    private Video video;
-    private String orderSql = "DESC";
+    private final String TABLE_NAME = "lve_video";
 
-    public CRUDVideo(Context context){
+    private final String COL_1 = "id";
+    private final String COL_2 = "mipmap";
+    private final String COL_3 = "urlacces";
+    private final String COL_4 = "src";
+    private final String COL_5 = "titre";
+    private final String COL_6 = "auteur";
+    private final String COL_7 = "duree";
+    private final String COL_8 = "date";
+    private final String COL_9 = "type_libelle";
+    private final String COL_10 = "type_shortcode";
+
+    public DAOVideo(Context context){
         this.context = context;
     }
 
-    public CRUDVideo(Context context, Video video){
-        this.context = context;
-        this.video = video;
+    public void createTable(){
+        String sql = "CREATE TABLE IF NOT EXISTS "+TABLE_NAME+" ("+COL_1+" INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                ""+COL_2+" VARCHAR, " +
+                ""+COL_3+" VARCHAR, " +
+                ""+COL_4+" VARCHAR, " +
+                ""+COL_5+" VARCHAR, " +
+                ""+COL_6+" VARCHAR, " +
+                ""+COL_7+" VARCHAR, " +
+                ""+COL_8+" VARCHAR, " +
+                ""+COL_9+" VARCHAR, " +
+                ""+COL_10+" VARCHAR);";
+
+        CommonPresenter.buildDataBase(context);
+        CommonPresenter.getDb().execSQL(sql);
     }
 
-    public void creerTable(){
-        String sql = "CREATE TABLE IF NOT EXISTS "+table_name+" (id INTEGER PRIMARY KEY AUTOINCREMENT, mipmap VARCHAR, urlacces VARCHAR, src VARCHAR, titre VARCHAR, auteur VARCHAR, duree VARCHAR, date VARCHAR, type_libelle VARCHAR, type_shortcode VARCHAR);";
-        connexion = new Connexion(context);
-        connexion.getDb().execSQL(sql);
+    public void insertData(String mipmap, String urlacces, String src,  String titre,  String auteur,  String duree,  String type_libelle,  String type_shortcode){
+        createTable();
+        String sql = "INSERT INTO "+TABLE_NAME+" ("+COL_2+", "+COL_3+", "+COL_4+", "+COL_5+", "+COL_6+", "+COL_7+", "+COL_8+", "+COL_9+", "+COL_10+")" +
+                " VALUES ('"+mipmap+"', " +
+                "'"+urlacces.replace("'","''")+"',  " +
+                "'"+src.replace("'","''")+"',  " +
+                "'"+titre.replace("'","''")+"',  " +
+                "'"+auteur.replace("'","''")+"',  " +
+                "'"+duree.replace("'","''")+"',  " +
+                "CURRENT_DATE,  " +
+                "'"+type_libelle.replace("'","''")+"',  " +
+                "'"+type_shortcode.replace("'","''")+"');";
+        CommonPresenter.getDb().execSQL(sql);
     }
 
-    public void ajouter(){
-        creerTable();
-        String sql = "INSERT INTO " + table_name + " (mipmap, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode)" +
-                " VALUES ('"+video.getMipmap()+"', '"+video.getUrlacces()+"', '"+video.getSrc()+"', '"+video.getTitre().replace("'", "''")+"', '"+video.getAuteur().replace("'", "''")+"', '"+video.getDuree()+"', '"+video.getDate()+"', '"+video.getType_libelle()+"', '"+video.getType_shortcode()+"');";
-        connexion.getDb().execSQL(sql);
-    }
-
-    public void modifier(Video video)
-    {
-        creerTable();
-        ContentValues values = new ContentValues();
-        values.put("mipmap", video.getMipmap());
-        values.put("urlacces", video.getUrlacces());
-        values.put("src", video.getSrc());
-        values.put("titre", video.getTitre().replace("'", "''"));
-        values.put("auteur", video.getAuteur().replace("'", "''"));
-        values.put("duree", video.getDuree());
-        values.put("date", video.getDate());
-        values.put("type_libelle", video.getType_libelle());
-        values.put("type_shortcode", video.getType_shortcode());
-        connexion.getDb().update(table_name, values, "id LIKE ?", new String[]{""+video.getId()});
-    }
-
-    public ArrayList<Video> lister(){
-        creerTable();
+    public ArrayList<Video> getAllData(){
+        createTable();
         ArrayList<Video> resultat = new ArrayList<>();
-        Cursor cursor = connexion.getDb().rawQuery("Select * FROM " + table_name + " ORDER BY id "+orderSql, null);
+        Cursor cursor = CommonPresenter.getDb().rawQuery("SELECT * FROM "+TABLE_NAME+" ORDER BY "+COL_1+" DESC", null);
         int count = cursor.getCount();
         cursor.moveToFirst();
         //--
         for(Integer j=0; j<count; j++){
-            String id = cursor.getString(cursor.getColumnIndex("id"));
-            String mipmap = cursor.getString(cursor.getColumnIndex("mipmap"));
-            String urlacces = cursor.getString(cursor.getColumnIndex("urlacces"));
-            String src = cursor.getString(cursor.getColumnIndex("src"));
-            String titre = cursor.getString(cursor.getColumnIndex("titre"));
-            String auteur = cursor.getString(cursor.getColumnIndex("auteur"));
-            String duree = cursor.getString(cursor.getColumnIndex("duree"));
-            String date = cursor.getString(cursor.getColumnIndex("date"));
-            String type_libelle = cursor.getString(cursor.getColumnIndex("type_libelle"));
-            String type_shortcode = cursor.getString(cursor.getColumnIndex("type_shortcode"));
-            resultat.add(new Video(Integer.parseInt(id), Integer.parseInt(mipmap), urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode));
-            cursor.moveToNext();
-        }
-        connexion.getDb().close();
-        return resultat;
-    }
-
-    public Video infosBy(String src){
-        creerTable();
-        ArrayList<Video> resultat = new ArrayList<>();
-        Cursor cursor = connexion.getDb().rawQuery("Select * FROM " + table_name + " WHERE src LIKE '"+src+"'", null);
-        int count = cursor.getCount();
-        cursor.moveToFirst();
-        //--
-        for(Integer j=0; j<count; j++){
-            String id = cursor.getString(cursor.getColumnIndex("id"));
-            String mipmap = cursor.getString(cursor.getColumnIndex("mipmap"));
-            String urlacces = cursor.getString(cursor.getColumnIndex("urlacces"));
-            String titre = cursor.getString(cursor.getColumnIndex("titre"));
-            String auteur = cursor.getString(cursor.getColumnIndex("auteur"));
-            String duree = cursor.getString(cursor.getColumnIndex("duree"));
-            String date = cursor.getString(cursor.getColumnIndex("date"));
-            String type_libelle = cursor.getString(cursor.getColumnIndex("type_libelle"));
-            String type_shortcode = cursor.getString(cursor.getColumnIndex("type_shortcode"));
-            resultat.add(new Video(Integer.parseInt(id), Integer.parseInt(mipmap), urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode));
-            cursor.moveToNext();
-        }
-        connexion.getDb().close();
-        return (resultat.size() > 0 ? resultat.get(0) : null);
-    }
-
-    public Video infos(int id){
-        creerTable();
-        ArrayList<Video> resultat = new ArrayList<>();
-        Cursor cursor = connexion.getDb().rawQuery("Select * FROM " + table_name + " WHERE id = '"+id+"'", null);
-        int count = cursor.getCount();
-        cursor.moveToFirst();
-        //--
-        for(Integer j=0; j<count; j++){
-            String mipmap = cursor.getString(cursor.getColumnIndex("mipmap"));
-            String urlacces = cursor.getString(cursor.getColumnIndex("urlacces"));
-            String src = cursor.getString(cursor.getColumnIndex("src"));
-            String titre = cursor.getString(cursor.getColumnIndex("titre"));
-            String auteur = cursor.getString(cursor.getColumnIndex("auteur"));
-            String duree = cursor.getString(cursor.getColumnIndex("duree"));
-            String date = cursor.getString(cursor.getColumnIndex("date"));
-            String type_libelle = cursor.getString(cursor.getColumnIndex("type_libelle"));
-            String type_shortcode = cursor.getString(cursor.getColumnIndex("type_shortcode"));
-            resultat.add(new Video(id, Integer.parseInt(mipmap), urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode));
-            cursor.moveToNext();
-        }
-        connexion.getDb().close();
-        return (resultat.size() > 0 ? resultat.get(0) : null);
-    }
-
-    public ArrayList<Video> getFromAssetByRecherche(String motclef){
-        ArrayList<Video> resultat = new ArrayList<>();
-        String srcFichier = "videos.json";
-        try
-        {
-            Parametrage parametrage = new Parametrage();
-            parametrage.setContext(context);
-            Animation animation = new Animation();
-            SousMenu sousMenu = new SousMenu();
+            int id = cursor.getInt(cursor.getColumnIndex(COL_1));
+            String mipmap = cursor.getString(cursor.getColumnIndex(COL_2));
+            String urlacces = cursor.getString(cursor.getColumnIndex(COL_3));
+            String src = cursor.getString(cursor.getColumnIndex(COL_4));
+            String titre = cursor.getString(cursor.getColumnIndex(COL_5));
+            String auteur = cursor.getString(cursor.getColumnIndex(COL_6));
+            String duree = cursor.getString(cursor.getColumnIndex(COL_7));
+            String date = cursor.getString(cursor.getColumnIndex(COL_8));
+            String type_libelle = cursor.getString(cursor.getColumnIndex(COL_9));
+            String type_shortcode = cursor.getString(cursor.getColumnIndex(COL_10));
             //--
-            JSONArray jsonArray = new JSONArray(parametrage.loadJSONFromAsset(srcFichier));
-            for(int i = 0; i < jsonArray.length(); i++)
-            {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                String titre = jsonObject.getString("titre");
-                String auteur = jsonObject.getString("auteur");
-                if(motclef != null && (titre.toLowerCase().contains(motclef.trim().toLowerCase()) || auteur.toLowerCase().contains(motclef.trim().toLowerCase()))){
-                    int id = jsonObject.getInt("id");
-                    String duree = jsonObject.getString("duree");
-                    String urlacces = jsonObject.getString("urlacces");
-                    String src = jsonObject.getString("src");
-                    String type_libelle = jsonObject.getString("type_libelle");
-                    String type_shortcode = jsonObject.getString("type_shortcode");
-                    String date = animation.getDateStringByDate(jsonObject.getString("date"));
-                    int imageMipmap = sousMenu.getMipmapByTypeShortcode(type_shortcode);
-                    resultat.add(new Video(id, imageMipmap, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode));
-                }
-            }
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return resultat;
-    }
-
-
-    public ArrayList<Video> getFromAssetBy(String shortcode){
-        ArrayList<Video> resultat = new ArrayList<>();
-        String srcFichier = "videos.json";
-        try
-        {
-            Parametrage parametrage = new Parametrage();
-            parametrage.setContext(context);
-            Animation animation = new Animation();
-            SousMenu sousMenu = new SousMenu();
+            int mMipmap = CommonPresenter.getMipmapByTypeShortcode(type_shortcode);
+            resultat.add(new Video(id, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, mMipmap));
             //--
-            JSONArray jsonArray = new JSONArray(parametrage.loadJSONFromAsset(srcFichier));
-            for(int i = 0; i < jsonArray.length(); i++)
-            {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                if(shortcode != null && shortcode.equalsIgnoreCase(jsonObject.getString("type_shortcode"))){
-                    int id = jsonObject.getInt("id");
-                    String titre = jsonObject.getString("titre");
-                    String duree = jsonObject.getString("duree");
-                    String urlacces = jsonObject.getString("urlacces");
-                    String src = jsonObject.getString("src");
-                    String auteur = jsonObject.getString("auteur");
-                    String type_libelle = jsonObject.getString("type_libelle");
-                    String type_shortcode = jsonObject.getString("type_shortcode");
-                    String date = animation.getDateStringByDate(jsonObject.getString("date"));
-                    int imageMipmap = sousMenu.getMipmapByTypeShortcode(type_shortcode);
-                    resultat.add(new Video(id, imageMipmap, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode));
-                }
-                else{
-                    if(shortcode == null){
-                        int id = jsonObject.getInt("id");
-                        String titre = jsonObject.getString("titre");
-                        String duree = jsonObject.getString("duree");
-                        String urlacces = jsonObject.getString("urlacces");
-                        String src = jsonObject.getString("src");
-                        String auteur = jsonObject.getString("auteur");
-                        String type_libelle = jsonObject.getString("type_libelle");
-                        String type_shortcode = jsonObject.getString("type_shortcode");
-                        String date = animation.getDateStringByDate(jsonObject.getString("date"));
-                        int imageMipmap = sousMenu.getMipmapByTypeShortcode(type_shortcode);
-                        resultat.add(new Video(id, imageMipmap, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode));
-                    }
-                }
-            }
+            cursor.moveToNext();
         }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
+        CommonPresenter.getDb().close();
         return resultat;
     }
 
-
-    // Chargement du fichier json depuis le dossier assets
-    public String loadJSONFromAsset(String srcFichier) {
-        String json = null;
-        try
-        {
-            InputStream is = context.getAssets().open(srcFichier);
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer, "UTF-8");
+    public boolean isVideoExists(String src){
+        createTable();
+        ArrayList<Video> resultat = new ArrayList<>();
+        Cursor cursor = CommonPresenter.getDb().rawQuery("SELECT * FROM "+TABLE_NAME+" WHERE "+COL_4+" LIKE '"+src+"'", null);
+        int count = cursor.getCount();
+        cursor.moveToFirst();
+        //--
+        for(Integer j=0; j<count; j++){
+            int id = cursor.getInt(cursor.getColumnIndex(COL_1));
+            String mipmap = cursor.getString(cursor.getColumnIndex(COL_2));
+            String urlacces = cursor.getString(cursor.getColumnIndex(COL_3));
+            //String src = cursor.getString(cursor.getColumnIndex(COL_4));
+            String titre = cursor.getString(cursor.getColumnIndex(COL_5));
+            String auteur = cursor.getString(cursor.getColumnIndex(COL_6));
+            String duree = cursor.getString(cursor.getColumnIndex(COL_7));
+            String date = cursor.getString(cursor.getColumnIndex(COL_8));
+            String type_libelle = cursor.getString(cursor.getColumnIndex(COL_9));
+            String type_shortcode = cursor.getString(cursor.getColumnIndex(COL_10));
+            //--
+            int mMipmap = CommonPresenter.getMipmapByTypeShortcode(type_shortcode);
+            resultat.add(new Video(id, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, mMipmap));
+            //--
+            cursor.moveToNext();
         }
-        catch (IOException ex)
-        {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
+        CommonPresenter.getDb().close();
+        return (resultat.size() > 0);
     }
 
-
-    public void vider(){
-        creerTable();
-        String sql = "DROP TABLE IF EXISTS " + table_name;
-        connexion.getDb().execSQL(sql);
+    public void dropAllData(){
+        createTable();
+        String sql = "DROP TABLE IF EXISTS " + TABLE_NAME;
+        CommonPresenter.getDb().execSQL(sql);
     }
 
-    public void supprimer()
+    public void deleteDataBy(int id)
     {
-        creerTable();
-        String sql = "DELETE FROM " + table_name + " WHERE id LIKE '%"+video.getId()+"%'";
-        connexion.getDb().execSQL(sql);
-    }
-
-    public Connexion getConnexion() {
-        return connexion;
-    }
-
-    public Video getVideo() {
-        return video;
-    }
-
-    public void setVideo(Video video) {
-        this.video = video;
-    }
-
-    public String getOrderSql() {
-        return orderSql;
-    }
-
-    public void setOrderSql(String orderSql) {
-        this.orderSql = orderSql;
+        createTable();
+        String sql = "DELETE FROM " + TABLE_NAME + " WHERE "+COL_1+" = '"+id+"'";
+        CommonPresenter.getDb().execSQL(sql);
     }
 }
