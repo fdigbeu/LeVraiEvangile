@@ -36,6 +36,7 @@ public class PdfPresenter {
     public void loadPdfData(final Context context, Intent intent){
         iPdf.initialize();
         iPdf.events();
+        iPdf.askPermissionToSaveFile();
         iPdf.progressBarVisibility(View.VISIBLE);
         //--
         if(CommonPresenter.isMobileConnected(context)) {

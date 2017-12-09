@@ -1,11 +1,16 @@
 package org.levraievangile.View.Activities;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -16,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 
@@ -30,6 +36,8 @@ import org.levraievangile.View.Services.PlayerAudioService;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+
+import static org.levraievangile.Presenter.CommonPresenter.VALUE_PERMISSION_TO_SAVE_FILE;
 
 public class AudioActivity extends AppCompatActivity implements AudioView.IAudio{
 
@@ -103,56 +111,56 @@ public class AudioActivity extends AppCompatActivity implements AudioView.IAudio
         audio_player_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                audioPresenter.retrieveUserAction(AudioActivity.this, view);
+                audioPresenter.retrieveUserAction(view);
             }
         });
         // User clicks on Previous button
         audio_player_previous.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                audioPresenter.retrieveUserAction(AudioActivity.this, view);
+                audioPresenter.retrieveUserAction(view);
             }
         });
         // User clicks to close player
         audio_player_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                audioPresenter.retrieveUserAction(AudioActivity.this, view, mediaPlayer);
+                audioPresenter.retrieveUserAction(view, mediaPlayer);
             }
         });
         // User clicks to hide audio player
         fab_player_notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                audioPresenter.retrieveUserAction(AudioActivity.this, view, mediaPlayer);
+                audioPresenter.retrieveUserAction(view, mediaPlayer);
             }
         });
         // User clicks to have volume
         fab_player_volume.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                audioPresenter.retrieveUserAction(AudioActivity.this, view);
+                audioPresenter.retrieveUserAction(view);
             }
         });
         // User clicks on download button
         fab_player_download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                audioPresenter.retrieveUserAction(AudioActivity.this, view);
+                audioPresenter.retrieveUserAction(view);
             }
         });
         // User clicks on share button
         fab_player_share_app.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                audioPresenter.retrieveUserAction(AudioActivity.this, view);
+                audioPresenter.retrieveUserAction(view);
             }
         });
         // User clicks on add to favorite button
         fab_player_favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                audioPresenter.retrieveUserAction(AudioActivity.this, view);
+                audioPresenter.retrieveUserAction(view);
             }
         });
     }
@@ -385,8 +393,34 @@ public class AudioActivity extends AppCompatActivity implements AudioView.IAudio
         audio_player_play.setBackgroundResource(R.drawable.btn_media_player_play);
     }
 
+
+    @Override
+    public void askPermissionToSaveFile() {
+        int permissionCheck = ContextCompat.checkSelfPermission(AudioActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if(permissionCheck != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(AudioActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, VALUE_PERMISSION_TO_SAVE_FILE);
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case VALUE_PERMISSION_TO_SAVE_FILE:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    // Ceate folders
+                    CommonPresenter.createFolder();
+                }
+                else {
+                    Toast.makeText(AudioActivity.this, getResources().getString(R.string.lb_storage_file_require), Toast.LENGTH_LONG).show();
+                }
+                break;
+        }
+    }
+
     @Override
     public void onBackPressed() {
+        audioPresenter.stopMediaPlayer(mediaPlayer);
         super.onBackPressed();
     }
 }

@@ -1,15 +1,22 @@
 package org.levraievangile.View.Activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.levraievangile.Model.Video;
+import org.levraievangile.Presenter.CommonPresenter;
 import org.levraievangile.Presenter.VideoPresenter;
 import org.levraievangile.R;
 import org.levraievangile.View.Adapters.VideoRecyclerAdapter;
@@ -23,6 +30,7 @@ import static org.levraievangile.Presenter.CommonPresenter.KEY_VALUE_VIDEO_PLAY_
 import static org.levraievangile.Presenter.CommonPresenter.KEY_VALUE_VIDEO_PLAY_PREVIOUS;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_VIDEO_PLAYER_RETURN_DATA;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_VIDEO_PLAYER_SEND_DATA;
+import static org.levraievangile.Presenter.CommonPresenter.VALUE_PERMISSION_TO_SAVE_FILE;
 import static org.levraievangile.Presenter.CommonPresenter.VALUE_VIDEO_SELECTED_REQUEST_CODE;
 
 public class VideoActivity extends AppCompatActivity implements IVideo {
@@ -105,6 +113,30 @@ public class VideoActivity extends AppCompatActivity implements IVideo {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void askPermissionToSaveFile() {
+        int permissionCheck = ContextCompat.checkSelfPermission(VideoActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if(permissionCheck != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(VideoActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, VALUE_PERMISSION_TO_SAVE_FILE);
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case VALUE_PERMISSION_TO_SAVE_FILE:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    // Ceate folders
+                    CommonPresenter.createFolder();
+                }
+                else {
+                    Toast.makeText(VideoActivity.this, getResources().getString(R.string.lb_storage_file_require), Toast.LENGTH_LONG).show();
+                }
+                break;
+        }
     }
 
     @Override

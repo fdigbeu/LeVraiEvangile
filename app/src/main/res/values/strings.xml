@@ -17,7 +17,9 @@
     <string name="unstable_connection">Connexion internet instable</string>
     <string name="no_connection">Aucune connexion internet</string>
     <string name="detail_no_connection">Les données mobiles sont désactivées. Connectez-vous au réseau Wi-Fi à la place ou activez les données mobiles et réessayez.</string>
-
+    <string name="lb_data_save">Vos données ont été enregistrées avec succès !</string>
+    <string name="lb_storage_file_require">Cette permission est requise pour sauvegarder un fichier</string>
+    <string name="lb_downloading">Téléchargement en cours...</string>
     <!-- lb notification radio2vie -->
     <string name="lb_buffering_title">CHARGEMENT EN COURS...</string>
     <string name="lb_buffering_detail">Mise en mémoire tempon...</string>
@@ -27,4 +29,10 @@
 
     <string name="lb_fermer">FERMER</string>
     <string name="image_description"></string>
+
+    <string name="url_play_store">https://play.google.com/store/apps/details?id=org.levraievangile</string>
+    <string name="url_partager_video">http://www.levraievangile.org/videos/lire/{TYPE}/{ID}/</string>
+    <string name="url_partager_audio">http://www.levraievangile.org/audios/lire/{TYPE}/{ID}/</string>
+    <string name="ws_url_pdf_typeliste">http://www.levraievangile.org/webservice/ressources/pdf/{TYPE}/</string>
+    <string name="url_actualite_image">http://www.levraievangile.org/uploads/</string>
 </resources>

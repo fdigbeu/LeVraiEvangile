@@ -1,19 +1,27 @@
 package org.levraievangile.Presenter;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.DownloadManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.os.Environment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.text.Html;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.Window;
@@ -32,6 +40,7 @@ import org.levraievangile.Model.Pdf;
 import org.levraievangile.Model.Video;
 import org.levraievangile.R;
 
+import java.io.File;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -50,6 +59,8 @@ public class CommonPresenter {
     public static final String KEY_ALL_PDFS_LIST = "KEY_ALL_PDFS_LIST";
     public static final String KEY_ALL_NEWS_MONTH_LIST = "KEY_ALL_NEWS_MONTH_LIST";
 
+    public static final String KEY_AUDIO_SELECTED = "KEY_AUDIO_SELECTED";
+
     public static final String KEY_VIDEO_PLAYER_SEND_DATA = "KEY_VIDEO_PLAYER_SEND_DATA";
     public static final String KEY_VIDEO_PLAYER_RETURN_DATA = "KEY_VIDEO_PLAYER_RETURN_DATA";
     public static final String KEY_VALUE_POSITION_VIDEO_SELECTED = "KEY_VALUE_POSITION_VIDEO_SELECTED";
@@ -63,14 +74,9 @@ public class CommonPresenter {
     public static final String KEY_NOTIF_PLAYER_PLAY_NEXT = "KEY_NOTIF_PLAYER_PLAY_NEXT";
     public static final String KEY_NOTIF_PLAYER_PREVIOUS = "KEY_NOTIF_PLAYER_PREVIOUS";
 
-    public static final String KEY_AUDIO_PLAYER_SEND_DATA = "KEY_AUDIO_PLAYER_SEND_DATA";
-    public static final String KEY_AUDIO_PLAYER_RETURN_DATA = "KEY_AUDIO_PLAYER_RETURN_DATA";
-    public static final String KEY_VALUE_POSITION_AUDIO_SELECTED = "KEY_VALUE_POSITION_AUDIO_SELECTED";
-    public static final String KEY_VALUE_AUDIO_PLAY_NEXT = "KEY_VALUE_AUDIO_PLAY_NEXT";
-    public static final String KEY_VALUE_AUDIO_PLAY_PREVIOUS = "KEY_VALUE_AUDIO_PLAY_PREVIOUS";
-    public static final String KEY_VALUE_AUDIO_PLAY_NOTIFICATION = "KEY_VALUE_AUDIO_PLAY_NOTIFICATION";
-    public static final int VALUE_AUDIO_SELECTED_REQUEST_CODE = 10;
+    public static final int VALUE_PERMISSION_TO_SAVE_FILE = 103;
 
+    private static final String FOLDER_NAME[] = {"LVE", "LVE/Audios", "LVE/Videos", "LVE/Pdfs"};
 
     public CommonPresenter(){}
 
@@ -348,6 +354,99 @@ public class CommonPresenter {
     }
 
 
+    /**
+     * Download file
+     * @param context
+     * @param myHttpUrl
+     * @param nameOfFile
+     * @param descriptionOfFile
+     * @param typeOfFile
+     */
+    public static void getFileByDownloadManager(Context context, String myHttpUrl, String nameOfFile, String descriptionOfFile, String typeOfFile){
+
+        File SDCardRoot = Environment.getExternalStorageDirectory();
+        try {
+            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(myHttpUrl));
+            request.setTitle(nameOfFile);
+            request.setDescription(descriptionOfFile.equalsIgnoreCase("") == false ? descriptionOfFile : "");
+            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
+            request.setAllowedOverRoaming(false);
+            request.allowScanningByMediaScanner();
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            // Create folder
+            createFolder();
+            // Set destination of file
+            String destination = (typeOfFile.equalsIgnoreCase("audio") ? FOLDER_NAME[1] : typeOfFile.equalsIgnoreCase("video") ? FOLDER_NAME[2] : FOLDER_NAME[3]);
+            request.setDestinationInExternalPublicDir(SDCardRoot + "/" + destination, nameOfFile);
+            // Download
+            DownloadManager manager = (DownloadManager)context.getSystemService(Context.DOWNLOAD_SERVICE);
+            manager.enqueue(request);
+        }
+        catch (Exception ex){}
+    }
+
+    public static boolean isStorageDownloadFileAccepted(Context context){
+        int permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        return (permissionCheck == PackageManager.PERMISSION_GRANTED);
+    }
+
+    /**
+     * Share application data
+     * @param context
+     */
+    public static void shareApplication(Context context)
+    {
+        String message = "Bonjour,\nJe tiens à te faire découvrir l'application android Le Vrai Evangile.\nClique sur le lien qui apparaît en bas de ce message, et n'hésite pas à en parler autour de toi.\nGloire à Jésus-Christ.\n\n"+context.getResources().getString(R.string.url_play_store);
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+        sendIntent.setType("text/plain");
+        context.startActivity(Intent.createChooser(sendIntent, "Partager l'application"));
+    }
+
+    /**
+     * Share audio data
+     * @param context
+     * @param audio
+     */
+    public static void shareAudio(Context context, Audio audio)
+    {
+        String id = ""+audio.getId();
+        String title = audio.getTitre();
+        String url = context.getResources().getString(R.string.url_partager_audio);
+        String description = "Bonjour,\nJe t'invite à écouter cet audio.\n\nTITRE: "+title+"\n LIEN: "+url.replace("{TYPE}", audio.getType_shortcode()).replace("{ID}", ""+id);
+        sendShareResource(context, description, title);
+    }
+
+    /**
+     * Share video data
+     * @param context
+     * @param video
+     */
+    public static void shareVideo(Context context, Video video)
+    {
+        String id = ""+video.getId();
+        String title = video.getTitre();
+        String url = context.getResources().getString(R.string.url_partager_video);
+        String description = "Bonjour,\nJe t'invite à visionner cette vidéo.\n\nTITRE: "+title+"\n LIEN: "+url.replace("{TYPE}", video.getType_shortcode()).replace("{ID}", ""+id);
+        sendShareResource(context, description, title);
+    }
+
+    /**
+     * Send Share data
+     * @param context
+     * @param description
+     * @param title
+     */
+    private static void sendShareResource(Context context, String description, String title){
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, description);
+        sendIntent.setType("text/plain");
+        context.startActivity(Intent.createChooser(sendIntent, title));
+    }
+
+
     public static int getNumberToDisplay(Context context){
         int number = 1;
         Hashtable<String, Integer> screenSize = getScreenSize(context);
@@ -503,6 +602,36 @@ public class CommonPresenter {
             e.printStackTrace();
         }
         return mList;
+    }
+
+
+    /**
+     * Get all save audios saved
+     * @param context
+     * @return
+     */
+    public static Audio getAudioSelected(Context context){
+        String srcFichier = getDataFromSharePreferences(context, KEY_AUDIO_SELECTED);
+        Audio audio = null;
+        try {
+            JSONObject jsonObject = new JSONObject(srcFichier);
+            int id = jsonObject.getInt("id");
+            String titre = jsonObject.getString("titre");
+            String duree = jsonObject.getString("duree");
+            String urlacces = jsonObject.getString("urlacces");
+            String src = jsonObject.getString("src");
+            String auteur = jsonObject.getString("auteur");
+            String type_libelle = jsonObject.getString("type_libelle");
+            String type_shortcode = jsonObject.getString("type_shortcode");
+            String date = jsonObject.getString("date");
+            int mipmap = getMipmapByTypeShortcode(type_shortcode);
+            audio = new Audio(id, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, mipmap);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return audio;
     }
 
     /**
@@ -718,6 +847,39 @@ public class CommonPresenter {
         }
     }
 
+
+
+    /**
+     * Create folder
+     */
+    public static void createFolder(){
+        for(int i=0; i<FOLDER_NAME.length; i++){
+            try {
+                File root = new File(Environment.getExternalStorageDirectory(), FOLDER_NAME[i]);
+                if (!root.exists()) {
+                    root.mkdirs();
+                }
+            }
+            catch (Exception e){
+                Log.i("TAG_FOLDER_ERROR", e.getMessage());
+            }
+        }
+    }
+
+    private static String getAudioPath(){
+        File SDCardRoot = Environment.getExternalStorageDirectory();
+        return Environment.getExternalStoragePublicDirectory(SDCardRoot + "/" + FOLDER_NAME[1] + "/").getAbsolutePath();
+    }
+
+    private static String getVideoPath(){
+        File SDCardRoot = Environment.getExternalStorageDirectory();
+        return Environment.getExternalStoragePublicDirectory(SDCardRoot + "/" + FOLDER_NAME[2] + "/").getAbsolutePath();
+    }
+
+    private static String getPdfPath(){
+        File SDCardRoot = Environment.getExternalStorageDirectory();
+        return Environment.getExternalStoragePublicDirectory(SDCardRoot + "/" + FOLDER_NAME[3] + "/").getAbsolutePath();
+    }
 
     /**
      * Get app volume

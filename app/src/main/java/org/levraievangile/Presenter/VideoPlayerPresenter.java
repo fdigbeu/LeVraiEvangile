@@ -1,7 +1,11 @@
 package org.levraievangile.Presenter;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -22,6 +26,9 @@ public class VideoPlayerPresenter {
     // Ref interface
     private VideoPlayerView.IVideoPlayer iVideoPlayer;
 
+    // Ref video
+    private Video videoSelected;
+
     // Constructor
     public VideoPlayerPresenter(VideoPlayerView.IVideoPlayer iVideoPlayer) {
         this.iVideoPlayer = iVideoPlayer;
@@ -41,9 +48,9 @@ public class VideoPlayerPresenter {
         // Verify connexion state
         if(CommonPresenter.isMobileConnected(context)) {
             if(intent != null) {
-                Video ressource = (Video) intent.getSerializableExtra(KEY_VIDEO_PLAYER_SEND_DATA);
+                videoSelected = (Video) intent.getSerializableExtra(KEY_VIDEO_PLAYER_SEND_DATA);
                 Hashtable<String, Integer> resolutionEcran = CommonPresenter.getScreenSize(context);
-                iVideoPlayer.displayPlayer(ressource, resolutionEcran.get("largeur"), resolutionEcran.get("hauteur"));
+                iVideoPlayer.displayPlayer(videoSelected, resolutionEcran.get("largeur"), resolutionEcran.get("hauteur"));
             }
             else{
                 iVideoPlayer.closeActivity();
@@ -57,45 +64,32 @@ public class VideoPlayerPresenter {
     }
 
     // When the video is finished
-    public void retrieveOnCompletionAction(Context context){
+    public void retrieveOnCompletionAction(){
         iVideoPlayer.playNextVideo();
     }
 
     // Manage all video player button
-    public void retrieveUserAction(Context context, View view){
+    public void retrieveUserAction(View view){
         try {
             switch (view.getId()){
                 // Download video
                 case R.id.fab_player_download:
-                    /*Setting mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, KEY_SETTING_WIFI_EXCLUSIF);
-                    if(mSetting.getChoice()){
-                        if(CommonPresenter.isMobileWIFIConnected(context)){
-                            iVideoPlayer.downloadQRVideo(context);
-                        }
-                        else{
-                            String title = context.getResources().getString(R.string.lb_wifi_only);
-                            String message = context.getResources().getString(R.string.lb_wifi_exclusif_message);
-                            CommonPresenter.showMessage(context, title, message, false);
-                        }
-                    }
-                    else{
-                        iVideoPlayer.downloadVideo(context);
-                    }*/
+                    downloadThisVideo(view.getContext());
                     break;
 
                 // Share video
                 case R.id.fab_player_share_app:
-                    //iVideoPlayer.shareQRVideo(context);
+                    CommonPresenter.shareVideo(view.getContext(), videoSelected);
                     break;
 
                 // Add to video favorite
                 case R.id.fab_player_favorite:
-                    //iVideoPlayer.addQRVideoToFavorite(context);
+                    //CommonPresenter.saveRessourceVideoData(view.getContext(), videoSelected);
                     break;
 
                 // Open volume for video player
                 case R.id.fab_player_volume:
-                    //CommonPresenter.getApplicationVolume(context);
+                    CommonPresenter.getApplicationVolume(view.getContext());
                     break;
 
                     // Hide video player
@@ -115,6 +109,23 @@ public class VideoPlayerPresenter {
             }
         }
         catch (Exception ex){}
+    }
+
+    // Download video
+    private void downloadThisVideo(Context context){
+        if(videoSelected != null){
+            if(CommonPresenter.isStorageDownloadFileAccepted(context)){
+                String url = videoSelected.getUrlacces()+videoSelected.getSrc();
+                String filename = videoSelected.getSrc();
+                String description = "LVE-APP-DOWNLOADER ("+videoSelected.getDuree()+" | "+videoSelected.getAuteur()+")";
+                CommonPresenter.getFileByDownloadManager(context, url, filename, description, "video");
+                Toast.makeText(context, context.getResources().getString(R.string.lb_downloading), Toast.LENGTH_SHORT).show();
+                Log.i("TAG_DOWNLOAD_FILE", "URL = "+url);
+            }
+            else{
+                iVideoPlayer.askPermissionToSaveFile();
+            }
+        }
     }
 
     // Save Video data

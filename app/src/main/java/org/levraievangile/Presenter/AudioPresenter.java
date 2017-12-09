@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import org.levraievangile.Model.ApiClient;
 import org.levraievangile.Model.Audio;
@@ -21,6 +22,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static org.levraievangile.Presenter.CommonPresenter.KEY_ALL_AUDIOS_LIST;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_AUDIO_SELECTED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIOS_LIST;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIO_TIME_ELAPSED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_NEXT;
@@ -48,6 +50,7 @@ public class AudioPresenter implements AudioView.IStreamAudio {
     public void loadAudioData(final Context context, Intent intent){
         iAudio.initialize();
         iAudio.events();
+        iAudio.askPermissionToSaveFile();
         iAudio.progressBarVisibility(View.VISIBLE);
         //--
         if(CommonPresenter.isMobileConnected(context)) {
@@ -128,6 +131,9 @@ public class AudioPresenter implements AudioView.IStreamAudio {
      * @param position
      */
     public void playLVEAudioPlayer(Context context, Audio audio, int position){
+        // Save audio selected
+        CommonPresenter.saveDataInSharePreferences(context, KEY_AUDIO_SELECTED, audio.toString());
+        //--
         if(CommonPresenter.isMobileConnected(context)){
             iAudio.audioPlayerVisibility(View.VISIBLE);
             loadStreamAudio = new LoadStreamAudio();
@@ -161,12 +167,12 @@ public class AudioPresenter implements AudioView.IStreamAudio {
     }
 
     // Manage audio player button
-    public void retrieveUserAction(Context context, View view, MediaPlayer mediaPlayer){
+    public void retrieveUserAction(View view, MediaPlayer mediaPlayer){
         try {
             switch (view.getId()){
                 // Play notification
                 case R.id.fab_player_notification:
-                    CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_AUDIO_TIME_ELAPSED, ""+mediaPlayer.getCurrentPosition());
+                    CommonPresenter.saveDataInSharePreferences(view.getContext(), KEY_NOTIF_AUDIO_TIME_ELAPSED, ""+mediaPlayer.getCurrentPosition());
                     closeAudioMediaPlayer(mediaPlayer);
                     iAudio.playNotificationAudio();
                     break;
@@ -189,7 +195,8 @@ public class AudioPresenter implements AudioView.IStreamAudio {
 
 
     // Manage audio player button
-    public void retrieveUserAction(Context context, View view){
+    public void retrieveUserAction(View view){
+        Audio audioSelected = CommonPresenter.getAudioSelected(view.getContext());
         try {
             switch (view.getId()){
                 // Play next audio
@@ -203,17 +210,15 @@ public class AudioPresenter implements AudioView.IStreamAudio {
                     break;
 
                 case R.id.fab_player_volume:
-                    CommonPresenter.getApplicationVolume(context);
+                    CommonPresenter.getApplicationVolume(view.getContext());
                     break;
 
                 case R.id.fab_player_download:
-                    /*if(audioSelected != null){
-                        Log.i("TAG_DOWNLOAD", "URL = "+audioSelected.getSrc()+audioSelected.getUrlacces());
-                    }*/
+                    downloadThisAudio(view.getContext());
                     break;
 
                 case R.id.fab_player_share_app:
-                    //Log.i("TAG_SHARE_APP", "URL = "+audioSelected.getSrc()+audioSelected.getUrlacces());
+                    CommonPresenter.shareAudio(view.getContext(), audioSelected);
 
                     break;
 
@@ -229,6 +234,28 @@ public class AudioPresenter implements AudioView.IStreamAudio {
     // When the audio is finished
     public void retrieveOnCompletionAction(Context context){
         iAudio.playNextAudio();
+    }
+
+    // Download audio
+    private void downloadThisAudio(Context context){
+        Audio audioSelected = CommonPresenter.getAudioSelected(context);
+        if(audioSelected != null){
+            if(CommonPresenter.isStorageDownloadFileAccepted(context)){
+                String url = audioSelected.getUrlacces()+audioSelected.getSrc();
+                String filename = audioSelected.getSrc();
+                String description = "LVE-APP-DOWNLOADER ("+audioSelected.getDuree()+" | "+audioSelected.getAuteur()+")";
+                CommonPresenter.getFileByDownloadManager(context, url, filename, description, "audio");
+                Toast.makeText(context, context.getResources().getString(R.string.lb_downloading), Toast.LENGTH_SHORT).show();
+                Log.i("TAG_DOWNLOAD_FILE", "URL = "+url);
+            }
+            else{
+                iAudio.askPermissionToSaveFile();
+            }
+        }
+        else{
+
+            Log.i("TAG_METHODE", "downloadThisAudio() : audioSelected == NULL");
+        }
     }
 
     /**

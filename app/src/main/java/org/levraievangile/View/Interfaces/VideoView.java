@@ -22,6 +22,7 @@ public class VideoView {
         public void instanciateIVideoRecycler(VideoView.IVideoRecycler iVideoRecycler);
         public void launchVideoToPlay(Video video, int position);
         public void progressBarVisibility(int visibility);
+        public void askPermissionToSaveFile();
         public void closeActivity();
     }
 

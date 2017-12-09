@@ -40,6 +40,7 @@ public class VideoPresenter {
     public void loadVideoData(final Context context, Intent intent){
         iVideo.initialize();
         iVideo.events();
+        iVideo.askPermissionToSaveFile();
         iVideo.progressBarVisibility(View.VISIBLE);
         //--
         if(CommonPresenter.isMobileConnected(context)) {

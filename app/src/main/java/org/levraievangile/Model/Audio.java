@@ -133,4 +133,8 @@ public class Audio implements Serializable{
     public void setType_shortcode(String type_shortcode) {
         this.type_shortcode = type_shortcode;
     }
+
+    public int getId() {
+        return id;
+    }
 }

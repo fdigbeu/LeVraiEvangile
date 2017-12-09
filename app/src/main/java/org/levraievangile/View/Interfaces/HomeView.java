@@ -22,6 +22,7 @@ public class HomeView {
     public interface IHome{
         public void initialize();
         public void events();
+        public void askPermissionToSaveFile();
     }
 
     public interface IPlaceholder{

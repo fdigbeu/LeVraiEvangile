@@ -1,12 +1,17 @@
 package org.levraievangile.View.Activities;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,6 +36,7 @@ import org.levraievangile.View.Services.PlayerAudioService;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_VALUE_VIDEO_PLAY_NEXT;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_VALUE_VIDEO_PLAY_PREVIOUS;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_VIDEO_PLAYER_RETURN_DATA;
+import static org.levraievangile.Presenter.CommonPresenter.VALUE_PERMISSION_TO_SAVE_FILE;
 
 public class VideoPlayerActivity extends AppCompatActivity implements VideoPlayerView.IVideoPlayer {
 
@@ -70,9 +76,9 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
     @Override
     public void initialize() {
         fab_player_layout = findViewById(R.id.fab_player_layout);
-        title_video = (TextView)findViewById(R.id.titre_video);
-        progress_player_video = (ProgressBar)findViewById(R.id.progress_player_video);
-        player_video = (VideoView)findViewById(R.id.player_video);
+        title_video = findViewById(R.id.titre_video);
+        progress_player_video = findViewById(R.id.progress_player_video);
+        player_video = findViewById(R.id.player_video);
         mediaController = new MediaController(VideoPlayerActivity.this, false);
         player_video.setMediaController(mediaController);
         //--
@@ -82,7 +88,6 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
         fab_player_download = findViewById(R.id.fab_player_download);
         fab_player_share_app = findViewById(R.id.fab_player_share_app);
         fab_player_favorite = findViewById(R.id.fab_player_favorite);
-        fab_player_favorite.setVisibility(View.GONE);
         fab_player_volume = findViewById(R.id.fab_player_volume);
         fab_player_down = findViewById(R.id.fab_player_down);
     }
@@ -93,49 +98,49 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
         fab_player_download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                playerPresenter.retrieveUserAction(VideoPlayerActivity.this, view);
+                playerPresenter.retrieveUserAction(view);
             }
         });
         // Fab share video
         fab_player_share_app.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                playerPresenter.retrieveUserAction(VideoPlayerActivity.this, view);
+                playerPresenter.retrieveUserAction(view);
             }
         });
         // Fab add to video favorite
         fab_player_favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                playerPresenter.retrieveUserAction(VideoPlayerActivity.this, view);
+                playerPresenter.retrieveUserAction(view);
             }
         });
         // Fab volume video
         fab_player_volume.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                playerPresenter.retrieveUserAction(VideoPlayerActivity.this, view);
+                playerPresenter.retrieveUserAction(view);
             }
         });
         //Fab exit
         fab_player_down.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                playerPresenter.retrieveUserAction(VideoPlayerActivity.this, view);
+                playerPresenter.retrieveUserAction(view);
             }
         });
         // User clicks on previous video button
         btn_video_nav_left.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                playerPresenter.retrieveUserAction(VideoPlayerActivity.this, view);
+                playerPresenter.retrieveUserAction(view);
             }
         });
         // User clicks on next video button
         btn_video_nav_right.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                playerPresenter.retrieveUserAction(VideoPlayerActivity.this, view);
+                playerPresenter.retrieveUserAction(view);
             }
         });
     }
@@ -169,7 +174,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
         player_video.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                playerPresenter.retrieveOnCompletionAction(VideoPlayerActivity.this);
+                playerPresenter.retrieveOnCompletionAction();
             }
         });
 
@@ -250,28 +255,6 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
     }
 
     @Override
-    public void downloadVideo(Context context) {
-        /*Ressource ressource = (Ressource)getIntent().getSerializableExtra(KEY_VIDEO_PLAYER_SEND_DATA);
-        String url = ressource.getUrlacces()+ressource.getSrc();
-        String filename = ressource.getSrc();
-        String description = "QR-APP-DOWNLOADER ("+ressource.getDuree()+" | "+ressource.getAuteur()+")";
-        CommonPresenter.getFileByDownloadManager(context, url, filename, description, "video");
-        Toast.makeText(context, context.getResources().getString(R.string.lb_downloading), Toast.LENGTH_SHORT).show();*/
-    }
-
-    @Override
-    public void shareVideo(Context context) {
-        /*Ressource ressource = (Ressource)getIntent().getSerializableExtra(KEY_VIDEO_PLAYER_SEND_DATA);
-        CommonPresenter.shareRessource(context, ressource, "video");*/
-    }
-
-    @Override
-    public void addVideoToFavorite(Context context) {
-        /*Ressource ressource = (Ressource)getIntent().getSerializableExtra(KEY_VIDEO_PLAYER_SEND_DATA);
-        playerPresenter.saveRessourceVideoData(context, ressource);*/
-    }
-
-    @Override
     public void closeActivity() {
         this.finish();
     }
@@ -281,6 +264,30 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
         Intent serviceIntent = new Intent(VideoPlayerActivity.this, PlayerAudioService.class);
         serviceIntent.setAction(NotificationView.ACTION.PAUSE_ACTION);
         startService(serviceIntent);
+    }
+
+    @Override
+    public void askPermissionToSaveFile() {
+        int permissionCheck = ContextCompat.checkSelfPermission(VideoPlayerActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if(permissionCheck != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(VideoPlayerActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, VALUE_PERMISSION_TO_SAVE_FILE);
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case VALUE_PERMISSION_TO_SAVE_FILE:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    // Ceate folders
+                    CommonPresenter.createFolder();
+                }
+                else {
+                    Toast.makeText(VideoPlayerActivity.this, getResources().getString(R.string.lb_storage_file_require), Toast.LENGTH_LONG).show();
+                }
+                break;
+        }
     }
 
     @Override

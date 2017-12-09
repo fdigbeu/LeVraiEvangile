@@ -1,7 +1,12 @@
 package org.levraievangile.View.Activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,12 +24,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.levraievangile.Model.Annee;
 import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.BonASavoir;
 import org.levraievangile.Model.Pdf;
 import org.levraievangile.Model.Video;
+import org.levraievangile.Presenter.CommonPresenter;
 import org.levraievangile.Presenter.HomePresenter;
 import org.levraievangile.R;
 import org.levraievangile.View.Adapters.AudioRecyclerAdapter;
@@ -37,6 +44,7 @@ import org.levraievangile.View.Interfaces.HomeView;
 import java.util.ArrayList;
 
 import static org.levraievangile.Presenter.CommonPresenter.KEY_SHORT_CODE;
+import static org.levraievangile.Presenter.CommonPresenter.VALUE_PERMISSION_TO_SAVE_FILE;
 
 public class HomeActivity extends AppCompatActivity implements HomeView.IHome {
 
@@ -56,7 +64,6 @@ public class HomeActivity extends AppCompatActivity implements HomeView.IHome {
         homePresenter = new HomePresenter(this);
         homePresenter.loadHomeData(HomeActivity.this);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -90,6 +97,31 @@ public class HomeActivity extends AppCompatActivity implements HomeView.IHome {
     public void events() {
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+    }
+
+
+    @Override
+    public void askPermissionToSaveFile() {
+        int permissionCheck = ContextCompat.checkSelfPermission(HomeActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if(permissionCheck != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(HomeActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, VALUE_PERMISSION_TO_SAVE_FILE);
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case VALUE_PERMISSION_TO_SAVE_FILE:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    // Ceate folders
+                    CommonPresenter.createFolder();
+                }
+                else {
+                    Toast.makeText(HomeActivity.this, getResources().getString(R.string.lb_storage_file_require), Toast.LENGTH_LONG).show();
+                }
+                break;
+        }
     }
 
     /**

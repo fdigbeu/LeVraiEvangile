@@ -46,6 +46,7 @@ public class HomePresenter {
     public void loadHomeData(Context context){
         iHome.initialize();
         iHome.events();
+        iHome.askPermissionToSaveFile();
     }
 
     // Launch activity

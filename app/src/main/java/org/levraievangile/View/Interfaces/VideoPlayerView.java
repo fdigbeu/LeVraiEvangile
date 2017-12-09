@@ -22,10 +22,8 @@ public class VideoPlayerView {
         public void showPlayerWidgetsOnTouch();
         public void playNextVideo();
         public void playPreviousVideo();
-        public void downloadVideo(Context context);
-        public void shareVideo(Context context);
-        public void addVideoToFavorite(Context context);
         public void closeActivity();
+        public void askPermissionToSaveFile();
         public void pauseNotificationAudio();
     }
 
