@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ProgressBar;
 
 import org.levraievangile.Model.Actualite;
@@ -40,10 +42,29 @@ public class NewsActivity extends AppCompatActivity implements NewsView.INews {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_news, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case android.R.id.home:
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void initialize() {
         monthRecyclerView = findViewById(R.id.monthRecyclerView);
         newsRecyclerView = findViewById(R.id.newsRecyclerView);
         progressBar = findViewById(R.id.newsProgressBar);
+
+        // Display Home Back button
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

@@ -16,6 +16,8 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -74,10 +76,29 @@ public class AudioActivity extends AppCompatActivity implements AudioView.IAudio
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_audio, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case android.R.id.home:
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void initialize() {
         recyclerView = findViewById(R.id.audioRecyclerView);
         progressBar = findViewById(R.id.audioProgressBar);
         audioPlayerLayout =  findViewById(R.id.audioPlayerLayout);
+
+        // Display Home Back button
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Widgets Audio player
         audio_player_progressbar = findViewById(R.id.audio_player_progressbar);
