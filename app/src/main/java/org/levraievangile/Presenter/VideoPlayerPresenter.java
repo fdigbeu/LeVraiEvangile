@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 
+import org.levraievangile.Model.DAOFavoris;
 import org.levraievangile.Model.Video;
 import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.VideoPlayerView;
@@ -84,7 +85,14 @@ public class VideoPlayerPresenter {
 
                 // Add to video favorite
                 case R.id.fab_player_favorite:
-                    //CommonPresenter.saveRessourceVideoData(view.getContext(), videoSelected);
+                    DAOFavoris daoFavoris = new DAOFavoris(view.getContext());
+                    if(!daoFavoris.isFavorisExists(videoSelected.getSrc())){
+                        daoFavoris.insertData("video",""+videoSelected.getMipmap(), videoSelected.getUrlacces(), videoSelected.getSrc(), videoSelected.getTitre(), videoSelected.getAuteur(), videoSelected.getDuree(), videoSelected.getType_libelle(), videoSelected.getType_shortcode(), ""+videoSelected.getId());
+                        Toast.makeText(view.getContext(), view.getContext().getResources().getString(R.string.video_add_to_favorite), Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        Toast.makeText(view.getContext(), view.getContext().getResources().getString(R.string.video_already_add_to_favorite), Toast.LENGTH_SHORT).show();
+                    }
                     break;
 
                 // Open volume for video player

@@ -24,6 +24,13 @@
     <string name="lb_buffering_title">CHARGEMENT EN COURS...</string>
     <string name="lb_buffering_detail">Mise en mémoire tempon...</string>
 
+    <string name="video_add_to_favorite">Cette vidéo a été ajoutée à la liste des favoris</string>
+    <string name="video_already_add_to_favorite">Cette vidéo a déjà été ajoutée à la liste des favoris</string>
+    <string name="audio_add_to_favorite">Cet audio a été ajouté à la liste des favoris</string>
+    <string name="audio_already_add_to_favorite">Cet audio a déjà été ajouté à la liste des favoris</string>
+    <string name="pdf_add_to_favorite">Ce pdf a été ajouté à la liste des favoris</string>
+    <string name="pdf_already_add_to_favorite">Ce pdf a déjà été ajouté à la liste des favoris</string>
+
     <string name="lb_impossible_toplay">LECTURE IMPOSSIBLE</string>
     <string name="lb_impossible_toplay_detail">Le fichier audio n\'a pu être lu.</string>
 
