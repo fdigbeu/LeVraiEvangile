@@ -143,4 +143,10 @@ public class HomePresenter {
                 break;
         }
     }
+
+    // Display search form
+    public void displaySearchForm(Context context){
+        CommonPresenter commonPresenter = new CommonPresenter();
+        commonPresenter.showFormSearch(context);
+    }
 }

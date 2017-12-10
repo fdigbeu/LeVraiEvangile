@@ -77,6 +77,7 @@ public class HomeActivity extends AppCompatActivity implements HomeView.IHome {
         int id = item.getItemId();
         switch (id){
             case R.id.action_search:
+                homePresenter.displaySearchForm(HomeActivity.this);
                 return true;
 
             case R.id.action_share:

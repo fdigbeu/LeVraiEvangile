@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.text.Html;
@@ -26,8 +27,13 @@ import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import org.json.JSONArray;
@@ -82,6 +88,11 @@ public class CommonPresenter {
     public static final int VALUE_PERMISSION_TO_SAVE_FILE = 103;
 
     private static final String FOLDER_NAME[] = {"LVE", "LVE/Audios", "LVE/Videos", "LVE/Pdfs"};
+
+    // Search Form
+    private Dialog searchDialogForm;
+    private static String searchTypeRessource;
+    private static String searchKeyWord;
 
     // Attributes database
     private static SQLiteDatabase db;
@@ -905,7 +916,66 @@ public class CommonPresenter {
         }
     }
 
+    public void showFormSearch(final Context context){
+        Hashtable<String, Integer> resolutionEcran = getScreenSize(context);
+        int width = resolutionEcran.get("largeur");
+        int height = resolutionEcran.get("hauteur");
+        int imgWidth = width <= height ? width : height;
+        int newWidth = (int)(imgWidth*0.75f);
+        int newHeight = (int)(imgWidth*0.40f);
 
+        searchDialogForm=new Dialog(context);
+        searchDialogForm.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        searchDialogForm.setContentView(R.layout.dialog_form_research);
+        searchDialogForm.getWindow().setLayout((int)(newWidth*1.30f), ActionBar.LayoutParams.WRAP_CONTENT);
+
+        ImageButton btnClose = searchDialogForm.findViewById(R.id.btn_close_search);
+        Spinner spinnerTypeRessource = searchDialogForm.findViewById(R.id.spinner_type_ressource);
+        final TextInputEditText edittextSearch = searchDialogForm.findViewById(R.id.edittexte_search);
+        ImageButton btnValidate = searchDialogForm.findViewById(R.id.btn_search_validate);
+
+        final String[] listeTypeRessource = context.getResources().getStringArray(R.array.form_type_ressource);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.item_spinner, listeTypeRessource);
+        spinnerTypeRessource.setAdapter(adapter);
+
+        spinnerTypeRessource.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                searchTypeRessource = removeAccents(listeTypeRessource[position].replace("s", "").toLowerCase());
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchDialogForm.dismiss();
+            }
+        });
+
+        btnValidate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(edittextSearch.getText().toString().trim().length() == 0){
+                    edittextSearch.setError(context.getResources().getString(R.string.field_requires));
+                    return;
+                }
+                //--
+                if(isMobileConnected(context)){
+                    searchKeyWord = edittextSearch.getText().toString().trim();
+                    /*Intent intent = new Intent(context, SearchResultActivity.class);
+                    intent.putExtra(KEY_SEARCH_FORM_TYPE_RESSOURCE, searchTypeRessource);
+                    intent.putExtra(KEY_SEARCH_FORM_KEY_WORD, searchKeyWord);
+                    context.startActivity(intent);*/
+                }
+                else{
+                    Toast.makeText(context, context.getResources().getString(R.string.no_connection), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        searchDialogForm.show();
+    }
 
     /**
      * Create folder
