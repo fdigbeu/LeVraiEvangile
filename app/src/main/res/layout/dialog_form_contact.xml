@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/form_contact"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/blueOpacityBg">
+
+    <ScrollView
+        android:id="@+id/scrollview_contact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/layout_contact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical" >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/text_header_contact"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingTop="@dimen/size_10_dp"
+                        android:paddingBottom="@dimen/size_10_dp"
+                        android:text="@string/lb_form_contact_us"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/text_size_18_sp"
+                        android:textStyle="bold" />
+
+                    <ImageButton
+                        android:id="@+id/btn_close_contact"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/btn_form_close"
+                        android:contentDescription="@string/lb_content_desc" />
+
+                    <Spinner
+                        android:id="@+id/spinner_civility"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@+id/text_header_contact"
+                        android:layout_marginStart="@dimen/size_10_dp"
+                        android:layout_marginEnd="@dimen/size_10_dp"
+                        android:layout_marginTop="34dp"
+                        android:spinnerMode="dropdown" />
+
+                </RelativeLayout>
+
+            <TextView
+                android:id="@+id/texte_contact_indicateur"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:padding="@dimen/size_10_dp"
+                android:textAlignment="center"
+                android:text="@string/lb_form_field_require"
+                android:textColor="@color/blueOpacity75"
+                android:textSize="@dimen/text_size_15_sp" />
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/size_5_dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName|textCapSentences"
+                    android:id="@+id/edittext_nom"
+                    android:hint="@string/lb_form_your_name"
+                    android:textColorHint="@color/blueOpacity75"
+                    android:layout_marginTop="@dimen/size_10_dp"
+                    android:layout_marginStart="@dimen/size_10_dp"
+                    android:layout_marginEnd="@dimen/size_10_dp"
+                    android:padding="@dimen/size_5_dp"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
+                    android:maxLines="1"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/size_5_dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/lb_form_your_email"
+                    android:id="@+id/edittext_email"
+                    android:inputType="textEmailAddress"
+                    android:textColorHint="@color/blueOpacity75"
+                    android:layout_marginTop="@dimen/size_10_dp"
+                    android:layout_marginStart="@dimen/size_10_dp"
+                    android:layout_marginEnd="@dimen/size_10_dp"
+                    android:padding="@dimen/size_5_dp"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
+                    android:maxLines="1"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/size_5_dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/lb_form_your_city"
+                    android:id="@+id/edittext_city"
+                    android:inputType="text"
+                    android:textColorHint="@color/blueOpacity75"
+                    android:layout_marginTop="@dimen/size_10_dp"
+                    android:layout_marginStart="@dimen/size_10_dp"
+                    android:layout_marginEnd="@dimen/size_10_dp"
+                    android:padding="@dimen/size_5_dp"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
+                    android:maxLines="1"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/size_10_dp"
+                    android:orientation="horizontal" >
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="fill_vertical"
+                        android:layout_weight="1"
+                        android:layout_margin="@dimen/size_5_dp">
+
+                        <android.support.design.widget.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/edittexte_message"
+                            android:hint="@string/lb_form_your_message"
+                            android:inputType="textCapSentences|textMultiLine"
+                            android:textColorHint="@color/blueOpacity75"
+                            android:padding="@dimen/size_5_dp"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="18sp"/>
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <ImageButton
+                        android:id="@+id/btn_validate"
+                        android:layout_width="@dimen/size_65_dp"
+                        android:layout_height="@dimen/size_65_dp"
+                        android:layout_marginStart="@dimen/size_10_dp"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/btn_form_validate"
+                        android:contentDescription="@string/lb_content_desc" />
+
+                </LinearLayout>
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/progress_contact" />
+
+</RelativeLayout>
