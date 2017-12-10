@@ -149,6 +149,7 @@ public class HomePresenter {
 
     // Retrieve user action : When he clicks on top menu items
     public void retrieveUserAction(Context context, MenuItem item){
+        CommonPresenter commonPresenter = null;
         switch (item.getItemId()){
             // Share LVE App
             case R.id.action_share:
@@ -158,7 +159,7 @@ public class HomePresenter {
 
             // Search videos
             case R.id.action_search:
-                CommonPresenter commonPresenter = new CommonPresenter();
+                commonPresenter = new CommonPresenter();
                 commonPresenter.showFormSearch(context);
                 break;
 
@@ -167,6 +168,8 @@ public class HomePresenter {
                 break;
 
             case R.id.action_contact:
+                commonPresenter = new CommonPresenter();
+                commonPresenter.showFormContact(context);
                 break;
 
             case R.id.action_favorite:

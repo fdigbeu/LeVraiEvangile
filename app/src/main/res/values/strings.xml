@@ -59,6 +59,25 @@
     <string name="lb_top_update">Mettre à jour</string>
     <string name="lb_top_parameter">Paramètres</string>
 
+    <string name="ws_url_laisser_msg_methodpost">http://www.levraievangile.org/webservice/contact/laisser-un-message/</string>
+
+    <string name="text_indicator_recherche">La saisie du champ « Mots clés ou orateur » est obligatoire</string>
+    <string name="text_indicator_contact">Tous les champs du formulaire sont obligatoires</string>
+    <string name="email_invalidate">Adresse email non valide</string>
+
+    <string-array name="form_civility">
+        <item>Monsieur</item>
+        <item>Madame</item>
+        <item>Mademoiselle</item>
+    </string-array>
+
+    <string name="lb_form_field_require">Tous les champs du formulaire sont obligatoires</string>
+    <string name="lb_form_contact_us">LAISSER UN MESSAGE</string>
+    <string name="lb_form_your_name">Votre nom</string>
+    <string name="lb_form_your_email">Votre e-mail</string>
+    <string name="lb_form_your_city">Votre ville</string>
+    <string name="lb_form_your_message">Votre message</string>
+
     <string name="url_play_store">https://play.google.com/store/apps/details?id=org.levraievangile</string>
     <string name="url_partager_pdf">http://pdf.levraievangile.org/</string>
     <string name="url_partager_video">http://www.levraievangile.org/videos/lire/{TYPE}/{ID}/</string>

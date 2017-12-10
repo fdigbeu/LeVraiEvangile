@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -25,6 +26,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.MenuItem;
@@ -34,10 +36,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
+
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,22 +50,26 @@ import org.json.JSONObject;
 import org.levraievangile.Model.Annee;
 import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.BonASavoir;
+import org.levraievangile.Model.JsonReturn;
 import org.levraievangile.Model.Mois;
 import org.levraievangile.Model.Pdf;
+import org.levraievangile.Model.SendContactForm;
 import org.levraievangile.Model.Setting;
 import org.levraievangile.Model.Video;
 import org.levraievangile.R;
+import org.levraievangile.View.Interfaces.CommonView;
 
 import java.io.File;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 /**
  * Created by JESUS EST YAHWEH on 03/01/2017.
  */
 
-public class CommonPresenter {
+public class CommonPresenter implements CommonView.ICommonPresenter{
 
     public static final String KEY_ALL_NEWS_YEARS_LIST = "KEY_ALL_NEWS_YEARS_LIST";
     public static final String KEY_ALL_GOOD_TO_KNOW_LIST = "KEY_ALL_GOOD_TO_KNOW_LIST";
@@ -103,6 +112,18 @@ public class CommonPresenter {
     public static final int VALUE_PERMISSION_TO_SAVE_FILE = 103;
 
     private static final String FOLDER_NAME[] = {"LVE", "LVE/Audios", "LVE/Videos", "LVE/Pdfs"};
+
+    // Contact Form
+    private static String civility;
+    private static String name;
+    private static String email;
+    private static String city;
+    private static String message;
+    private static String actionForm;
+    private static ProgressBar progressBar;
+    private static HashMap<String, String> postDataParams;
+    private Dialog contactDialogForm;
+    private SendContactForm sendContactForm;
 
     // Search Form
     private Dialog searchDialogForm;
@@ -1127,5 +1148,154 @@ public class CommonPresenter {
         CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PREVIOUS, ""+previousPosition);
         int nextPosition = CommonPresenter.getNotifPlayerNextValue(positionSelected, totalAudios);
         CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_NEXT, ""+nextPosition);
+    }
+
+    /**
+     * Display contact form
+     * @param context
+     */
+    public void showFormContact(final Context context){
+        Hashtable<String, Integer> resolutionEcran = getScreenSize(context);
+        int width = resolutionEcran.get("largeur");
+        int height = resolutionEcran.get("hauteur");
+        int imgWidth = width <= height ? width : height;
+        int newWidth = (int)(imgWidth*0.75f);
+        int newHeight = (int)(imgWidth*0.40f);
+
+        contactDialogForm=new Dialog(context);
+        contactDialogForm.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        contactDialogForm.setContentView(R.layout.dialog_form_contact);
+        contactDialogForm.getWindow().setLayout((int)(newWidth*1.30f), ActionBar.LayoutParams.WRAP_CONTENT);
+
+        ImageButton btnClose = contactDialogForm.findViewById(R.id.btn_close_contact);
+        Spinner spinnerCivility = contactDialogForm.findViewById(R.id.spinner_civility);
+        final TextInputEditText edittextNom = contactDialogForm.findViewById(R.id.edittext_nom);
+        final TextInputEditText edittextEmail = contactDialogForm.findViewById(R.id.edittext_email);
+        final TextInputEditText edittextCity = contactDialogForm.findViewById(R.id.edittext_city);
+        final TextInputEditText edittexteMessage = contactDialogForm.findViewById(R.id.edittexte_message);
+        ImageButton btnValidate = contactDialogForm.findViewById(R.id.btn_validate);
+        progressBar = contactDialogForm.findViewById(R.id.progress_contact);
+        progressBar.setVisibility(View.GONE);
+
+        final String[] listeCivilite = context.getResources().getStringArray(R.array.form_civility);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.item_spinner, listeCivilite);
+        spinnerCivility.setAdapter(adapter);
+        spinnerCivility.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                civility = listeCivilite[position];
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                contactDialogForm.dismiss();
+            }
+        });
+
+        btnValidate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(edittextNom.getText().toString().trim().length() == 0){
+                    edittextNom.setError(context.getResources().getString(R.string.field_requires));
+                    return;
+                }
+                //--
+                if(edittextEmail.getText().toString().trim().length() == 0) {
+                    edittextEmail.setError(context.getResources().getString(R.string.field_requires));
+                    return;
+                }
+                //--
+                if(!isValidEmail(edittextEmail.getText().toString().trim())){
+                    edittextEmail.setError(context.getResources().getString(R.string.email_invalidate));
+                    return;
+                }
+                //--
+                if(edittextCity.getText().toString().trim().length() == 0){
+                    edittextCity.setError(context.getResources().getString(R.string.field_requires));
+                    return;
+                }
+                //--
+                if(edittexteMessage.getText().toString().trim().length() == 0){
+                    edittexteMessage.setError(context.getResources().getString(R.string.field_requires));
+                    return;
+                }
+                //--
+                name = edittextNom.getText().toString().trim();
+                email = edittextEmail.getText().toString().trim();
+                city = edittextCity.getText().toString().trim();
+                message = edittexteMessage.getText().toString().trim();
+                //--
+                if(isMobileConnected(context)){
+                    sendContactFormData(context);
+                }
+                else{
+                    Toast.makeText(context, context.getResources().getString(R.string.no_connection), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+
+        contactDialogForm.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                if(sendContactForm != null) {
+                    sendContactForm.cancel(true);
+                }
+            }
+        });
+
+        contactDialogForm.show();
+    }
+
+    /**
+     * Verify if email is valid
+     * @param target
+     * @return
+     */
+    public final static boolean isValidEmail(CharSequence target) {
+        return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+    }
+
+    private void sendContactFormData(Context context){
+        postDataParams = new HashMap<>();
+        postDataParams.put("civilite", civility);
+        postDataParams.put("nom", name);
+        postDataParams.put("email", email);
+        postDataParams.put("ville", city);
+        postDataParams.put("detail", message);
+        //--
+        actionForm = context.getResources().getString(R.string.ws_url_laisser_msg_methodpost);
+        //--
+        sendContactForm = new SendContactForm();
+        sendContactForm.initializeData(context, postDataParams, actionForm, progressBar, this);
+        sendContactForm.execute();
+    }
+
+
+
+    // If send contact message is finished
+    @Override
+    public void onSendContactFormFinished(Context context, String returnCode) {
+        progressBar.setVisibility(View.GONE);
+        //--
+        if(!returnCode.isEmpty() && returnCode != null){
+            if(returnCode.contains("code_message")){
+                Gson gson = new Gson();
+                JsonReturn jsonCode = gson.fromJson(returnCode, JsonReturn.class);
+                Toast.makeText(context, jsonCode.getCode_message(), Toast.LENGTH_LONG).show();
+                // Close contact form
+                contactDialogForm.dismiss();
+            }
+            else{
+                Toast.makeText(context, returnCode, Toast.LENGTH_LONG).show();
+            }
+        }
+        else{
+            Toast.makeText(context, context.getResources().getString(R.string.unstable_connection), Toast.LENGTH_LONG).show();
+        }
     }
 }

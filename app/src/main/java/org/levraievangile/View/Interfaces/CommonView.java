@@ -1,6 +1,5 @@
-package org.questionsreponses.View.Interfaces;
+package org.levraievangile.View.Interfaces;
 
-import android.app.Dialog;
 import android.content.Context;
 
 /**
