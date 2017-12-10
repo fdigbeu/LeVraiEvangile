@@ -15,6 +15,8 @@ import org.levraievangile.View.Interfaces.WebView.ILoadWebPage;
 
 import static org.levraievangile.Presenter.CommonPresenter.GOOGLE_DRIVE_READER;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_SHORT_CODE;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_URL_NEWS_SELECTED;
+import static org.levraievangile.Presenter.CommonPresenter.saveDataInSharePreferences;
 
 /**
  * Created by Maranatha on 07/12/2017.
@@ -23,7 +25,6 @@ import static org.levraievangile.Presenter.CommonPresenter.KEY_SHORT_CODE;
 public class WebPresenter implements ILoadWebPage {
     private WebView.IWeb iWeb;
     private LVEWebClient lveWebClient;
-    private int fabVisibility;
 
     public WebPresenter(WebView.IWeb iWeb) {
         this.iWeb = iWeb;
@@ -38,16 +39,21 @@ public class WebPresenter implements ILoadWebPage {
         //--
         if(intent != null){
             String url = intent.getStringExtra(KEY_SHORT_CODE);
+            if(url.startsWith(GOOGLE_DRIVE_READER)){
+                saveDataInSharePreferences(context, KEY_URL_NEWS_SELECTED, url);
+            }
+            else {
+                saveDataInSharePreferences(context, KEY_URL_NEWS_SELECTED, "NULL");
+            }
             this.lveWebClient = new LVEWebClient();
             this.lveWebClient.setiWeb(this.iWeb);
             iWeb.loadWebView(this.lveWebClient, url);
-            fabVisibility = url.contains(GOOGLE_DRIVE_READER) ? View.VISIBLE : View.GONE;
         }
         else{
             iWeb.progressBarVisibility(View.GONE);
             iWeb.webViewVisibility(View.GONE);
             iWeb.closeActivity();
-            fabVisibility = View.GONE;
+            iWeb.fabPdfLayoutVisibility(View.GONE);
         }
     }
 
@@ -75,6 +81,11 @@ public class WebPresenter implements ILoadWebPage {
                     Toast.makeText(view.getContext(), view.getContext().getResources().getString(R.string.pdf_already_add_to_favorite), Toast.LENGTH_SHORT).show();
                 }
                 break;
+
+            // Close activity
+            case R.id.fab_close_app:
+                iWeb.closeActivity();
+                break;
         }
     }
 
@@ -97,16 +108,19 @@ public class WebPresenter implements ILoadWebPage {
     }
 
     @Override
-    public void webViewLoadSuccess() {
+    public void webViewLoadSuccess(Context context) {
         iWeb.progressBarVisibility(View.GONE);
         iWeb.webViewVisibility(View.VISIBLE);
-        iWeb.fabPdfLayoutVisibility(fabVisibility);
+        iWeb.fabCloseAppVisibility(View.VISIBLE);
+        String url = CommonPresenter.getDataFromSharePreferences(context, KEY_URL_NEWS_SELECTED);
+        Log.i("TAG_WEBVIEW_URL", "webViewLoadSuccess() = "+url);
+        iWeb.fabPdfLayoutVisibility((url != null && url.startsWith(GOOGLE_DRIVE_READER)) ? View.VISIBLE : View.GONE);
     }
 
     @Override
     public void webViewLoadFailure() {
         iWeb.progressBarVisibility(View.GONE);
         iWeb.webViewVisibility(View.GONE);
-        iWeb.fabPdfLayoutVisibility(fabVisibility);
+        iWeb.fabCloseAppVisibility(View.VISIBLE);
     }
 }

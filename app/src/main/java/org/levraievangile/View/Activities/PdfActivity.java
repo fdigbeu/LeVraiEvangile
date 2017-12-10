@@ -80,6 +80,11 @@ public class PdfActivity extends AppCompatActivity implements PdfView.IPdf{
         }
     }
 
+    @Override
+    public void modifyHeaderInfos(String typeLibelle) {
+        getSupportActionBar().setTitle(getResources().getString(R.string.tab_text_pdf)+" ("+typeLibelle+")");
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

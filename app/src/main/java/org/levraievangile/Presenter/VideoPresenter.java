@@ -43,32 +43,41 @@ public class VideoPresenter {
         iVideo.askPermissionToSaveFile();
         iVideo.progressBarVisibility(View.VISIBLE);
         //--
-        if(CommonPresenter.isMobileConnected(context)) {
-            if(intent != null) {
+        if(intent != null) {
+            try {
                 //Get list video by short-code
                 final String shortCode = intent.getStringExtra(KEY_SHORT_CODE);
-                Call<List<Video>> callVideos = ApiClient.getApiClientLeVraiEvangile().create(VideoView.IApiRessource.class).getAllVideos(shortCode);
-                callVideos.enqueue(new Callback<List<Video>>() {
-                    @Override
-                    public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
-                        ArrayList<Video> videos = (ArrayList<Video>)response.body();
-                        final String keyShortCode = KEY_ALL_VIDEOS_LIST+"-"+shortCode;
-                        CommonPresenter.saveDataInSharePreferences(context, keyShortCode, videos.toString());
-                        iVideo.loadVideoData(videos, 1);
-                        iVideo.progressBarVisibility(View.GONE);
-                    }
+                iVideo.modifyHeaderInfos(CommonPresenter.getLibelleByTypeShortcode(shortCode));
+                if(CommonPresenter.isMobileConnected(context)) {
+                    Call<List<Video>> callVideos = ApiClient.getApiClientLeVraiEvangile().create(VideoView.IApiRessource.class).getAllVideos(shortCode);
+                    callVideos.enqueue(new Callback<List<Video>>() {
+                        @Override
+                        public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
+                            ArrayList<Video> videos = (ArrayList<Video>) response.body();
+                            final String keyShortCode = KEY_ALL_VIDEOS_LIST + "-" + shortCode;
+                            CommonPresenter.saveDataInSharePreferences(context, keyShortCode, videos.toString());
+                            iVideo.loadVideoData(videos, 1);
+                            iVideo.progressBarVisibility(View.GONE);
+                        }
 
-                    @Override
-                    public void onFailure(Call<List<Video>> call, Throwable t) {
-                        ArrayList<Video> videos = CommonPresenter.getAllVideoSavedBy(context, shortCode);
-                        iVideo.loadVideoData(videos, 1);
-                        iVideo.progressBarVisibility(View.GONE);
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<List<Video>> call, Throwable t) {
+                            ArrayList<Video> videos = CommonPresenter.getAllVideoSavedBy(context, shortCode);
+                            iVideo.loadVideoData(videos, 1);
+                            iVideo.progressBarVisibility(View.GONE);
+                        }
+                    });
+                }
+                else{
+                    ArrayList<Video> videos = CommonPresenter.getAllVideoSavedBy(context, shortCode);
+                    iVideo.loadVideoData(videos, 1);
+                    iVideo.progressBarVisibility(View.GONE);
+                }
             }
-            else{
-                iVideo.closeActivity();
-            }
+            catch (Exception ex){}
+        }
+        else{
+            iVideo.closeActivity();
         }
     }
 

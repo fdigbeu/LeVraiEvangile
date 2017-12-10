@@ -23,6 +23,7 @@ public class VideoView {
         public void launchVideoToPlay(Video video, int position);
         public void progressBarVisibility(int visibility);
         public void askPermissionToSaveFile();
+        public void modifyHeaderInfos(String typeLibelle);
         public void closeActivity();
     }
 

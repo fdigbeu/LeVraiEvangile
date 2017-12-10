@@ -55,30 +55,38 @@ public class NewsPresenter {
 
         iNews.progressBarVisibility(View.VISIBLE);
         //--
-        if(CommonPresenter.isMobileConnected(context)) {
-            if(intent != null) {
+        if(intent != null) {
+            try {
                 //Get list month news by short-code
                 final String yearValue = intent.getStringExtra(KEY_SHORT_CODE);
-                Call<List<Mois>> callMonth = ApiClient.getApiClientLeVraiEvangile().create(NewsView.IApiRessource.class).getAllNewsMonth(yearValue);
-                callMonth.enqueue(new Callback<List<Mois>>() {
-                    @Override
-                    public void onResponse(Call<List<Mois>> call, Response<List<Mois>> response) {
-                        ArrayList<Mois> months = (ArrayList<Mois>)response.body();
-                        final String keyShortCode = KEY_ALL_NEWS_MONTH_LIST+"-"+yearValue;
-                        CommonPresenter.saveDataInSharePreferences(context, keyShortCode, months.toString());
-                        iNews.loadNewsMonth(months, Integer.parseInt(yearValue));
-                    }
+                iNews.modifyHeaderInfos(yearValue);
+                if(CommonPresenter.isMobileConnected(context)) {
+                    Call<List<Mois>> callMonth = ApiClient.getApiClientLeVraiEvangile().create(NewsView.IApiRessource.class).getAllNewsMonth(yearValue);
+                    callMonth.enqueue(new Callback<List<Mois>>() {
+                        @Override
+                        public void onResponse(Call<List<Mois>> call, Response<List<Mois>> response) {
+                            ArrayList<Mois> months = (ArrayList<Mois>) response.body();
+                            final String keyShortCode = KEY_ALL_NEWS_MONTH_LIST + "-" + yearValue;
+                            CommonPresenter.saveDataInSharePreferences(context, keyShortCode, months.toString());
+                            iNews.loadNewsMonth(months, Integer.parseInt(yearValue));
+                        }
 
-                    @Override
-                    public void onFailure(Call<List<Mois>> call, Throwable t) {
-                        ArrayList<Mois> months = CommonPresenter.getAllNewsMonthSavedBy(context, yearValue);
-                        iNews.loadNewsMonth(months, Integer.parseInt(yearValue));
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<List<Mois>> call, Throwable t) {
+                            ArrayList<Mois> months = CommonPresenter.getAllNewsMonthSavedBy(context, yearValue);
+                            iNews.loadNewsMonth(months, Integer.parseInt(yearValue));
+                        }
+                    });
+                }
+                else{
+                    ArrayList<Mois> months = CommonPresenter.getAllNewsMonthSavedBy(context, yearValue);
+                    iNews.loadNewsMonth(months, Integer.parseInt(yearValue));
+                }
             }
-            else{
-                iNews.closeActivity();
-            }
+            catch (Exception ex){}
+        }
+        else{
+            iNews.closeActivity();
         }
     }
 

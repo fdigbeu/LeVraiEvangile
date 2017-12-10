@@ -84,4 +84,21 @@
 
     </LinearLayout>
 
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fab_close_app"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/size_5_dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_player_media_cancel_32dp"
+        fab:fab_size="mini"
+        fab:fab_colorNormal="@color/colorAccent"
+        fab:menu_colorNormal="@color/colorAccent"
+        app:backgroundTint="@color/colorAccentOpacity50"
+        app:rippleColor="@color/colorAccent"
+        fab:menu_colorPressed="@color/colorAccentOpacity50"
+        fab:menu_colorRipple="@color/colorAccent"/>
+
 </RelativeLayout>

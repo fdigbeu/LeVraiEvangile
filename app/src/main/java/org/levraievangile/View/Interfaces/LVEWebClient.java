@@ -54,7 +54,7 @@ public class LVEWebClient extends WebViewClient {
     @Override
     public void onPageFinished(WebView view, String url) {
         WebPresenter webPresenter = new WebPresenter(iWeb);
-        webPresenter.webViewLoadSuccess();
+        webPresenter.webViewLoadSuccess(view.getContext());
     }
 
     @Override

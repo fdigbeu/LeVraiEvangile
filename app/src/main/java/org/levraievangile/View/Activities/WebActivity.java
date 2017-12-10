@@ -31,7 +31,7 @@ public class WebActivity extends AppCompatActivity implements IWeb {
     private WebView webView;
     private ProgressBar progressBar;
     private View fabPdfLayout;
-    private FloatingActionButton fabPdfDowload, fabPdfShare, fabPdfFavorite;
+    private FloatingActionButton fabPdfDowload, fabPdfShare, fabPdfFavorite, fabCloseApp;
     // Ref presenter
     private WebPresenter webPresenter;
 
@@ -57,6 +57,7 @@ public class WebActivity extends AppCompatActivity implements IWeb {
         fabPdfDowload = findViewById(R.id.fab_pdf_dowload);
         fabPdfShare = findViewById(R.id.fab_pdf_share);
         fabPdfFavorite = findViewById(R.id.fab_pdf_favorite);
+        fabCloseApp = findViewById(R.id.fab_close_app);
     }
 
     @Override
@@ -77,6 +78,12 @@ public class WebActivity extends AppCompatActivity implements IWeb {
         });
         // When user clicks on favorite button
         fabPdfFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                webPresenter.retrieveUserAction(view);
+            }
+        });
+        fabCloseApp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 webPresenter.retrieveUserAction(view);
@@ -151,6 +158,11 @@ public class WebActivity extends AppCompatActivity implements IWeb {
     @Override
     public void fabPdfLayoutVisibility(int visibility) {
         fabPdfLayout.setVisibility(visibility);
+    }
+
+    @Override
+    public void fabCloseAppVisibility(int visibility) {
+        fabCloseApp.setVisibility(visibility);
     }
 
     @Override

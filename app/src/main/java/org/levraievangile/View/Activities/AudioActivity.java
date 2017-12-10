@@ -382,6 +382,11 @@ public class AudioActivity extends AppCompatActivity implements AudioView.IAudio
     }
 
     @Override
+    public void modifyHeaderInfos(String typeLibelle) {
+        getSupportActionBar().setTitle(getResources().getString(R.string.tab_text_audio)+" ("+typeLibelle+")");
+    }
+
+    @Override
     public void audioPlayerVisibility(int visibility) {
         audioPlayerLayout.setVisibility(visibility);
     }

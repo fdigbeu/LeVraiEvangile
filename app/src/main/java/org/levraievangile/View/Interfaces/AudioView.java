@@ -24,6 +24,7 @@ public class AudioView {
         public void progressBarVisibility(int visibility);
         public void launchNotificationAudio();
         public void closeActivity();
+        public void modifyHeaderInfos(String typeLibelle);
         public void askPermissionToSaveFile();
         // Audio player
         public void audioPlayerVisibility(int visibility);

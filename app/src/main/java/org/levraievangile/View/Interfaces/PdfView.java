@@ -22,6 +22,7 @@ public class PdfView {
         public void launchActivity(String value);
         public void progressBarVisibility(int visibility);
         public void askPermissionToSaveFile();
+        public void modifyHeaderInfos(String typeLibelle);
         public void closeActivity();
     }
 

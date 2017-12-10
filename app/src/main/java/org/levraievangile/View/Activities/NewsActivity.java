@@ -89,6 +89,11 @@ public class NewsActivity extends AppCompatActivity implements NewsView.INews {
     }
 
     @Override
+    public void modifyHeaderInfos(String typeLibelle) {
+        getSupportActionBar().setTitle(getResources().getString(R.string.tab_text_news)+" ("+typeLibelle+")");
+    }
+
+    @Override
     public void closeActivity() {
         this.finish();
     }

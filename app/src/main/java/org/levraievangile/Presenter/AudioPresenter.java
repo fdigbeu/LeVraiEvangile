@@ -54,33 +54,42 @@ public class AudioPresenter implements AudioView.IStreamAudio {
         iAudio.askPermissionToSaveFile();
         iAudio.progressBarVisibility(View.VISIBLE);
         //--
-        if(CommonPresenter.isMobileConnected(context)) {
-            if(intent != null) {
+        if(intent != null) {
+            try {
                 //Get list audio by short-code
                 final String shortCode = intent.getStringExtra(KEY_SHORT_CODE);
-                Call<List<Audio>> callAudios = ApiClient.getApiClientLeVraiEvangile().create(AudioView.IApiRessource.class).getAllAudios(shortCode);
-                callAudios.enqueue(new Callback<List<Audio>>() {
-                    @Override
-                    public void onResponse(Call<List<Audio>> call, Response<List<Audio>> response) {
-                        ArrayList<Audio> audios = (ArrayList<Audio>)response.body();
-                        final String keyShortCode = KEY_ALL_AUDIOS_LIST+"-"+shortCode;
-                        CommonPresenter.saveDataInSharePreferences(context, keyShortCode, audios.toString());
-                        CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_AUDIOS_LIST, audios.toString());
-                        iAudio.loadAudioData(audios, 1);
-                        iAudio.progressBarVisibility(View.GONE);
-                    }
+                iAudio.modifyHeaderInfos(CommonPresenter.getLibelleByTypeShortcode(shortCode));
+                if(CommonPresenter.isMobileConnected(context)) {
+                    Call<List<Audio>> callAudios = ApiClient.getApiClientLeVraiEvangile().create(AudioView.IApiRessource.class).getAllAudios(shortCode);
+                    callAudios.enqueue(new Callback<List<Audio>>() {
+                        @Override
+                        public void onResponse(Call<List<Audio>> call, Response<List<Audio>> response) {
+                            ArrayList<Audio> audios = (ArrayList<Audio>) response.body();
+                            final String keyShortCode = KEY_ALL_AUDIOS_LIST + "-" + shortCode;
+                            CommonPresenter.saveDataInSharePreferences(context, keyShortCode, audios.toString());
+                            CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_AUDIOS_LIST, audios.toString());
+                            iAudio.loadAudioData(audios, 1);
+                            iAudio.progressBarVisibility(View.GONE);
+                        }
 
-                    @Override
-                    public void onFailure(Call<List<Audio>> call, Throwable t) {
-                        ArrayList<Audio> audios = CommonPresenter.getAllAudioSavedBy(context, shortCode);
-                        iAudio.loadAudioData(audios, 1);
-                        iAudio.progressBarVisibility(View.GONE);
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<List<Audio>> call, Throwable t) {
+                            ArrayList<Audio> audios = CommonPresenter.getAllAudioSavedBy(context, shortCode);
+                            iAudio.loadAudioData(audios, 1);
+                            iAudio.progressBarVisibility(View.GONE);
+                        }
+                    });
+                }
+                else{
+                    ArrayList<Audio> audios = CommonPresenter.getAllAudioSavedBy(context, shortCode);
+                    iAudio.loadAudioData(audios, 1);
+                    iAudio.progressBarVisibility(View.GONE);
+                }
             }
-            else{
-                iAudio.closeActivity();
-            }
+            catch (Exception ex){}
+        }
+        else{
+            iAudio.closeActivity();
         }
     }
 

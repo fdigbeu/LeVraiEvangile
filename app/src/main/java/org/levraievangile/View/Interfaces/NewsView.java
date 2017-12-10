@@ -23,6 +23,7 @@ public class NewsView {
         public void loadNewsData(ArrayList<Actualite> news, int numberColumns);
         public void launchActivity(String value);
         public void progressBarVisibility(int visibility);
+        public void modifyHeaderInfos(String typeLibelle);
         public void closeActivity();
     }
 
