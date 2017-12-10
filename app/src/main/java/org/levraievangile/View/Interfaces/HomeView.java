@@ -23,6 +23,7 @@ public class HomeView {
         public void initialize();
         public void events();
         public void askPermissionToSaveFile();
+        public void launchParameterActivity();
     }
 
     public interface IPlaceholder{

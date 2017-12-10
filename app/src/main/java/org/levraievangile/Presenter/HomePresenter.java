@@ -1,6 +1,8 @@
 package org.levraievangile.Presenter;
 
 import android.content.Context;
+import android.support.v7.widget.ShareActionProvider;
+import android.view.MenuItem;
 import android.view.View;
 
 import org.levraievangile.Model.Annee;
@@ -9,6 +11,7 @@ import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.BonASavoir;
 import org.levraievangile.Model.Pdf;
 import org.levraievangile.Model.Video;
+import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.HomeView;
 
 import java.util.ArrayList;
@@ -144,9 +147,36 @@ public class HomePresenter {
         }
     }
 
-    // Display search form
-    public void displaySearchForm(Context context){
-        CommonPresenter commonPresenter = new CommonPresenter();
-        commonPresenter.showFormSearch(context);
+    // Retrieve user action : When he clicks on top menu items
+    public void retrieveUserAction(Context context, MenuItem item){
+        switch (item.getItemId()){
+            // Share LVE App
+            case R.id.action_share:
+                ShareActionProvider shareProvider = new ShareActionProvider(context);
+                CommonPresenter.shareApplication(context, item, shareProvider);
+                break;
+
+            // Search videos
+            case R.id.action_search:
+                CommonPresenter commonPresenter = new CommonPresenter();
+                commonPresenter.showFormSearch(context);
+                break;
+
+            case R.id.action_config:
+                iHome.launchParameterActivity();
+                break;
+
+            case R.id.action_contact:
+                break;
+
+            case R.id.action_favorite:
+                break;
+
+            case R.id.action_download:
+                break;
+
+            case R.id.action_update:
+                break;
+        }
     }
 }

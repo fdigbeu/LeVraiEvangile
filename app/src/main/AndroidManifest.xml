@@ -49,6 +49,11 @@
 
         <!-- Service for media player notification -->
         <service android:name=".View.Services.PlayerAudioService" />
+
+        <activity
+            android:name=".View.Activities.SettingsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="@string/lb_top_parameter"></activity>
     </application>
 
 </manifest>

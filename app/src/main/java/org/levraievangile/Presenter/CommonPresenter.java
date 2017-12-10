@@ -21,10 +21,13 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.ShareActionProvider;
 import android.text.Html;
 import android.util.Log;
 import android.view.Display;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -44,6 +47,7 @@ import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.BonASavoir;
 import org.levraievangile.Model.Mois;
 import org.levraievangile.Model.Pdf;
+import org.levraievangile.Model.Setting;
 import org.levraievangile.Model.Video;
 import org.levraievangile.R;
 
@@ -84,6 +88,17 @@ public class CommonPresenter {
     public static final String KEY_NOTIF_PLAYER_SELECTED = "KEY_NOTIF_PLAYER_SELECTED";
     public static final String KEY_NOTIF_PLAYER_PLAY_NEXT = "KEY_NOTIF_PLAYER_PLAY_NEXT";
     public static final String KEY_NOTIF_PLAYER_PREVIOUS = "KEY_NOTIF_PLAYER_PREVIOUS";
+
+    public static final String KEY_SETTING_CONFIRM_BEFORE_QUIT_APP = "KEY_SETTING_CONFIRM_BEFORE_QUIT_APP";
+    public static final String KEY_SETTING_AUDIO_NOTIFICATION = "KEY_SETTING_AUDIO_NOTIFICATION";
+    public static final String KEY_SETTING_VIDEO_NOTIFICATION = "KEY_SETTING_VIDEO_NOTIFICATION";
+    public static final String KEY_SETTING_CONCATENATE_AUDIO_READING = "KEY_SETTING_CONCATENATE_AUDIO_READING";
+    public static final String KEY_SETTING_CONCATENATE_VIDEO_READING = "KEY_SETTING_CONCATENATE_VIDEO_READING";
+    public static final String KEY_SETTING_WIFI_EXCLUSIF = "KEY_SETTING_WIFI_EXCLUSIF";
+
+    public static final String[] KEY_SETTINGS = {KEY_SETTING_CONFIRM_BEFORE_QUIT_APP,
+            KEY_SETTING_AUDIO_NOTIFICATION, KEY_SETTING_VIDEO_NOTIFICATION, KEY_SETTING_CONCATENATE_AUDIO_READING,
+            KEY_SETTING_CONCATENATE_VIDEO_READING, KEY_SETTING_WIFI_EXCLUSIF};
 
     public static final int VALUE_PERMISSION_TO_SAVE_FILE = 103;
 
@@ -420,14 +435,20 @@ public class CommonPresenter {
      * Share application data
      * @param context
      */
-    public static void shareApplication(Context context)
+    public static void shareApplication(Context context, MenuItem item, ShareActionProvider shareActionProvider)
     {
         String message = "Bonjour,\nJe tiens à te faire découvrir l'application android Le Vrai Evangile.\nClique sur le lien qui apparaît en bas de ce message, et n'hésite pas à en parler autour de toi.\nGloire à Jésus-Christ.\n\n"+context.getResources().getString(R.string.url_play_store);
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT, message);
         sendIntent.setType("text/plain");
-        context.startActivity(Intent.createChooser(sendIntent, "Partager l'application"));
+        if(shareActionProvider != null){
+            shareActionProvider.setShareIntent(sendIntent);
+            MenuItemCompat.setActionProvider(item, shareActionProvider);
+        }
+        else{
+            context.startActivity(Intent.createChooser(sendIntent, context.getResources().getString(R.string.lb_share_app)));
+        }
     }
 
     /**
@@ -1007,6 +1028,73 @@ public class CommonPresenter {
     private static String getPdfPath(){
         File SDCardRoot = Environment.getExternalStorageDirectory();
         return Environment.getExternalStoragePublicDirectory(SDCardRoot + "/" + FOLDER_NAME[3] + "/").getAbsolutePath();
+    }
+
+    // Initialize setting
+    public static void initializeAppSetting(Context context){
+        String dataSetting = getDataFromSharePreferences(context, KEY_SETTING_CONFIRM_BEFORE_QUIT_APP);
+        if(dataSetting==null || dataSetting.isEmpty()){
+            String title = "Confirmer avant de quitter";
+            String libelle = "Demander la confirmation avant de sortir de l'application.";
+            boolean choice = true;
+            saveDataInSharePreferences(context, KEY_SETTING_CONFIRM_BEFORE_QUIT_APP, new Setting(title, libelle, choice).toString());
+            //--
+            title = "Notification audio";
+            libelle = "Recevoir une alerte lorsqu'un nouvel audio est mise en ligne";
+            choice = false;
+            saveDataInSharePreferences(context, KEY_SETTING_AUDIO_NOTIFICATION, new Setting(title, libelle, choice).toString());
+            //--
+            title = "Notification vidéo";
+            libelle = "Recevoir une alerte lorsqu'une nouvelle vidéo est mise en ligne";
+            choice = false;
+            saveDataInSharePreferences(context, KEY_SETTING_VIDEO_NOTIFICATION, new Setting(title, libelle, choice).toString());
+            //--
+            title = "AUDIO, Enchaîner la lecture";
+            libelle = "Lecture automatiquement des audios.";
+            choice = true;
+            saveDataInSharePreferences(context, KEY_SETTING_CONCATENATE_AUDIO_READING, new Setting(title, libelle, choice).toString());
+            //--
+            title = "VIDEO, Enchaîner la lecture";
+            libelle = "Lecture automatiquement des vidéos.";
+            choice = true;
+            saveDataInSharePreferences(context, KEY_SETTING_CONCATENATE_VIDEO_READING, new Setting(title, libelle, choice).toString());
+            //--
+            title = "WIFI exclusif";
+            libelle = "Télécharger uniquement en Wi-Fi.";
+            choice = false;
+            saveDataInSharePreferences(context, KEY_SETTING_WIFI_EXCLUSIF, new Setting(title, libelle, choice).toString());
+        }
+        else{
+            Log.i("TAG_DATA_SETTING", "The data setting is not NULL");
+        }
+    }
+
+    // Get data setting object from SharePreferences
+    public static Setting getSettingObjectFromSharePreferences(Context context, String key){
+        Setting mSetting = null;
+        String dataSetting = getDataFromSharePreferences(context, key);
+        //--
+        try
+        {
+            JSONObject jsonObject = new JSONObject(dataSetting);
+            String title = jsonObject.getString("title");
+            String libelle = jsonObject.getString("libelle");
+            boolean choice = jsonObject.getBoolean("choice");
+            mSetting = new Setting(title, libelle, choice);
+            return mSetting;
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return mSetting;
+    }
+
+    // Save setting data object
+    public static void saveSettingObjectInSharePreferences(Context context, String key, boolean choice){
+        Setting mSetting = getSettingObjectFromSharePreferences(context, key);
+        mSetting.setChoice(choice);
+        saveDataInSharePreferences(context, key, mSetting.toString());
     }
 
     /**

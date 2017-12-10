@@ -7,9 +7,11 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
@@ -17,6 +19,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -67,7 +70,6 @@ public class HomeActivity extends AppCompatActivity implements HomeView.IHome {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_home, menu);
         return true;
     }
@@ -77,25 +79,31 @@ public class HomeActivity extends AppCompatActivity implements HomeView.IHome {
         int id = item.getItemId();
         switch (id){
             case R.id.action_search:
-                homePresenter.displaySearchForm(HomeActivity.this);
+                homePresenter.retrieveUserAction(HomeActivity.this, item);
                 return true;
 
             case R.id.action_share:
+                homePresenter.retrieveUserAction(HomeActivity.this, item);
                 return true;
 
             case R.id.action_config:
+                homePresenter.retrieveUserAction(HomeActivity.this, item);
                 return true;
 
             case R.id.action_contact:
+                homePresenter.retrieveUserAction(HomeActivity.this, item);
                 return true;
 
             case R.id.action_favorite:
+                homePresenter.retrieveUserAction(HomeActivity.this, item);
                 return true;
 
             case R.id.action_download:
+                homePresenter.retrieveUserAction(HomeActivity.this, item);
                 return true;
 
             case R.id.action_update:
+                homePresenter.retrieveUserAction(HomeActivity.this, item);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -284,5 +292,12 @@ public class HomeActivity extends AppCompatActivity implements HomeView.IHome {
             // Show 5 total pages.
             return 5;
         }
+    }
+
+    @Override
+    public void launchParameterActivity(){
+        Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 }

@@ -4,7 +4,7 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/btn"
+    android:background="@drawable/btn_border_radius"
     android:foreground="?attr/selectableItemBackground"
     android:padding="@dimen/size_5_dp"
     android:layout_margin="@dimen/size_5_dp"
@@ -19,7 +19,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/item_title"
+            android:id="@+id/item_setting_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -30,23 +30,22 @@
             android:gravity="center"/>
 
         <TextView
-            android:id="@+id/item_subtitle"
+            android:id="@+id/item_setting_subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textSize="@dimen/text_size_15_sp"
-            android:textColor="@color/blueOpacity75"
+            android:textColor="@color/colorPrimaryOpacity70"
             android:clickable="false"
             android:gravity="center"/>
 
     </LinearLayout>
 
     <TextView
-        android:id="@+id/item_line_bar"
         style="@style/CustomVerticalLine" />
 
     <CheckBox
-        android:id="@+id/item_checkBox"
+        android:id="@+id/item_setting_checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"

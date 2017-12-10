@@ -14,13 +14,13 @@ import java.util.List;
  * Created by Maranatha on 28/11/2017.
  */
 
-public class SettingsPresenter {
+public class SettingPresenter {
 
     // Ref interface
     private SettingsView.ISettings iSettings;
 
     // Constructor
-    public SettingsPresenter(SettingsView.ISettings iSettings) {
+    public SettingPresenter(SettingsView.ISettings iSettings) {
         this.iSettings = iSettings;
     }
 
@@ -28,6 +28,8 @@ public class SettingsPresenter {
     public void loadSettingsData(Context context){
         iSettings.initialize();
         iSettings.events();
+        // Initialize the settings
+        CommonPresenter.initializeAppSetting(context);
         // Load All setting data
         Setting mSetting = null;
         List<Setting> settingList = new ArrayList<>();
