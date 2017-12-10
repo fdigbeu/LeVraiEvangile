@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 import static org.levraievangile.Presenter.CommonPresenter.GOOGLE_DRIVE_READER;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_PDF_SELECTED;
+import static org.levraievangile.Presenter.CommonPresenter.saveDataInSharePreferences;
 
 /**
  * Created by Maranatha on 10/10/2017.
@@ -100,7 +102,6 @@ public class PdfRecyclerAdapter extends RecyclerView.Adapter<PdfRecyclerAdapter.
                 @Override
                 public void onClick(View view) {
                     positionSelected = positionItem;
-                    //pdfSelected = pdfItems.get(positionSelected);
                     if(iPlaceholder != null){
                         HomePresenter homePresenter = new HomePresenter(iPlaceholder);
                         homePresenter.launchActivity(pdfItems.get(positionSelected).getType_shortcode(), PdfActivity.class);
@@ -108,6 +109,7 @@ public class PdfRecyclerAdapter extends RecyclerView.Adapter<PdfRecyclerAdapter.
                     else if(iPdf != null){
                         PdfPresenter pdfPresenter = new PdfPresenter(iPdf);
                         pdfPresenter.launchActivity(GOOGLE_DRIVE_READER+pdfItems.get(positionSelected).getUrlacces()+pdfItems.get(positionSelected).getSrc());
+                        saveDataInSharePreferences(view.getContext(), KEY_PDF_SELECTED, pdfItems.get(positionSelected).toString());
                     }
                     else{}
                 }

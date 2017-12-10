@@ -45,6 +45,19 @@ public class Pdf {
         this.mipmap = mipmap;
     }
 
+    @Override
+    public String toString() {
+        return "{\"auteur\":\""+auteur+"\"," +
+                "\"date\":\""+date+"\"," +
+                "\"urlacces\":\""+urlacces+"\"," +
+                "\"type_shortcode\":\""+type_shortcode+"\"," +
+                "\"src\":\""+src+"\"," +
+                "\"titre\":\""+titre+"\"," +
+                "\"type_libelle\":\""+type_libelle+"\"," +
+                "\"mipmap\":"+mipmap+"," +
+                "\"id\":"+id+"}";
+    }
+
     public int getMipmap() {
         return mipmap;
     }

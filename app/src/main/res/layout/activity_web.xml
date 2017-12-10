@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -21,5 +22,66 @@
         android:visibility="gone"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"/>
+
+    <LinearLayout
+        android:id="@+id/fab_pdf_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_5_dp"
+        android:layout_marginEnd="@dimen/size_5_dp"
+        android:layout_marginTop="@dimen/size_5_dp"
+        android:layout_marginBottom="@dimen/size_40_dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:gravity="clip_horizontal"
+        android:orientation="horizontal">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_pdf_dowload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="@dimen/size_5_dp"
+            android:src="@drawable/ic_fab_download_32dp"
+            fab:fab_size="normal"
+            fab:fab_colorNormal="@color/colorAccent"
+            fab:menu_colorNormal="@color/colorAccent"
+            app:backgroundTint="@color/colorAccentOpacity50"
+            app:rippleColor="@color/colorAccent"
+            fab:menu_colorPressed="@color/colorAccentOpacity50"
+            fab:menu_colorRipple="@color/colorAccent"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_pdf_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="@dimen/size_5_dp"
+            android:src="@drawable/ic_fab_share_32dp"
+            fab:fab_size="normal"
+            fab:fab_colorNormal="@color/colorAccent"
+            fab:menu_colorNormal="@color/colorAccent"
+            app:backgroundTint="@color/colorAccentOpacity50"
+            app:rippleColor="@color/colorAccent"
+            fab:menu_colorPressed="@color/colorAccentOpacity50"
+            fab:menu_colorRipple="@color/colorAccent"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_pdf_favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="@dimen/size_5_dp"
+            android:src="@drawable/ic_player_favorite_32dp"
+            fab:fab_size="normal"
+            fab:fab_colorNormal="@color/colorAccent"
+            fab:menu_colorNormal="@color/colorAccent"
+            app:backgroundTint="@color/colorAccentOpacity50"
+            app:rippleColor="@color/colorAccent"
+            fab:menu_colorPressed="@color/colorAccentOpacity50"
+            fab:menu_colorRipple="@color/colorAccent"/>
+
+    </LinearLayout>
 
 </RelativeLayout>

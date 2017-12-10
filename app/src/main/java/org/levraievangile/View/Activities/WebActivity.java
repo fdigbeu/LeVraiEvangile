@@ -1,23 +1,37 @@
 package org.levraievangile.View.Activities;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionButton;
+
+import org.levraievangile.Presenter.CommonPresenter;
 import org.levraievangile.Presenter.WebPresenter;
 import org.levraievangile.View.Interfaces.LVEWebClient;
 import org.levraievangile.View.Interfaces.WebView.IWeb;
 
 import org.levraievangile.R;
 
+import static org.levraievangile.Presenter.CommonPresenter.VALUE_PERMISSION_TO_SAVE_FILE;
+
 public class WebActivity extends AppCompatActivity implements IWeb {
     // Ref widgets
     private WebView webView;
     private ProgressBar progressBar;
+    private View fabPdfLayout;
+    private FloatingActionButton fabPdfDowload, fabPdfShare, fabPdfFavorite;
     // Ref presenter
     private WebPresenter webPresenter;
 
@@ -39,11 +53,35 @@ public class WebActivity extends AppCompatActivity implements IWeb {
     public void initialize() {
         webView = findViewById(R.id.webview);
         progressBar = findViewById(R.id.progress);
+        fabPdfLayout = findViewById(R.id.fab_pdf_layout);
+        fabPdfDowload = findViewById(R.id.fab_pdf_dowload);
+        fabPdfShare = findViewById(R.id.fab_pdf_share);
+        fabPdfFavorite = findViewById(R.id.fab_pdf_favorite);
     }
 
     @Override
     public void events() {
-
+        // When user clicks on download button
+        fabPdfDowload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                webPresenter.retrieveUserAction(view);
+            }
+        });
+        // When user clicks on share button
+        fabPdfShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                webPresenter.retrieveUserAction(view);
+            }
+        });
+        // When user clicks on favorite button
+        fabPdfFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                webPresenter.retrieveUserAction(view);
+            }
+        });
     }
 
     @Override
@@ -75,6 +113,31 @@ public class WebActivity extends AppCompatActivity implements IWeb {
         webView.setWebViewClient(webClient);
     }
 
+
+    @Override
+    public void askPermissionToSaveFile() {
+        int permissionCheck = ContextCompat.checkSelfPermission(WebActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if(permissionCheck != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(WebActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, VALUE_PERMISSION_TO_SAVE_FILE);
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case VALUE_PERMISSION_TO_SAVE_FILE:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    // Ceate folders
+                    CommonPresenter.createFolder();
+                }
+                else {
+                    Toast.makeText(WebActivity.this, getResources().getString(R.string.lb_storage_file_require), Toast.LENGTH_LONG).show();
+                }
+                break;
+        }
+    }
+
     @Override
     public void progressBarVisibility(int visibility) {
         progressBar.setVisibility(visibility);
@@ -83,6 +146,11 @@ public class WebActivity extends AppCompatActivity implements IWeb {
     @Override
     public void webViewVisibility(int visibility) {
         webView.setVisibility(visibility);
+    }
+
+    @Override
+    public void fabPdfLayoutVisibility(int visibility) {
+        fabPdfLayout.setVisibility(visibility);
     }
 
     @Override

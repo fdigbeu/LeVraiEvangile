@@ -12,6 +12,8 @@ public class WebView {
         public void loadWebView(LVEWebClient webClient, String url);
         public void progressBarVisibility(int visibility);
         public void webViewVisibility(int visibility);
+        public void fabPdfLayoutVisibility(int visibility);
+        public void askPermissionToSaveFile();
         public void closeActivity();
     }
 

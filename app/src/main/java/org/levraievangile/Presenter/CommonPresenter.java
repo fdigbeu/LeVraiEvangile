@@ -61,6 +61,7 @@ public class CommonPresenter {
     public static final String KEY_ALL_NEWS_MONTH_LIST = "KEY_ALL_NEWS_MONTH_LIST";
 
     public static final String KEY_AUDIO_SELECTED = "KEY_AUDIO_SELECTED";
+    public static final String KEY_PDF_SELECTED = "KEY_PDF_SELECTED";
 
     public static final String GOOGLE_DRIVE_READER = "https://drive.google.com/viewer?url=";
 
@@ -418,6 +419,20 @@ public class CommonPresenter {
     }
 
     /**
+     * Share pdf data
+     * @param context
+     * @param pdf
+     */
+    public static void sharePdf(Context context, Pdf pdf)
+    {
+        String id = ""+pdf.getId();
+        String title = pdf.getTitre();
+        String url = context.getResources().getString(R.string.url_partager_pdf)+pdf.getSrc();
+        String description = "Bonjour,\nJe t'invite à lire ce fichier pdf.\n\nTITRE: "+title+"\n LIEN: "+url;
+        sendShareResource(context, description, title);
+    }
+
+    /**
      * Share audio data
      * @param context
      * @param audio
@@ -619,7 +634,36 @@ public class CommonPresenter {
 
 
     /**
-     * Get all save audios saved
+     * Get selected pdf saved
+     * @param context
+     * @return
+     */
+    public static Pdf getPdfSelected(Context context){
+        String srcFichier = getDataFromSharePreferences(context, KEY_PDF_SELECTED);
+        Pdf pdf = null;
+        try {
+            JSONObject jsonObject = new JSONObject(srcFichier);
+            int id = jsonObject.getInt("id");
+            String titre = jsonObject.getString("titre");
+            String urlacces = jsonObject.getString("urlacces");
+            String src = jsonObject.getString("src");
+            String auteur = jsonObject.getString("auteur");
+            String type_libelle = jsonObject.getString("type_libelle");
+            String type_shortcode = jsonObject.getString("type_shortcode");
+            String date = jsonObject.getString("date");
+            int mipmap = R.mipmap.sm_pdf;
+            pdf = new Pdf(id, urlacces, src, titre, auteur, date, type_libelle, type_shortcode, mipmap);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return pdf;
+    }
+
+
+    /**
+     * Get selected audios saved
      * @param context
      * @return
      */
