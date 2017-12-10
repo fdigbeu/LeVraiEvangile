@@ -65,6 +65,7 @@ public class VideoActivity extends AppCompatActivity implements IVideo {
         int id = item.getItemId();
         switch (id){
             case android.R.id.home:
+                videoPresenter.retrieveUserAction(item);
                 return true;
         }
         return super.onOptionsItemSelected(item);

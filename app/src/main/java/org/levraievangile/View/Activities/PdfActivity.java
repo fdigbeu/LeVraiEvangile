@@ -55,6 +55,7 @@ public class PdfActivity extends AppCompatActivity implements PdfView.IPdf{
         int id = item.getItemId();
         switch (id){
             case android.R.id.home:
+                pdfPresenter.retrieveUserAction(item);
                 return true;
         }
         return super.onOptionsItemSelected(item);

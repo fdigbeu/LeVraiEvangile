@@ -305,8 +305,8 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
 
     @Override
     public void onBackPressed() {
-        CommonPresenter.cancelCountDownTimer(downTimer);
-        CommonPresenter.stopVideoViewPlayer(player_video);
+        playerPresenter.cancelCountDownTimer(downTimer);
+        playerPresenter.stopVideoViewPlayer(player_video);
         super.onBackPressed();
     }
 }

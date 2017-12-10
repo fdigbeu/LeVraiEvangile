@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -161,6 +162,15 @@ public class AudioPresenter implements AudioView.IStreamAudio {
             String title = context.getResources().getString(R.string.no_connection);
             String message = context.getResources().getString(R.string.detail_no_connection);
             CommonPresenter.showMessage(context, title.toUpperCase(), message, false);
+        }
+    }
+
+    // Manage menu Item
+    public void retrieveUserAction(MenuItem item){
+        switch (item.getItemId()){
+            case android.R.id.home:
+                iAudio.closeActivity();
+                break;
         }
     }
 

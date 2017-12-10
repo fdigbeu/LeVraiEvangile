@@ -86,6 +86,7 @@ public class AudioActivity extends AppCompatActivity implements AudioView.IAudio
         int id = item.getItemId();
         switch (id){
             case android.R.id.home:
+                audioPresenter.retrieveUserAction(item);
                 return true;
         }
         return super.onOptionsItemSelected(item);

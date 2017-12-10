@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
+import android.os.CountDownTimer;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +16,7 @@ import org.levraievangile.Model.DAOFavoris;
 import org.levraievangile.Model.Video;
 import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.VideoPlayerView;
+import org.levraievangile.View.Interfaces.VideoView;
 
 import java.util.Hashtable;
 
@@ -136,21 +139,14 @@ public class VideoPlayerPresenter {
         }
     }
 
-    // Save Video data
-    public void saveRessourceVideoData(Context context, Video ressource){
-        /*String typeRessource = "video";
-        DAORessource daoRessource = new DAORessource(context);
-        if(!daoRessource.isRessourceExists(ressource.getSrc())){
-            int totalBeforeInsert = daoRessource.getAllByTypeRessource(typeRessource).size();
-            daoRessource.insertData(ressource.getTitre(), ressource.getEtat(), ressource.getSrc(), typeRessource, ressource.getAuteur(), ressource.getUrlacces(), ressource.getDuree());
-            int totalAfterInsert = daoRessource.getAllByTypeRessource(typeRessource).size();
-            if(totalBeforeInsert < totalAfterInsert){
-                Toast.makeText(context, context.getString(R.string.video_add_to_favorite), Toast.LENGTH_SHORT).show();
-            }
-        }
-        else{
-            Toast.makeText(context, context.getString(R.string.video_already_add_to_favorite), Toast.LENGTH_SHORT).show();
-        }*/
+    // Cancel count down timer
+    public void cancelCountDownTimer(CountDownTimer countDownTimer){
+        CommonPresenter.cancelCountDownTimer(countDownTimer);
+    }
+
+    // Stop video player
+    public void stopVideoViewPlayer(android.widget.VideoView videoView){
+        CommonPresenter.stopVideoViewPlayer(videoView);
     }
 
     // Manage player video visibility

@@ -3,6 +3,7 @@ package org.levraievangile.Presenter;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.google.gson.Gson;
@@ -78,6 +79,15 @@ public class VideoPresenter {
         }
         else{
             iVideo.closeActivity();
+        }
+    }
+
+    // Manage menu Item
+    public void retrieveUserAction(MenuItem item){
+        switch (item.getItemId()){
+            case android.R.id.home:
+                iVideo.closeActivity();
+                break;
         }
     }
 

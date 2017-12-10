@@ -3,6 +3,7 @@ package org.levraievangile.Presenter;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 
 import org.levraievangile.Model.Actualite;
@@ -87,6 +88,17 @@ public class NewsPresenter {
         }
         else{
             iNews.closeActivity();
+        }
+    }
+
+
+
+    // Manage menu Item
+    public void retrieveUserAction(MenuItem item){
+        switch (item.getItemId()){
+            case android.R.id.home:
+                iNews.closeActivity();
+                break;
         }
     }
 

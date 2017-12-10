@@ -2,6 +2,7 @@ package org.levraievangile.Presenter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.view.MenuItem;
 import android.view.View;
 
 import org.levraievangile.Model.ApiClient;
@@ -74,6 +75,17 @@ public class PdfPresenter {
         }
         else{
             iPdf.closeActivity();
+        }
+    }
+
+
+
+    // Manage menu Item
+    public void retrieveUserAction(MenuItem item){
+        switch (item.getItemId()){
+            case android.R.id.home:
+                iPdf.closeActivity();
+                break;
         }
     }
 

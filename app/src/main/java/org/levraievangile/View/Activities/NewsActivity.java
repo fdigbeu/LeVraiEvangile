@@ -52,6 +52,7 @@ public class NewsActivity extends AppCompatActivity implements NewsView.INews {
         int id = item.getItemId();
         switch (id){
             case android.R.id.home:
+                newsPresenter.retrieveUserAction(item);
                 return true;
         }
         return super.onOptionsItemSelected(item);
