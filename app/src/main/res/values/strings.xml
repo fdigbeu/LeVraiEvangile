@@ -37,6 +37,14 @@
     <string name="lb_fermer">FERMER</string>
     <string name="image_description"></string>
 
+    <string name="lb_top_search">Rechercher</string>
+    <string name="lb_top_share">Partager</string>
+    <string name="lb_top_config">Paramétrer</string>
+    <string name="lb_top_contact">Nous joindre</string>
+    <string name="lb_top_favorite">Mes favoris</string>
+    <string name="lb_top_download">Mes téléchargements</string>
+    <string name="lb_top_update">Mettre à jour</string>
+
     <string name="url_play_store">https://play.google.com/store/apps/details?id=org.levraievangile</string>
     <string name="url_partager_pdf">http://pdf.levraievangile.org/</string>
     <string name="url_partager_video">http://www.levraievangile.org/videos/lire/{TYPE}/{ID}/</string>

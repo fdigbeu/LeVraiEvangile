@@ -75,8 +75,27 @@ public class HomeActivity extends AppCompatActivity implements HomeView.IHome {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id){
+            case R.id.action_search:
+                return true;
+
+            case R.id.action_share:
+                return true;
+
+            case R.id.action_config:
+                return true;
+
+            case R.id.action_contact:
+                return true;
+
+            case R.id.action_favorite:
+                return true;
+
+            case R.id.action_download:
+                return true;
+
+            case R.id.action_update:
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
