@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/item_linearlayout"
+    android:foreground="?attr/selectableItemBackground"
+    android:padding="@dimen/size_5_dp"
+    android:layout_margin="@dimen/size_5_dp"
+    android:background="@drawable/btn_orange"
+    android:clickable="true"
+    tools:ignore="UseCompoundDrawables">
+
+    <ImageView
+        android:id="@+id/item_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="@dimen/size_5_dp"
+        android:src="@mipmap/question"
+        android:clickable="false"
+        android:contentDescription="@string/lb_content_desc"/>
+
+    <CheckBox
+        android:id="@+id/item_checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="@dimen/size_5_dp"
+        android:visibility="gone"
+        android:clickable="false"/>
+
+    <TextView
+        style="@style/CustomVerticalLine" />
+
+    <!-- Title of quizz (Category of bible book) -->
+    <include layout="@layout/item_quizz_save_title_ratinbar"  />
+
+</LinearLayout>
