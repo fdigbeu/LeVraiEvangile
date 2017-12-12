@@ -23,10 +23,12 @@ import org.levraievangile.View.Interfaces.NotificationView;
 
 import java.util.List;
 
-import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIO_TIME_ELAPSED;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_NEXT;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PREVIOUS;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_SELECTED;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED;
 
 /**
  * Created by Maranatha on 30/11/2017.
@@ -46,6 +48,7 @@ public class PlayerAudioService extends Service implements MediaPlayer.OnPrepare
         if (intent.getAction().equals(NotificationView.ACTION.STARTFOREGROUND_ACTION)) {
             audios = CommonPresenter.getAllNotificationAudios(getApplicationContext());
             positionSelected = Integer.parseInt(CommonPresenter.getDataFromSharePreferences(getApplicationContext(), KEY_NOTIF_PLAYER_SELECTED));
+            CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, ""+audios.get(positionSelected).getId());
             //--
             showNotification();
             // Play Media player
@@ -72,12 +75,16 @@ public class PlayerAudioService extends Service implements MediaPlayer.OnPrepare
         else if (intent.getAction().equals(NotificationView.ACTION.PREVIOUS_ACTION)) {
             positionSelected = Integer.parseInt(CommonPresenter.getDataFromSharePreferences(getApplicationContext(), KEY_NOTIF_PLAYER_PREVIOUS));
             //--
+            CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, ""+audios.get(positionSelected).getId());
+            //--
             CommonPresenter.saveNotificationParameters(getApplicationContext(), positionSelected, audios.size());
             // Play Media player
             playAudioMediaPlayer();
         }
         else if (intent.getAction().equals(NotificationView.ACTION.NEXT_ACTION)) {
             positionSelected = Integer.parseInt(CommonPresenter.getDataFromSharePreferences(getApplicationContext(), KEY_NOTIF_PLAYER_PLAY_NEXT));
+            //--
+            CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, ""+audios.get(positionSelected).getId());
             //--
             CommonPresenter.saveNotificationParameters(getApplicationContext(), positionSelected, audios.size());
             // Play Media player
@@ -92,12 +99,15 @@ public class PlayerAudioService extends Service implements MediaPlayer.OnPrepare
             }
         }
         else if (intent.getAction().equals(NotificationView.ACTION.STOPFOREGROUND_ACTION)) {
-            stopForeground(true);
-            stopSelf();
             // Close Media player
             if(mediaPlayer != null && mediaPlayer.isPlaying()){
+                CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED, ""+mediaPlayer.getCurrentPosition());
+                CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, ""+audios.get(positionSelected).getId());
                 mediaPlayer.stop();
             }
+            //--
+            stopForeground(true);
+            stopSelf();
         }
         //--
         return START_STICKY;
@@ -157,10 +167,10 @@ public class PlayerAudioService extends Service implements MediaPlayer.OnPrepare
         // Display stream success
         mediaPlayer.start();
         // Retrieve time to continue
-        String timeElapse = CommonPresenter.getDataFromSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TIME_ELAPSED);
-        if(timeElapse != null && !timeElapse.equalsIgnoreCase("NULL")){
+        String timeElapse = CommonPresenter.getDataFromSharePreferences(getApplicationContext(), KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED);
+        if(timeElapse != null && !timeElapse.equalsIgnoreCase("0")){
             mediaPlayer.seekTo(Integer.parseInt(timeElapse));
-            CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TIME_ELAPSED, "NULL");
+            CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED, "0");
         }
         // Small Notif audio Player : widget title is hide so info is written in subtitle
         views.setTextViewText(R.id.notif_player_title, audios.get(positionSelected).getTitre());

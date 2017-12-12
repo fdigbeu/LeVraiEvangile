@@ -16,86 +16,55 @@ import java.util.Hashtable;
  * Created by Maranatha on 11/12/2017.
  */
 
-public class LoadDownloadAudio extends AsyncTask<Void, Void, Void> {
+public class LoadDownloadVideo extends AsyncTask<Void, Void, ArrayList<DownloadFile>> {
 
     private  Context context;
-    private  String typeResource;
     private DownloadView.ILoadDownload iLoadDownload;
 
     @Override
     protected void onPreExecute() {
+        iLoadDownload.downloadVideoStarted();
         super.onPreExecute();
     }
 
     @Override
-    protected Void doInBackground(Void... voids) {
-        return null;
+    protected ArrayList<DownloadFile> doInBackground(Void... voids) {
+        ArrayList<DownloadFile> downloadFiles = videosFiles(context);
+        return downloadFiles;
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
+    protected void onPostExecute(ArrayList<DownloadFile> downloadFiles) {
+        super.onPostExecute(downloadFiles);
+        iLoadDownload.downloadVideoFinished(downloadFiles);
     }
 
-    private Hashtable<String, String> audiosFiles(Context context) {
+    private ArrayList<DownloadFile> videosFiles(Context context) {
         ContentResolver contentResolver = context.getContentResolver();
-        Hashtable<String, String> audioList = null;
-        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
-        String sortOrder = MediaStore.Audio.Media.TITLE + " DESC";
-        Cursor cursor = contentResolver.query(uri, null, selection, null, sortOrder);
-
-        if (cursor != null && cursor.getCount() > 0) {
-            audioList = new Hashtable<>();
-            while (cursor.moveToNext()) {
-                String data = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-                String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-                String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                String duration = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-                // Save to audioList
-                audioList.put("data", data);
-                audioList.put("title", title);
-                audioList.put("album", album);
-                audioList.put("artist", artist);
-                audioList.put("duration", duration);
-            }
-        }
-        cursor.close();
-        return audioList;
-    }
-
-    private Hashtable<String, String> videosFiles(Context context) {
-        ContentResolver contentResolver = context.getContentResolver();
-        Hashtable<String, String> videoList = null;
+        ArrayList<DownloadFile> videoList = null;
         Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
         //String selection = MediaStore.Video.Media.IS_VIDEO + "!= 0";
-        String sortOrder = MediaStore.Video.Media.TITLE + " DESC";
+        String sortOrder = MediaStore.Video.Media.TITLE + " ASC";
         Cursor cursor = contentResolver.query(uri, null, null, null, sortOrder);
 
         if (cursor != null && cursor.getCount() > 0) {
-            videoList = new Hashtable<>();
+            videoList = new ArrayList<>();
             while (cursor.moveToNext()) {
                 String data = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
                 String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
                 String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
                 String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                 String duration = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-                // Save to audioList
-                videoList.put("data", data);
-                videoList.put("title", title);
-                videoList.put("album", album);
-                videoList.put("artist", artist);
-                videoList.put("duration", duration);
+                // Save to videoList
+                videoList.add(new DownloadFile(data, title, album, artist, duration));
             }
         }
         cursor.close();
         return videoList;
     }
 
-    public void initializeData(Context context, String typeResource, DownloadView.ILoadDownload iLoadDownload){
+    public void initializeData(Context context, DownloadView.ILoadDownload iLoadDownload){
         this.context = context;
-        this.typeResource = typeResource;
         this.iLoadDownload = iLoadDownload;
     }
 }

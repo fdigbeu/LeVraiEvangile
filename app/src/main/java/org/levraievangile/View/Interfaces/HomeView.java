@@ -24,6 +24,8 @@ public class HomeView {
         public void events();
         public void askPermissionToSaveFile();
         public void launchParameterActivity();
+        public void launchDownloadActivity();
+        public void launchFavorisActivity();
     }
 
     public interface IPlaceholder{

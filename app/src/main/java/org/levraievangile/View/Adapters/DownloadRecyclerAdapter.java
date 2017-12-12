@@ -7,10 +7,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.levraievangile.Model.Favoris;
+import org.levraievangile.Model.DownloadFile;
 import org.levraievangile.Presenter.CommonPresenter;
 import org.levraievangile.R;
-import org.levraievangile.View.Interfaces.FavorisView;
+import org.levraievangile.View.Interfaces.DownloadView;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -19,48 +19,40 @@ import java.util.Hashtable;
  * Created by Maranatha on 10/10/2017.
  */
 
-public class FavorisRecyclerAdapter extends RecyclerView.Adapter<FavorisRecyclerAdapter.MyViewHolder> {
+public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecyclerAdapter.MyViewHolder> {
 
-    private ArrayList<Favoris> favorisItems;
+    private ArrayList<DownloadFile> downloadItems;
     private String typeResource;
     private Hashtable<Integer, MyViewHolder> mViewHolder;
-    private FavorisView.IPlaceholder iPlaceholder;
+    private DownloadView.IPlaceholder iPlaceholder;
     private int positionVideoSelected;
     private int positionAudioSelected;
     private int positionPdfSelected;
 
-    public FavorisRecyclerAdapter(ArrayList<Favoris> favorisItems, FavorisView.IPlaceholder iPlaceholder) {
-        this.favorisItems = favorisItems;
+    public DownloadRecyclerAdapter(ArrayList<DownloadFile> downloadItems, DownloadView.IPlaceholder iPlaceholder) {
+        this.downloadItems = downloadItems;
         this.iPlaceholder = iPlaceholder;
         mViewHolder = new Hashtable<>();
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_favoris, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_download, parent, false);
         return new  MyViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        typeResource = favorisItems.get(position).getType();
         holder.positionItem = position;
         mViewHolder.put(position, holder);
-        String dateFormat = CommonPresenter.changeFormatDate(favorisItems.get(position).getDate());
-        String durationFormat = null;
-        if(favorisItems.get(position).getDuree() != null && !favorisItems.get(position).getDuree().trim().contains("00:00:00")) {
-            durationFormat = CommonPresenter.changeFormatDuration(favorisItems.get(position).getDuree());
-        }
-        //--
-        holder.itemImage.setImageResource(CommonPresenter.getMipmapByTypeShortcode(favorisItems.get(position).getType_shortcode()));
-        holder.itemTitle.setText(favorisItems.get(position).getTitre());
-        String auteur = favorisItems.get(position).getAuteur();
-        holder.itemSubTitle.setText(dateFormat+(durationFormat != null ? " | "+durationFormat : "")+(auteur != null ? " | "+favorisItems.get(position).getAuteur() : ""));
+        //holder.itemImage.setImageResource(CommonPresenter.getMipmapByTypeShortcode(downloadItems.get(position).getType_shortcode()));
+        holder.itemTitle.setText(downloadItems.get(position).getTitle());
+        holder.itemSubTitle.setText(downloadItems.get(position).getDuration()+" | "+downloadItems.get(position).getArtist());
     }
 
     @Override
     public int getItemCount() {
-        return favorisItems.size();
+        return downloadItems.size();
     }
 
 
@@ -83,7 +75,7 @@ public class FavorisRecyclerAdapter extends RecyclerView.Adapter<FavorisRecycler
             container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    
                 }
             });
         }

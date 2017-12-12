@@ -26,10 +26,10 @@ import retrofit2.Response;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_ALL_AUDIOS_LIST;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_AUDIO_SELECTED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIOS_LIST;
-import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIO_TIME_ELAPSED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_NEXT;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PREVIOUS;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_SELECTED;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_SHORT_CODE;
 
 /**
@@ -192,9 +192,7 @@ public class AudioPresenter implements AudioView.IStreamAudio {
             switch (view.getId()){
                 // Play notification
                 case R.id.fab_player_notification:
-                    CommonPresenter.saveDataInSharePreferences(view.getContext(), KEY_NOTIF_AUDIO_TIME_ELAPSED, ""+mediaPlayer.getCurrentPosition());
-                    closeAudioMediaPlayer(mediaPlayer);
-                    iAudio.playNotificationAudio();
+                    playAudioNotification(view.getContext(), mediaPlayer);
                     break;
 
                 case R.id.audio_player_close:
@@ -203,6 +201,13 @@ public class AudioPresenter implements AudioView.IStreamAudio {
             }
         }
         catch (Exception ex){}
+    }
+
+    // Play audio notification
+    private void playAudioNotification(Context context, MediaPlayer mediaPlayer){
+        CommonPresenter.saveDataInSharePreferences(context, KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED, ""+mediaPlayer.getCurrentPosition());
+        closeAudioMediaPlayer(mediaPlayer);
+        iAudio.playNotificationAudio();
     }
 
     // Close media player

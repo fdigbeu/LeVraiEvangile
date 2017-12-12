@@ -53,7 +53,15 @@
         <activity
             android:name=".View.Activities.SettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="@string/lb_top_parameter"></activity>
+            android:label="@string/lb_top_parameter" />
+        <activity
+            android:name=".View.Activities.DownloadActivity"
+            android:label="@string/title_activity_download"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".View.Activities.FavorisActivity"
+            android:label="@string/title_activity_favoris"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

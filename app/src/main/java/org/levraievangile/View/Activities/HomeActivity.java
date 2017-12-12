@@ -7,11 +7,9 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
@@ -297,6 +295,20 @@ public class HomeActivity extends AppCompatActivity implements HomeView.IHome {
     @Override
     public void launchParameterActivity(){
         Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+
+    @Override
+    public void launchDownloadActivity(){
+        Intent intent = new Intent(HomeActivity.this, DownloadActivity.class);
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+
+    @Override
+    public void launchFavorisActivity(){
+        Intent intent = new Intent(HomeActivity.this, FavorisActivity.class);
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }

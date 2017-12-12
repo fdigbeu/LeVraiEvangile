@@ -50,6 +50,11 @@ public class HomePresenter {
         iHome.initialize();
         iHome.events();
         iHome.askPermissionToSaveFile();
+        //--
+        // Initialize the settings
+        CommonPresenter.initializeAppSetting(context);
+        // Initialise notification data
+        CommonPresenter.initializeNotificationTimeLapsed(context);
     }
 
     // Launch activity
@@ -173,12 +178,15 @@ public class HomePresenter {
                 break;
 
             case R.id.action_favorite:
+                iHome.launchFavorisActivity();
                 break;
 
             case R.id.action_download:
+                iHome.launchDownloadActivity();
                 break;
 
             case R.id.action_update:
+                CommonPresenter.getLveMarketLink(context);
                 break;
         }
     }

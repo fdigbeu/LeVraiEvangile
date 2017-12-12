@@ -28,8 +28,6 @@ public class SettingPresenter {
     public void loadSettingsData(Context context){
         iSettings.initialize();
         iSettings.events();
-        // Initialize the settings
-        CommonPresenter.initializeAppSetting(context);
         // Load All setting data
         Setting mSetting = null;
         List<Setting> settingList = new ArrayList<>();

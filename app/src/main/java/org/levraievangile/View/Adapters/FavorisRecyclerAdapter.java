@@ -1,19 +1,16 @@
 package org.levraievangile.View.Adapters;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.levraievangile.Model.BonASavoir;
-import org.levraievangile.Model.Video;
-import org.levraievangile.Presenter.HomePresenter;
+import org.levraievangile.Model.Favoris;
+import org.levraievangile.Presenter.CommonPresenter;
 import org.levraievangile.R;
-import org.levraievangile.View.Activities.WebActivity;
-import org.levraievangile.View.Interfaces.HomeView;
+import org.levraievangile.View.Interfaces.FavorisView;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -22,38 +19,48 @@ import java.util.Hashtable;
  * Created by Maranatha on 10/10/2017.
  */
 
-public class GoodToKnowRecyclerAdapter extends RecyclerView.Adapter<GoodToKnowRecyclerAdapter.MyViewHolder> {
+public class FavorisRecyclerAdapter extends RecyclerView.Adapter<FavorisRecyclerAdapter.MyViewHolder> {
 
-    private ArrayList<BonASavoir> goodToKnowItems;
+    private ArrayList<Favoris> favorisItems;
+    private String typeResource;
     private Hashtable<Integer, MyViewHolder> mViewHolder;
-    private HomeView.IPlaceholder iPlaceholder;
-    private int positionSelected;
+    private FavorisView.IPlaceholder iPlaceholder;
+    private int positionVideoSelected;
+    private int positionAudioSelected;
+    private int positionPdfSelected;
 
-    public GoodToKnowRecyclerAdapter(ArrayList<BonASavoir> goodToKnowItems, HomeView.IPlaceholder iPlaceholder) {
-        this.goodToKnowItems = goodToKnowItems;
+    public FavorisRecyclerAdapter(ArrayList<Favoris> favorisItems, FavorisView.IPlaceholder iPlaceholder) {
+        this.favorisItems = favorisItems;
         this.iPlaceholder = iPlaceholder;
         mViewHolder = new Hashtable<>();
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_bon_asavoir, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_favoris, parent, false);
         return new  MyViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        BonASavoir goodToKnow = goodToKnowItems.get(position);
-        mViewHolder.put(position, holder);
+        typeResource = favorisItems.get(position).getType();
         holder.positionItem = position;
-        holder.horizontalLine.setVisibility(position+1 < goodToKnowItems.size() ? View.VISIBLE : View.GONE);
-        holder.itemIcon.setImageResource(goodToKnow.getMipmap());
-        holder.itemTitle.setText(goodToKnow.getTitre());
+        mViewHolder.put(position, holder);
+        String dateFormat = CommonPresenter.changeFormatDate(favorisItems.get(position).getDate());
+        String durationFormat = null;
+        if(favorisItems.get(position).getDuree() != null && !favorisItems.get(position).getDuree().trim().contains("00:00:00")) {
+            durationFormat = CommonPresenter.changeFormatDuration(favorisItems.get(position).getDuree());
+        }
+        //--
+        holder.itemImage.setImageResource(CommonPresenter.getMipmapByTypeShortcode(favorisItems.get(position).getType_shortcode()));
+        holder.itemTitle.setText(favorisItems.get(position).getTitre());
+        String auteur = favorisItems.get(position).getAuteur();
+        holder.itemSubTitle.setText(dateFormat+(durationFormat != null ? " | "+durationFormat : "")+(auteur != null ? " | "+favorisItems.get(position).getAuteur() : ""));
     }
 
     @Override
     public int getItemCount() {
-        return goodToKnowItems.size();
+        return favorisItems.size();
     }
 
 
@@ -61,25 +68,22 @@ public class GoodToKnowRecyclerAdapter extends RecyclerView.Adapter<GoodToKnowRe
 
         int positionItem;
         View container;
-        ImageView itemIcon;
-        TextView horizontalLine;
+        ImageView itemImage;
         TextView itemTitle;
+        TextView itemSubTitle;
         public MyViewHolder(View itemView) {
             super(itemView);
 
-            container = itemView.findViewById(R.id.container);
-            itemIcon = itemView.findViewById(R.id.item_icon);
+            container = itemView.findViewById(R.id.container_layout);
+            itemImage = itemView.findViewById(R.id.item_image);
             itemTitle = itemView.findViewById(R.id.item_title);
-            horizontalLine = itemView.findViewById(R.id.horizontal_line);
+            itemSubTitle = itemView.findViewById(R.id.item_subtitle);
 
             // Event
             container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    positionSelected = positionItem;
-                    HomePresenter homePresenter = new HomePresenter(iPlaceholder);
-                    String pageUrl = view.getContext().getResources().getString(R.string.ws_url_good_toknow_detail);
-                    homePresenter.launchActivity(pageUrl.replace("{ID}", ""+goodToKnowItems.get(positionSelected).getId()), WebActivity.class);
+
                 }
             });
         }

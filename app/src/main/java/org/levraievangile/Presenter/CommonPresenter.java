@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DownloadManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -92,12 +93,18 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     public static final String KEY_VALUE_VIDEO_PLAY_PREVIOUS = "KEY_VALUE_VIDEO_PLAY_PREVIOUS";
     public static final int VALUE_VIDEO_SELECTED_REQUEST_CODE = 11;
 
-    public static final String KEY_NOTIF_AUDIO_TIME_ELAPSED = "KEY_NOTIF_AUDIO_TIME_ELAPSED";
+    // Manage audioId and time elapse between player audio and notif audio
+    public static final String KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED = "KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED";
+    public static final String KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED = "KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED";
+    public static final String KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID = "KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID";
+
+    // Manage notification audio
     public static final String KEY_NOTIF_AUDIOS_LIST = "KEY_NOTIF_AUDIOS_LIST";
     public static final String KEY_NOTIF_PLAYER_SELECTED = "KEY_NOTIF_PLAYER_SELECTED";
     public static final String KEY_NOTIF_PLAYER_PLAY_NEXT = "KEY_NOTIF_PLAYER_PLAY_NEXT";
     public static final String KEY_NOTIF_PLAYER_PREVIOUS = "KEY_NOTIF_PLAYER_PREVIOUS";
 
+    // Manage settings
     public static final String KEY_SETTING_CONFIRM_BEFORE_QUIT_APP = "KEY_SETTING_CONFIRM_BEFORE_QUIT_APP";
     public static final String KEY_SETTING_AUDIO_NOTIFICATION = "KEY_SETTING_AUDIO_NOTIFICATION";
     public static final String KEY_SETTING_VIDEO_NOTIFICATION = "KEY_SETTING_VIDEO_NOTIFICATION";
@@ -1111,6 +1118,13 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
         return mSetting;
     }
 
+    // Initialize notification time lapse
+    public static void initializeNotificationTimeLapsed(Context context){
+        saveDataInSharePreferences(context, KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED, "0");
+        saveDataInSharePreferences(context, KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED, "0");
+        saveDataInSharePreferences(context, KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, "0");
+    }
+
     // Save setting data object
     public static void saveSettingObjectInSharePreferences(Context context, String key, boolean choice){
         Setting mSetting = getSettingObjectFromSharePreferences(context, key);
@@ -1249,6 +1263,20 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
         });
 
         contactDialogForm.show();
+    }
+
+    /**
+     * Get lve market
+     * @param context
+     */
+    public static void getLveMarketLink(Context context){
+        Intent intent = context.getPackageManager().getLaunchIntentForPackage("com.android.vending");
+        // package name and activity
+        ComponentName comp = new ComponentName("com.android.vending", "com.google.android.finsky.activities.LaunchUrlHandlerActivity");
+        intent.setComponent(comp);
+        intent.setData(Uri.parse("market://details?id=org.levraievangile"));
+        context.startActivity(intent);
+        ((Activity)context).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     /**
