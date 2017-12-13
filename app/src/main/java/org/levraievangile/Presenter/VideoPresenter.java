@@ -91,7 +91,6 @@ public class VideoPresenter {
         }
     }
 
-
     /**
      * Scroll video data items to positon
      * @param position

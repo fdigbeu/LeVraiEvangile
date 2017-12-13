@@ -1,4 +1,4 @@
-package org.tv2vie.View.Services;
+package org.levraievangile.View.Services;
 
 import android.app.DownloadManager;
 import android.app.Service;
@@ -7,9 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
-import android.util.Log;
 
-import org.tv2vie.Presenter.Home.HomePresenter;
+import org.levraievangile.Presenter.HomePresenter;
 
 /**
  * Created by Maranatha on 30/08/2017.
@@ -17,7 +16,7 @@ import org.tv2vie.Presenter.Home.HomePresenter;
 
 public class DownloadService extends Service
 {
-    private static BroadcastReceiver downloadReceiver;
+    private BroadcastReceiver downloadReceiver;
 
     @Override
     public IBinder onBind(Intent arg0)
@@ -45,7 +44,8 @@ public class DownloadService extends Service
             @Override
             public void onReceive(Context context, Intent intent)
             {
-                HomePresenter.retrieveDataFromDownloadService(context, intent);
+                HomePresenter homePresenter = new HomePresenter();
+                homePresenter.fileIsDownloadSuccessFully(context, intent);
             }
         };
 

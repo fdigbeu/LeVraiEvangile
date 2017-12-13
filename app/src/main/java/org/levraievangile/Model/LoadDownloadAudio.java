@@ -7,10 +7,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 
+import org.levraievangile.Presenter.CommonPresenter;
+import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.DownloadView;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 /**
  * Created by Maranatha on 11/12/2017.
@@ -20,6 +21,7 @@ public class LoadDownloadAudio extends AsyncTask<Void, Void, ArrayList<DownloadF
 
     private  Context context;
     private DownloadView.ILoadDownload iLoadDownload;
+    private ArrayList<DownloadFile> audioList = null;
 
     @Override
     protected void onPreExecute() {
@@ -40,27 +42,52 @@ public class LoadDownloadAudio extends AsyncTask<Void, Void, ArrayList<DownloadF
     }
 
     private ArrayList<DownloadFile> audiosFiles(Context context) {
+        // Get Lve audio saved
+        audioList = new ArrayList<>();
+        DAOFavoris daoFavoris = new DAOFavoris(context);
+        ArrayList<Favoris> mList = daoFavoris.getAllData("download_audio");
+        if(mList != null && mList.size() > 0){
+            for (int i = mList.size()-1; i > 0; i--){
+                Favoris favoris = mList.get(i);
+                String data = CommonPresenter.getAudioPath()+"/"+favoris.getSrc();
+                String title = favoris.getTitre();
+                String album = favoris.getType_libelle();
+                String artist = favoris.getAuteur();
+                String duration = favoris.getDuree();
+                int mipmap = favoris.getMipmap();
+                String shortcode = "download-audio";
+                String date = favoris.getDate();
+                audioList.add(new DownloadFile(data, title, album, artist, duration, mipmap, date, shortcode));
+            }
+        }
+        //--
+        //getAllAudiosStorage();
+        //--
+        return audioList;
+    }
+
+    private void getAllAudiosStorage(){
         ContentResolver contentResolver = context.getContentResolver();
-        ArrayList<DownloadFile> audioList = null;
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
-        String sortOrder = MediaStore.Audio.Media.TITLE + " ASC";
+        String sortOrder = MediaStore.Audio.Media.DATE_ADDED + " DESC";
         Cursor cursor = contentResolver.query(uri, null, selection, null, sortOrder);
-
+        //--
         if (cursor != null && cursor.getCount() > 0) {
-            audioList = new ArrayList<>();
             while (cursor.moveToNext()) {
                 String data = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
                 String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
                 String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
                 String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                 String duration = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+                String date = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATE_ADDED));
                 // Save to audioList;
-                audioList.add(new DownloadFile(data, title, album, artist, duration));
+                if(!data.contains("LVE/Audios/")) {
+                    audioList.add(new DownloadFile(data, title, album, artist, CommonPresenter.getHourMinuteSecondBy(Integer.parseInt(duration)), R.mipmap.sm_audio, date, "download-audio"));
+                }
             }
         }
         cursor.close();
-        return audioList;
     }
 
     public void initializeData(Context context, DownloadView.ILoadDownload iLoadDownload){

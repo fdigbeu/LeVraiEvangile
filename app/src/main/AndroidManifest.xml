@@ -46,10 +46,6 @@
         <activity
             android:name=".View.Activities.VideoPlayerActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />
-
-        <!-- Service for media player notification -->
-        <service android:name=".View.Services.PlayerAudioService" />
-
         <activity
             android:name=".View.Activities.SettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -62,6 +58,11 @@
             android:name=".View.Activities.FavorisActivity"
             android:label="@string/title_activity_favoris"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <!-- Service for media player notification -->
+        <service android:name=".View.Services.PlayerAudioService" />
+        <!-- Service for downloader -->
+        <service android:name=".View.Services.DownloadService" />
     </application>
 
 </manifest>

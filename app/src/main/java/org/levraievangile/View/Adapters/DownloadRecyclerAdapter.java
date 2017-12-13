@@ -45,7 +45,7 @@ public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecycl
     public void onBindViewHolder(MyViewHolder holder, int position) {
         holder.positionItem = position;
         mViewHolder.put(position, holder);
-        //holder.itemImage.setImageResource(CommonPresenter.getMipmapByTypeShortcode(downloadItems.get(position).getType_shortcode()));
+        holder.itemImage.setImageResource(CommonPresenter.getMipmapByTypeShortcode(downloadItems.get(position).getShortcode()));
         holder.itemTitle.setText(downloadItems.get(position).getTitle());
         holder.itemSubTitle.setText(downloadItems.get(position).getDuration()+" | "+downloadItems.get(position).getArtist());
     }

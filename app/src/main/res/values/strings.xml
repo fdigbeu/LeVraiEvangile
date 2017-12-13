@@ -83,9 +83,6 @@
     <string name="url_partager_video">http://www.levraievangile.org/videos/lire/{TYPE}/{ID}/</string>
     <string name="url_partager_audio">http://www.levraievangile.org/audios/lire/{TYPE}/{ID}/</string>
     <string name="url_actualite_image">http://www.levraievangile.org/uploads/</string>
-    <string name="title_activity_download">DownloadActivity</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
-    <string name="tab_text_3">Tab 3</string>
-    <string name="title_activity_favoris">FavorisActivity</string>
+    <string name="title_activity_download">Mes téléchargements</string>
+    <string name="title_activity_favoris">Mes favoris</string>
 </resources>

@@ -1,6 +1,7 @@
 package org.levraievangile.Presenter;
 
 import android.content.Context;
+import android.view.MenuItem;
 
 import org.levraievangile.View.Interfaces.FavorisView;
 
@@ -21,5 +22,14 @@ public class FavorisPresenter {
     public void loadFavorisData(Context context){
         iFravoris.initialize();
         iFravoris.events();
+    }
+
+    // Manage menu Item
+    public void retrieveUserAction(MenuItem item){
+        switch (item.getItemId()){
+            case android.R.id.home:
+                iFravoris.closeActivity();
+                break;
+        }
     }
 }

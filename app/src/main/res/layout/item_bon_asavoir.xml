@@ -17,8 +17,8 @@
 
         <ImageView
             android:id="@+id/item_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/size_50_dp"
+            android:layout_height="@dimen/size_50_dp"
             android:layout_gravity="center_vertical"
             android:contentDescription="@string/image_description"
             android:layout_margin="@dimen/size_10_dp" />

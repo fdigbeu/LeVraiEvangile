@@ -2,10 +2,12 @@ package org.levraievangile.Presenter;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 
 import org.levraievangile.Model.DownloadFile;
 import org.levraievangile.Model.LoadDownloadAudio;
+import org.levraievangile.Model.LoadDownloadPdf;
 import org.levraievangile.Model.LoadDownloadVideo;
 import org.levraievangile.View.Interfaces.DownloadView;
 
@@ -22,6 +24,7 @@ public class DownloadPresenter implements DownloadView.ILoadDownload {
     // Ref LoadDownloadFile
     private LoadDownloadAudio loadDownloadAudio;
     private LoadDownloadVideo loadDownloadVideo;
+    private LoadDownloadPdf loadDownloadPdf;
 
     // Constructor
     public DownloadPresenter(DownloadView.IDownload iDownload) {
@@ -64,8 +67,20 @@ public class DownloadPresenter implements DownloadView.ILoadDownload {
                 break;
             // PDF
             case 2:
+                loadDownloadPdf = new LoadDownloadPdf();
+                loadDownloadPdf.initializeData(context, this);
+                loadDownloadPdf.execute();
                 break;
 
+        }
+    }
+
+    // Manage menu Item
+    public void retrieveUserAction(MenuItem item){
+        switch (item.getItemId()){
+            case android.R.id.home:
+                iDownload.closeActivity();
+                break;
         }
     }
 
@@ -97,5 +112,21 @@ public class DownloadPresenter implements DownloadView.ILoadDownload {
     @Override
     public void downloadVideoFailure() {
 
+    }
+
+    @Override
+    public void downloadPdfFinished(ArrayList<DownloadFile> downloadFiles) {
+        iPlaceholder.loadDownloadPdfData(downloadFiles, 1);
+    }
+
+    @Override
+    public void downloadPdfFailure() {
+
+    }
+
+    public void cancelAsyntask(){
+        if(loadDownloadAudio != null) loadDownloadAudio.cancel(true);
+        if(loadDownloadVideo != null) loadDownloadVideo.cancel(true);
+        if(loadDownloadPdf != null) loadDownloadPdf.cancel(true);
     }
 }

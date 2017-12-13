@@ -7,10 +7,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 
+import org.levraievangile.Presenter.CommonPresenter;
+import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.DownloadView;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 /**
  * Created by Maranatha on 11/12/2017.
@@ -20,6 +21,7 @@ public class LoadDownloadVideo extends AsyncTask<Void, Void, ArrayList<DownloadF
 
     private  Context context;
     private DownloadView.ILoadDownload iLoadDownload;
+    ArrayList<DownloadFile> videoList = null;
 
     @Override
     protected void onPreExecute() {
@@ -40,27 +42,51 @@ public class LoadDownloadVideo extends AsyncTask<Void, Void, ArrayList<DownloadF
     }
 
     private ArrayList<DownloadFile> videosFiles(Context context) {
-        ContentResolver contentResolver = context.getContentResolver();
-        ArrayList<DownloadFile> videoList = null;
-        Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-        //String selection = MediaStore.Video.Media.IS_VIDEO + "!= 0";
-        String sortOrder = MediaStore.Video.Media.TITLE + " ASC";
-        Cursor cursor = contentResolver.query(uri, null, null, null, sortOrder);
+        // Get Lve video saved
+        videoList = new ArrayList<>();
+        DAOFavoris daoFavoris = new DAOFavoris(context);
+        ArrayList<Favoris> mList = daoFavoris.getAllData("download_video");
+        if(mList != null && mList.size() > 0){
+            for (int i=mList.size()-1; i > 0; i--){
+                Favoris favoris = mList.get(i);
+                String data = CommonPresenter.getVideoPath()+"/"+favoris.getSrc();
+                String title = favoris.getTitre();
+                String album = favoris.getType_libelle();
+                String artist = favoris.getAuteur();
+                String duration = favoris.getDuree();
+                String shortcode = "download-video";
+                int mipmap = CommonPresenter.getMipmapByTypeShortcode(favoris.getType_shortcode());
+                String date = favoris.getDate();
+                videoList.add(new DownloadFile(data, title, album, artist, duration, mipmap, date, shortcode));
+            }
+        }
+        //--
+        //getAllVideosStorage();
+        //--
+        return videoList;
+    }
 
+    private void getAllVideosStorage(){
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+        String sortOrder = MediaStore.Video.Media.DATE_ADDED + " DESC";
+        Cursor cursor = contentResolver.query(uri, null, null, null, sortOrder);
+        //--
         if (cursor != null && cursor.getCount() > 0) {
-            videoList = new ArrayList<>();
             while (cursor.moveToNext()) {
                 String data = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
                 String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
                 String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
                 String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                 String duration = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+                String date = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATE_ADDED));
                 // Save to videoList
-                videoList.add(new DownloadFile(data, title, album, artist, duration));
+                if(!data.contains("LVE/Videos/")) {
+                    videoList.add(new DownloadFile(data, title, album, artist, CommonPresenter.getHourMinuteSecondBy(Integer.parseInt(duration)), R.mipmap.sm_video, date, "download-video"));
+                }
             }
         }
         cursor.close();
-        return videoList;
     }
 
     public void initializeData(Context context, DownloadView.ILoadDownload iLoadDownload){

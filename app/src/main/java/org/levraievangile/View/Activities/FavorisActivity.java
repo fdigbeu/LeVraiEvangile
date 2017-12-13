@@ -52,8 +52,10 @@ public class FavorisActivity extends AppCompatActivity implements FavorisView.IF
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id){
+            case android.R.id.home:
+                favorisPresenter.retrieveUserAction(item);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -72,6 +74,9 @@ public class FavorisActivity extends AppCompatActivity implements FavorisView.IF
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+
+        // Display Home Back button
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -154,5 +159,15 @@ public class FavorisActivity extends AppCompatActivity implements FavorisView.IF
             // Show 3 total pages.
             return 3;
         }
+    }
+
+    @Override
+    public void closeActivity() {
+        this.finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

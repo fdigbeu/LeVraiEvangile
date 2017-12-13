@@ -1,5 +1,7 @@
 package org.levraievangile.View.Interfaces;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 
 import org.levraievangile.Model.Annee;

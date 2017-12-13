@@ -61,10 +61,11 @@ public class DownloadActivity extends AppCompatActivity implements DownloadView.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id){
+            case android.R.id.home:
+                downloadPresenter.retrieveUserAction(item);
+                return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -83,6 +84,9 @@ public class DownloadActivity extends AppCompatActivity implements DownloadView.
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+
+        // Display Home Back button
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -149,31 +153,29 @@ public class DownloadActivity extends AppCompatActivity implements DownloadView.
 
         @Override
         public void loadDownloadAudioData(ArrayList<DownloadFile> downloads, int numberColumns) {
-            /*GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), numberColumns);
+            GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), numberColumns);
             downloadRecyclerView.setLayoutManager(gridLayout);
             downloadRecyclerView.setHasFixedSize(true);
             DownloadRecyclerAdapter adapter = new DownloadRecyclerAdapter(downloads, this);
-            downloadRecyclerView.setAdapter(adapter);*/
-            //--
-            if(downloads != null && downloads.size() > 0){
-                for (int i=0; i<downloads.size(); i++){
-                    Log.i("TAG_AUDIO_DOWNLOAD", "loadDownloadAudioData("+i+") : "+downloads.get(i).toString());
-                }
-            }
+            downloadRecyclerView.setAdapter(adapter);
         }
 
         @Override
         public void loadDownloadVideoData(ArrayList<DownloadFile> downloads, int numberColumns) {
-            if(downloads != null && downloads.size() > 0){
-                for (int i=0; i<downloads.size(); i++){
-                    Log.i("TAG_VIDEO_DOWNLOAD", "loadDownloadVideoData("+i+") : "+downloads.get(i).toString());
-                }
-            }
+            GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), numberColumns);
+            downloadRecyclerView.setLayoutManager(gridLayout);
+            downloadRecyclerView.setHasFixedSize(true);
+            DownloadRecyclerAdapter adapter = new DownloadRecyclerAdapter(downloads, this);
+            downloadRecyclerView.setAdapter(adapter);
         }
 
         @Override
         public void loadDownloadPdfData(ArrayList<DownloadFile> downloads, int numberColumns) {
-
+            GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), numberColumns);
+            downloadRecyclerView.setLayoutManager(gridLayout);
+            downloadRecyclerView.setHasFixedSize(true);
+            DownloadRecyclerAdapter adapter = new DownloadRecyclerAdapter(downloads, this);
+            downloadRecyclerView.setAdapter(adapter);
         }
 
         @Override
@@ -201,5 +203,17 @@ public class DownloadActivity extends AppCompatActivity implements DownloadView.
         public int getCount() {
             return 3;
         }
+    }
+
+    @Override
+    public void closeActivity() {
+        downloadPresenter.cancelAsyntask();
+        this.finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        downloadPresenter.cancelAsyntask();
+        super.onBackPressed();
     }
 }

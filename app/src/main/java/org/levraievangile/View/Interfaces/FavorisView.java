@@ -14,6 +14,7 @@ public class FavorisView {
     public interface IFravoris{
         public void initialize();
         public void events();
+        public void closeActivity();
     }
 
     public interface IPlaceholder{

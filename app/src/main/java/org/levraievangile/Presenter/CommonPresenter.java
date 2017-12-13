@@ -51,6 +51,7 @@ import org.json.JSONObject;
 import org.levraievangile.Model.Annee;
 import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.BonASavoir;
+import org.levraievangile.Model.Favoris;
 import org.levraievangile.Model.JsonReturn;
 import org.levraievangile.Model.Mois;
 import org.levraievangile.Model.Pdf;
@@ -81,6 +82,7 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     public static final String KEY_ALL_NEWS_MONTH_LIST = "KEY_ALL_NEWS_MONTH_LIST";
 
     public static final String KEY_AUDIO_SELECTED = "KEY_AUDIO_SELECTED";
+    public static final String KEY_VIDEO_SELECTED = "KEY_VIDEO_SELECTED";
     public static final String KEY_PDF_SELECTED = "KEY_PDF_SELECTED";
     public static final String KEY_URL_NEWS_SELECTED = "KEY_URL_NEWS_SELECTED";
 
@@ -111,6 +113,8 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     public static final String KEY_SETTING_CONCATENATE_AUDIO_READING = "KEY_SETTING_CONCATENATE_AUDIO_READING";
     public static final String KEY_SETTING_CONCATENATE_VIDEO_READING = "KEY_SETTING_CONCATENATE_VIDEO_READING";
     public static final String KEY_SETTING_WIFI_EXCLUSIF = "KEY_SETTING_WIFI_EXCLUSIF";
+
+    public static final String KEY_DOWNLOAD_FILES_LIST = "KEY_DOWNLOAD_FILES_LIST";
 
     public static final String[] KEY_SETTINGS = {KEY_SETTING_CONFIRM_BEFORE_QUIT_APP,
             KEY_SETTING_AUDIO_NOTIFICATION, KEY_SETTING_VIDEO_NOTIFICATION, KEY_SETTING_CONCATENATE_AUDIO_READING,
@@ -237,6 +241,28 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     }
 
     /**
+     * Get time by millisecond
+     * @param milliseconde
+     * @return
+     */
+    public static String getHourMinuteSecondBy(int milliseconde){
+        String timeReturn = "";
+        int heureReturn = 0;
+        int seconde = milliseconde/1000;
+        int minuteReturn = seconde/60;
+        int secondeReturn = (seconde - (minuteReturn*60));
+        int heure = minuteReturn/24;
+        if(heure > 0){
+            heureReturn = heure;
+            minuteReturn = (minuteReturn - (heureReturn*24));
+        }
+        timeReturn += (heureReturn > 9 ? heureReturn : "0"+heureReturn);
+        timeReturn += (minuteReturn > 9 ? ":"+minuteReturn : ":0"+minuteReturn);
+        timeReturn += (secondeReturn > 9 ? ":"+secondeReturn : ":0"+secondeReturn);
+        return timeReturn;
+    }
+
+    /**
      * Get mipmap by typeShortcode
      * @param shortcode
      * @return
@@ -285,6 +311,15 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
                 break;
             case "sainte-bible":
                 mipmap = R.mipmap.sm_pdf;
+                break;
+            case "download-pdf":
+                mipmap = R.mipmap.sm_pdf;
+                break;
+            case "download-audio":
+                mipmap = R.mipmap.sm_audio;
+                break;
+            case "download-video":
+                mipmap = R.mipmap.sm_video;
                 break;
         }
         return mipmap;
@@ -450,6 +485,24 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
             // Download
             DownloadManager manager = (DownloadManager)context.getSystemService(Context.DOWNLOAD_SERVICE);
             manager.enqueue(request);
+            // Add to download file list
+            Favoris favoris = null;
+            switch (typeOfFile){
+                case "audio":
+                    Audio audio = getAudioSelected(context);
+                    favoris = new Favoris(audio.getId(), "download_audio", audio.getUrlacces(), audio.getSrc(), audio.getTitre(), audio.getAuteur(), audio.getDuree(), audio.getDate(), audio.getType_libelle(), audio.getType_shortcode(), audio.getMipmap(), audio.getId());
+                    break;
+                case "video":
+                    Video video = getVideoSelected(context);
+                    favoris = new Favoris(video.getId(), "download_video", video.getUrlacces(), video.getSrc(), video.getTitre(), video.getAuteur(), video.getDuree(), video.getDate(), video.getType_libelle(), video.getType_shortcode(), video.getMipmap(), video.getId());
+                    break;
+                case "pdf":
+                    Pdf pdf = getPdfSelected(context);
+                    favoris = new Favoris(pdf.getId(), "download_pdf", pdf.getUrlacces(), pdf.getSrc(), pdf.getTitre(), pdf.getAuteur(), "00:00:00", pdf.getDate(), pdf.getType_libelle(), pdf.getType_shortcode(), pdf.getMipmap(), pdf.getId());
+                    break;
+            }
+            //--
+            addDownloadFileToTheTemponList(context, favoris);
         }
         catch (Exception ex){}
     }
@@ -720,6 +773,36 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
             e.printStackTrace();
         }
         return pdf;
+    }
+
+
+    /**
+     * Get selected videos saved
+     * @param context
+     * @return
+     */
+    public static Video getVideoSelected(Context context){
+        String srcFichier = getDataFromSharePreferences(context, KEY_VIDEO_SELECTED);
+        Video video = null;
+        try {
+            JSONObject jsonObject = new JSONObject(srcFichier);
+            int id = jsonObject.getInt("id");
+            String titre = jsonObject.getString("titre");
+            String duree = jsonObject.getString("duree");
+            String urlacces = jsonObject.getString("urlacces");
+            String src = jsonObject.getString("src");
+            String auteur = jsonObject.getString("auteur");
+            String type_libelle = jsonObject.getString("type_libelle");
+            String type_shortcode = jsonObject.getString("type_shortcode");
+            String date = jsonObject.getString("date");
+            int mipmap = getMipmapByTypeShortcode(type_shortcode);
+            video = new Video(id, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, mipmap);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return video;
     }
 
 
@@ -1043,17 +1126,17 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
         }
     }
 
-    private static String getAudioPath(){
+    public static String getAudioPath(){
         File SDCardRoot = Environment.getExternalStorageDirectory();
         return Environment.getExternalStoragePublicDirectory(SDCardRoot + "/" + FOLDER_NAME[1] + "/").getAbsolutePath();
     }
 
-    private static String getVideoPath(){
+    public static String getVideoPath(){
         File SDCardRoot = Environment.getExternalStorageDirectory();
         return Environment.getExternalStoragePublicDirectory(SDCardRoot + "/" + FOLDER_NAME[2] + "/").getAbsolutePath();
     }
 
-    private static String getPdfPath(){
+    public static String getPdfPath(){
         File SDCardRoot = Environment.getExternalStorageDirectory();
         return Environment.getExternalStoragePublicDirectory(SDCardRoot + "/" + FOLDER_NAME[3] + "/").getAbsolutePath();
     }
@@ -1303,8 +1386,6 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
         sendContactForm.execute();
     }
 
-
-
     // If send contact message is finished
     @Override
     public void onSendContactFormFinished(Context context, String returnCode) {
@@ -1325,5 +1406,67 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
         else{
             Toast.makeText(context, context.getResources().getString(R.string.unstable_connection), Toast.LENGTH_LONG).show();
         }
+    }
+
+
+
+    /**
+     * Get all save good to know
+     * @param context
+     * @return
+     */
+    public static ArrayList<Favoris> getAllDownloadFiles(Context context){
+        ArrayList<Favoris> mList = new ArrayList<>();
+        String srcFichier = getDataFromSharePreferences(context, KEY_DOWNLOAD_FILES_LIST);
+        try {
+            JSONArray jsonArray = new JSONArray(srcFichier);
+            //--
+            for(int i = 0; i < jsonArray.length(); i++)
+            {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                int id = jsonObject.getInt("id");
+                String type = jsonObject.getString("type");
+                String urlacces = jsonObject.getString("urlacces");
+                String src = jsonObject.getString("src");
+                String titre = jsonObject.getString("titre");
+                String auteur = jsonObject.getString("auteur");
+                String duree = jsonObject.getString("duree");
+                String date = jsonObject.getString("date");
+                String type_libelle = jsonObject.getString("type_libelle");
+                String type_shortcode = jsonObject.getString("titre");
+                int mipmap = getMipmapByTypeShortcode(type_shortcode);
+                int ressource_id = jsonObject.getInt("ressource_id");
+                //--
+                mList.add(new Favoris(id, type, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, mipmap, ressource_id));
+            }
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return mList;
+    }
+
+    // Add file to tempon downloaded file list
+    private static void addDownloadFileToTheTemponList(Context context, Favoris favoris){
+        ArrayList<Favoris> downloadList = getAllDownloadFiles(context);
+        if(downloadList == null || downloadList.isEmpty()){
+            downloadList = new ArrayList<>();
+            downloadList.add(favoris);
+        }
+        else{
+            boolean isFileExists = false;
+            for (int i=0; i<downloadList.size(); i++){
+                if(downloadList.get(i).getSrc().equalsIgnoreCase(favoris.getSrc())){
+                    isFileExists = true;
+                }
+            }
+            //--
+            if(!isFileExists){
+                downloadList.add(favoris);
+            }
+        }
+        //--
+        saveDataInSharePreferences(context, KEY_DOWNLOAD_FILES_LIST, downloadList.toString());
     }
 }

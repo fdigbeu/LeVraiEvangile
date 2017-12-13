@@ -21,6 +21,8 @@ import org.levraievangile.View.Interfaces.VideoView;
 import java.util.Hashtable;
 
 import static org.levraievangile.Presenter.CommonPresenter.KEY_VIDEO_PLAYER_SEND_DATA;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_VIDEO_SELECTED;
+import static org.levraievangile.Presenter.CommonPresenter.saveDataInSharePreferences;
 
 /**
  * Created by Maranatha on 27/11/2017.
@@ -55,6 +57,8 @@ public class VideoPlayerPresenter {
                 videoSelected = (Video) intent.getSerializableExtra(KEY_VIDEO_PLAYER_SEND_DATA);
                 Hashtable<String, Integer> resolutionEcran = CommonPresenter.getScreenSize(context);
                 iVideoPlayer.displayPlayer(videoSelected, resolutionEcran.get("largeur"), resolutionEcran.get("hauteur"));
+                // Save video selected data
+                saveDataInSharePreferences(context, KEY_VIDEO_SELECTED, videoSelected.toString());
             }
             else{
                 iVideoPlayer.closeActivity();

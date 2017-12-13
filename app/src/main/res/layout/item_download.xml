@@ -12,8 +12,8 @@
 
     <ImageView
         android:id="@+id/item_image"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/size_50_dp"
+        android:layout_height="@dimen/size_50_dp"
         android:layout_gravity="center_vertical"
         android:scaleType="fitXY"
         android:layout_margin="@dimen/size_5_dp"
@@ -33,22 +33,22 @@
             android:id="@+id/item_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="center_vertical"
             android:padding="@dimen/size_5_dp"
             android:textSize="@dimen/text_size_18_sp"
             android:textColor="@color/colorPrimary"
             android:clickable="false"
-            android:gravity="center"/>
+            android:gravity="left"/>
 
         <TextView
             android:id="@+id/item_subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="center_vertical"
             android:textSize="@dimen/text_size_15_sp"
             android:textColor="@color/colorPrimaryOpacity70"
             android:clickable="false"
-            android:gravity="center"/>
+            android:gravity="left"/>
 
     </LinearLayout>
 
@@ -58,6 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_margin="@dimen/size_5_dp"
+        android:visibility="gone"
         android:clickable="false" />
 
 </LinearLayout>

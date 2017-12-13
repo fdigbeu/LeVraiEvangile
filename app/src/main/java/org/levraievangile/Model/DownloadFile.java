@@ -10,13 +10,19 @@ public class DownloadFile {
     private String album;
     private String artist;
     private String duration;
+    private int mipmap;
+    private String date;
+    private String shortcode;
 
-    public DownloadFile(String data, String title, String album, String artist, String duration) {
+    public DownloadFile(String data, String title, String album, String artist, String duration, int mipmap, String date, String shortcode) {
         this.data = data;
         this.title = title;
         this.album = album;
         this.artist = artist;
         this.duration = duration;
+        this.mipmap = mipmap;
+        this.date = date;
+        this.shortcode = shortcode;
     }
 
     @Override
@@ -25,7 +31,10 @@ public class DownloadFile {
                 "\"title\":\""+title+"\"," +
                 "\"album\":\""+album+"\"," +
                 "\"artist\":\""+artist+"\"," +
-                "\"duration\":"+duration+"}";
+                "\"duration\":\""+duration+"\"," +
+                "\"mipmap\":\""+mipmap+"\"," +
+                "\"shortcode\":\""+shortcode+"\"," +
+                "\"date\":"+date+"}";
     }
 
     public String getData() {
@@ -66,5 +75,29 @@ public class DownloadFile {
 
     public void setDuration(String duration) {
         this.duration = duration;
+    }
+
+    public int getMipmap() {
+        return mipmap;
+    }
+
+    public void setMipmap(int mipmap) {
+        this.mipmap = mipmap;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getShortcode() {
+        return shortcode;
+    }
+
+    public void setShortcode(String shortcode) {
+        this.shortcode = shortcode;
     }
 }

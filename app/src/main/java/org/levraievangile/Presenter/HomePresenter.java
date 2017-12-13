@@ -1,7 +1,10 @@
 package org.levraievangile.Presenter;
 
+import android.app.DownloadManager;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -9,10 +12,13 @@ import org.levraievangile.Model.Annee;
 import org.levraievangile.Model.ApiClient;
 import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.BonASavoir;
+import org.levraievangile.Model.DAOFavoris;
+import org.levraievangile.Model.Favoris;
 import org.levraievangile.Model.Pdf;
 import org.levraievangile.Model.Video;
 import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.HomeView;
+import org.levraievangile.View.Services.DownloadService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +29,9 @@ import retrofit2.Response;
 
 import static org.levraievangile.Presenter.CommonPresenter.KEY_ALL_GOOD_TO_KNOW_LIST;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_ALL_NEWS_YEARS_LIST;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_DOWNLOAD_FILES_LIST;
+import static org.levraievangile.Presenter.CommonPresenter.getAllDownloadFiles;
+import static org.levraievangile.Presenter.CommonPresenter.saveDataInSharePreferences;
 
 /**
  * Created by Maranatha on 05/12/2017.
@@ -37,6 +46,8 @@ public class HomePresenter {
     private HomeView.IApiRessource iApiRessource;
 
     // Constructors
+    public HomePresenter() {}
+
     public HomePresenter(HomeView.IHome iHome) {
         this.iHome = iHome;
     }
@@ -55,6 +66,9 @@ public class HomePresenter {
         CommonPresenter.initializeAppSetting(context);
         // Initialise notification data
         CommonPresenter.initializeNotificationTimeLapsed(context);
+        // Start Download Service receiver
+        Intent downloadIntent = new Intent(context, DownloadService.class);
+        context.startService(downloadIntent);
     }
 
     // Launch activity
@@ -188,6 +202,27 @@ public class HomePresenter {
             case R.id.action_update:
                 CommonPresenter.getLveMarketLink(context);
                 break;
+        }
+    }
+
+    /**
+     * Manage action when files (audios, videos and pdf are correctly downloaded
+     * @param context
+     * @param intent
+     */
+    public void fileIsDownloadSuccessFully(Context context, Intent intent) {
+        String action = intent.getAction();
+        if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+            //--
+            ArrayList<Favoris> downloadList =  getAllDownloadFiles(context);
+            for (int i=0; i<downloadList.size(); i++){
+                DAOFavoris daoFavoris = new DAOFavoris(context);
+                Favoris favoris = downloadList.get(i);
+                daoFavoris.insertData(favoris.getType(), ""+favoris.getMipmap(), favoris.getUrlacces(), favoris.getSrc(), favoris.getTitre(), favoris.getAuteur(), favoris.getDuree(),  favoris.getType_libelle(),  favoris.getType_shortcode(), ""+favoris.getRessource_id());
+                Log.i("TAG_DOWNLOAD_SERVICE", "DOWNLOAD_LIST = "+downloadList.toString());
+            }
+            // Clear download list
+            saveDataInSharePreferences(context, KEY_DOWNLOAD_FILES_LIST, "");
         }
     }
 }

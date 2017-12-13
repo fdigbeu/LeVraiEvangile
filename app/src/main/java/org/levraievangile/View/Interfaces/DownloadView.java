@@ -14,6 +14,7 @@ public class DownloadView {
     public interface IDownload{
         public void initialize();
         public void events();
+        public void closeActivity();
     }
 
     public interface IPlaceholder{
@@ -34,5 +35,7 @@ public class DownloadView {
         public void downloadVideoStarted();
         public void downloadVideoFinished(ArrayList<DownloadFile> downloadFiles);
         public void downloadVideoFailure();
+        public void downloadPdfFinished(ArrayList<DownloadFile> downloadFiles);
+        public void downloadPdfFailure();
     }
 }
