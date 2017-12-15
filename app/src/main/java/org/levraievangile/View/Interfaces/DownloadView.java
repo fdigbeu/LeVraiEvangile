@@ -15,13 +15,29 @@ public class DownloadView {
         public void initialize();
         public void events();
         public void closeActivity();
+        public void storageDownloadFilesList(int key,  ArrayList<DownloadFile> downloadFilesList);
+        public ArrayList<DownloadFile> getStorageDownloadFilesAudioData();
+        public ArrayList<DownloadFile> getStorageDownloadFilesVideoData();
+        public ArrayList<DownloadFile> getStorageDownloadFilesPdfData();
     }
 
-    public interface IPlaceholder{
+    public interface IDownloadAudioView{
         public void initialize(View rootView);
         public void events();
         public void loadDownloadAudioData(ArrayList<DownloadFile> downloads, int numberColumns);
+        public void progressBarVisibility(int visibility);
+    }
+
+    public interface IDownloadVideoView{
+        public void initialize(View rootView);
+        public void events();
         public void loadDownloadVideoData(ArrayList<DownloadFile> downloads, int numberColumns);
+        public void progressBarVisibility(int visibility);
+    }
+
+    public interface IDownloadPdfView{
+        public void initialize(View rootView);
+        public void events();
         public void loadDownloadPdfData(ArrayList<DownloadFile> downloads, int numberColumns);
         public void progressBarVisibility(int visibility);
     }

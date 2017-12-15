@@ -16,8 +16,9 @@ public class DownloadFile {
     private String date;
     private String shortcode;
     private Bitmap bitmap;
+    private long albumId;
 
-    public DownloadFile(String data, String title, String album, String artist, String duration, int mipmap, String date, String shortcode) {
+    /*public DownloadFile(String data, String title, String album, String artist, String duration, int mipmap, String date, String shortcode, long albumId) {
         this.data = data;
         this.title = title;
         this.album = album;
@@ -26,9 +27,9 @@ public class DownloadFile {
         this.mipmap = mipmap;
         this.date = date;
         this.shortcode = shortcode;
-    }
+    }*/
 
-    public DownloadFile(String data, String title, String album, String artist, String duration, int mipmap, String date, String shortcode, Bitmap bitmap) {
+    public DownloadFile(String data, String title, String album, String artist, String duration, int mipmap, String date, String shortcode, long albumId, Bitmap bitmap) {
         this.data = data;
         this.title = title;
         this.album = album;
@@ -49,6 +50,8 @@ public class DownloadFile {
                 "\"duration\":\""+duration+"\"," +
                 "\"mipmap\":\""+mipmap+"\"," +
                 "\"shortcode\":\""+shortcode+"\"," +
+                "\"albumId\":\""+albumId+"\"," +
+                "\"bitmap\":\""+bitmap+"\"," +
                 "\"date\":"+date+"}";
     }
 
@@ -114,6 +117,14 @@ public class DownloadFile {
 
     public void setShortcode(String shortcode) {
         this.shortcode = shortcode;
+    }
+
+    public void setAlbumId(long albumId) {
+        this.albumId = albumId;
+    }
+
+    public long getAlbumId() {
+        return albumId;
     }
 
     public void setBitmap(Bitmap bitmap) {

@@ -8,17 +8,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 
 import org.levraievangile.Presenter.CommonPresenter;
 import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.DownloadView;
 
-import java.io.FileDescriptor;
 import java.util.ArrayList;
 
-import static org.levraievangile.Presenter.CommonPresenter.VALUE_MEDIA_EXTERNAL_AUDIO_ALBUMART;
+import static org.levraievangile.Presenter.CommonPresenter.getMediaAudioAlbumart;
 
 /**
  * Created by Maranatha on 11/12/2017.
@@ -66,7 +64,7 @@ public class LoadDownloadAudio extends AsyncTask<Void, Void, ArrayList<DownloadF
                     String shortcode = favoris.getType_shortcode();
                     int mipmap = CommonPresenter.getMipmapByTypeShortcode(shortcode);
                     String date = favoris.getDate();
-                    audioList.add(new DownloadFile(data, title, album, artist, duration, mipmap, date, shortcode, null));
+                    audioList.add(new DownloadFile(data, title, album, artist, duration, mipmap, date, shortcode, 0, null));
                 }
                 else{
                     // Delete in the list
@@ -97,13 +95,13 @@ public class LoadDownloadAudio extends AsyncTask<Void, Void, ArrayList<DownloadF
                 String duration = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
                 String date = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATE_MODIFIED));
                 long albumId = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID));
-                Bitmap bitmap = getAlbumart(context, albumId);
+                Bitmap bitmap = getMediaAudioAlbumart(context, albumId);
                 if(bitmap == null){
                     bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.sm_audio);
                 }
                 // Save to audioList;
                 if(!data.contains("LVE/Audios/")) {
-                    audioList.add(new DownloadFile(data, title, album, artist, CommonPresenter.getHourMinuteSecondBy(Integer.parseInt(duration)), R.mipmap.sm_audio, date, "download-audio", bitmap));
+                    audioList.add(new DownloadFile(data, title, album, artist, CommonPresenter.getHourMinuteSecondBy(Integer.parseInt(duration)), R.mipmap.sm_audio, date, "download-audio", albumId, bitmap));
                 }
             }
         }
@@ -113,29 +111,5 @@ public class LoadDownloadAudio extends AsyncTask<Void, Void, ArrayList<DownloadF
     public void initializeData(Context context, DownloadView.ILoadDownload iLoadDownload){
         this.context = context;
         this.iLoadDownload = iLoadDownload;
-    }
-
-    private Bitmap getAlbumart(Context context, Long album_id) {
-        Bitmap albumArtBitMap = null;
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        try {
-
-            final Uri sArtworkUri = Uri.parse(VALUE_MEDIA_EXTERNAL_AUDIO_ALBUMART);
-            Uri uri = ContentUris.withAppendedId(sArtworkUri, album_id);
-            ParcelFileDescriptor pfd = context.getContentResolver().openFileDescriptor(uri, "r");
-            if (pfd != null) {
-                FileDescriptor fd = pfd.getFileDescriptor();
-                albumArtBitMap = BitmapFactory.decodeFileDescriptor(fd, null,options);
-                pfd = null;
-                fd = null;
-            }
-        } catch (Error ee) {
-        } catch (Exception e) {
-        }
-
-        if (null != albumArtBitMap) {
-            return albumArtBitMap;
-        }
-        return null;
     }
 }

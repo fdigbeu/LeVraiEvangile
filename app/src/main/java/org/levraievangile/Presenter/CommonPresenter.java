@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DownloadManager;
 import android.content.ComponentName;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,6 +13,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -21,6 +24,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -29,6 +34,7 @@ import android.support.v7.widget.ShareActionProvider;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Display;
 import android.view.MenuItem;
@@ -52,6 +58,7 @@ import org.json.JSONObject;
 import org.levraievangile.Model.Annee;
 import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.BonASavoir;
+import org.levraievangile.Model.DownloadFile;
 import org.levraievangile.Model.Favoris;
 import org.levraievangile.Model.JsonReturn;
 import org.levraievangile.Model.Mois;
@@ -62,7 +69,9 @@ import org.levraievangile.Model.Video;
 import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.CommonView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.sql.Timestamp;
 import java.text.Normalizer;
 import java.text.SimpleDateFormat;
@@ -130,11 +139,6 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
 
     // External media audio album art
     public static final String VALUE_MEDIA_EXTERNAL_AUDIO_ALBUMART = "content://media/external/audio/albumart";
-
-    // Manage download data
-    public static final String KEY_DOWNLOAD_AUDIO_DATA = "KEY_DOWNLOAD_AUDIO_DATA";
-    public static final String KEY_DOWNLOAD_VIDEO_DATA = "KEY_DOWNLOAD_VIDEO_DATA";
-    public static final String KEY_DOWNLOAD_PDF_DATA = "KEY_DOWNLOAD_PDF_DATA";
 
     // Contact Form
     private static String civility;
@@ -1515,5 +1519,52 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
         }
         //--
         saveDataInSharePreferences(context, KEY_DOWNLOAD_FILES_LIST, downloadList.toString());
+    }
+
+    /**
+     * Get media video albumart
+     * @param context
+     * @param resourceId
+     * @return
+     */
+    public static Bitmap getMediaVideoAlbumart(Context context, long resourceId) {
+        try {
+
+            Bitmap bitmap = MediaStore.Video.Thumbnails.getThumbnail(context.getContentResolver(), resourceId, MediaStore.Video.Thumbnails.MICRO_KIND, null);
+            return bitmap;
+        }
+        catch (Exception ex){}
+        return null;
+    }
+
+
+    /**
+     * Get media audio albumart
+     * @param context
+     * @param album_id
+     * @return
+     */
+    public static Bitmap getMediaAudioAlbumart(Context context, Long album_id) {
+        Bitmap albumArtBitMap = null;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        try {
+
+            final Uri sArtworkUri = Uri.parse(VALUE_MEDIA_EXTERNAL_AUDIO_ALBUMART);
+            Uri uri = ContentUris.withAppendedId(sArtworkUri, album_id);
+            ParcelFileDescriptor pfd = context.getContentResolver().openFileDescriptor(uri, "r");
+            if (pfd != null) {
+                FileDescriptor fd = pfd.getFileDescriptor();
+                albumArtBitMap = BitmapFactory.decodeFileDescriptor(fd, null,options);
+                pfd = null;
+                fd = null;
+            }
+        } catch (Error ee) {
+        } catch (Exception e) {
+        }
+
+        if (null != albumArtBitMap) {
+            return albumArtBitMap;
+        }
+        return null;
     }
 }

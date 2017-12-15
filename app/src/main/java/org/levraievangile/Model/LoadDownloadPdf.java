@@ -1,11 +1,7 @@
 package org.levraievangile.Model;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.provider.MediaStore;
 
 import org.levraievangile.Presenter.CommonPresenter;
 import org.levraievangile.R;
@@ -59,7 +55,7 @@ public class LoadDownloadPdf extends AsyncTask<Void, Void, ArrayList<DownloadFil
                     String shortcode = favoris.getType_shortcode();
                     int mipmap = CommonPresenter.getMipmapByTypeShortcode(shortcode);
                     String date = favoris.getDate();
-                    pdfList.add(new DownloadFile(data, title, album, artist, duration, mipmap, date, shortcode));
+                    pdfList.add(new DownloadFile(data, title, album, artist, duration, mipmap, date, shortcode, 0, null));
                 }
                 else{
                     // Delete in the list

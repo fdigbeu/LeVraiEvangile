@@ -17,22 +17,47 @@ import java.util.ArrayList;
  * Created by Maranatha on 11/12/2017.
  */
 
-public class DownloadPresenter implements DownloadView.ILoadDownload {
+public class DownloadPresenter implements DownloadView.ILoadDownload{
     // Ref interface
     private DownloadView.IDownload iDownload;
-    private DownloadView.IPlaceholder iPlaceholder;
+    private DownloadView.IDownloadAudioView iDownloadAudioView;
+    private DownloadView.IDownloadVideoView iDownloadVideoView;
+    private DownloadView.IDownloadPdfView iDownloadPdfView;
     // Ref LoadDownloadFile
     private LoadDownloadAudio loadDownloadAudio;
     private LoadDownloadVideo loadDownloadVideo;
     private LoadDownloadPdf loadDownloadPdf;
 
-    // Constructor
+    // Constructors
     public DownloadPresenter(DownloadView.IDownload iDownload) {
         this.iDownload = iDownload;
     }
 
-    public DownloadPresenter(DownloadView.IPlaceholder iPlaceholder) {
-        this.iPlaceholder = iPlaceholder;
+    public DownloadPresenter(DownloadView.IDownloadAudioView iDownloadAudioView) {
+        this.iDownloadAudioView = iDownloadAudioView;
+    }
+
+    public DownloadPresenter(DownloadView.IDownloadVideoView iDownloadVideoView) {
+        this.iDownloadVideoView = iDownloadVideoView;
+    }
+
+    public DownloadPresenter(DownloadView.IDownloadPdfView iDownloadPdfView) {
+        this.iDownloadPdfView = iDownloadPdfView;
+    }
+
+    public DownloadPresenter(DownloadView.IDownload iDownload, DownloadView.IDownloadAudioView iDownloadAudioView) {
+        this.iDownload = iDownload;
+        this.iDownloadAudioView = iDownloadAudioView;
+    }
+
+    public DownloadPresenter(DownloadView.IDownload iDownload, DownloadView.IDownloadVideoView iDownloadVideoView) {
+        this.iDownload = iDownload;
+        this.iDownloadVideoView = iDownloadVideoView;
+    }
+
+    public DownloadPresenter(DownloadView.IDownload iDownload, DownloadView.IDownloadPdfView iDownloadPdfView) {
+        this.iDownload = iDownload;
+        this.iDownloadPdfView = iDownloadPdfView;
     }
 
     // Load download data
@@ -41,38 +66,69 @@ public class DownloadPresenter implements DownloadView.ILoadDownload {
         iDownload.events();
     }
 
-    public void loadPlaceHolderData(Context context, View rootView, int positionFrag){
-        iPlaceholder.initialize(rootView);
-        iPlaceholder.events();
-        //--
-        iPlaceholder.progressBarVisibility(View.VISIBLE);
-        loadFragmentData(context, positionFrag);
+    // Load download audio data
+    public void loadDownloadAudioFragData(View view){
+        iDownloadAudioView.initialize(view);
+        iDownloadAudioView.events();
     }
 
-    // Refresh all data
-    public void loadFragmentData(Context context, int positionFrag){
+    // Load download video data
+    public void loadDownloadVideoFragData(View view){
+        iDownloadVideoView.initialize(view);
+        iDownloadVideoView.events();
+    }
 
-        // Load Audio files
-        switch (positionFrag){
-            // AUDIOS
-            case 0:
-                loadDownloadAudio = new LoadDownloadAudio();
+    // Load download pdf data
+    public void loadDownloadPdfFragData(View view){
+        iDownloadPdfView.initialize(view);
+        iDownloadPdfView.events();
+    }
+
+    // If downloadAudio Fragment Attach Success
+    public void downloadAudioFragmentAttachSuccess(Context context){
+        if(iDownload != null && iDownloadAudioView != null){
+            ArrayList<DownloadFile> downloadFiles = iDownload.getStorageDownloadFilesAudioData();
+            if(downloadFiles==null){
+                LoadDownloadAudio loadDownloadAudio = new LoadDownloadAudio();
                 loadDownloadAudio.initializeData(context, this);
                 loadDownloadAudio.execute();
-                break;
-            // VIDEOS
-            case 1:
-                loadDownloadVideo = new LoadDownloadVideo();
+                iDownloadAudioView.progressBarVisibility(View.VISIBLE);
+            }
+            else {
+                iDownloadAudioView.loadDownloadAudioData(downloadFiles, 1);
+            }
+        }
+    }
+
+    // If downloadVideo Fragment Attach Success
+    public void downloadVideoFragmentAttachSuccess(Context context){
+        if(iDownload != null && iDownloadVideoView != null){
+            ArrayList<DownloadFile> downloadFiles = iDownload.getStorageDownloadFilesVideoData();
+            if(downloadFiles==null){
+                LoadDownloadVideo loadDownloadVideo = new LoadDownloadVideo();
                 loadDownloadVideo.initializeData(context, this);
                 loadDownloadVideo.execute();
-                break;
-            // PDF
-            case 2:
-                loadDownloadPdf = new LoadDownloadPdf();
+                iDownloadVideoView.progressBarVisibility(View.VISIBLE);
+            }
+            else {
+                iDownloadVideoView.loadDownloadVideoData(downloadFiles, 1);
+            }
+        }
+    }
+
+    // If downloadPdf Fragment Attach Success
+    public void downloadPdfFragmentAttachSuccess(Context context){
+        if(iDownload != null && iDownloadPdfView != null){
+            ArrayList<DownloadFile> downloadFiles = iDownload.getStorageDownloadFilesPdfData();
+            if(downloadFiles==null){
+                LoadDownloadPdf loadDownloadPdf = new LoadDownloadPdf();
                 loadDownloadPdf.initializeData(context, this);
                 loadDownloadPdf.execute();
-                break;
-
+                iDownloadPdfView.progressBarVisibility(View.VISIBLE);
+            }
+            else {
+                iDownloadPdfView.loadDownloadPdfData(downloadFiles, 1);
+            }
         }
     }
 
@@ -86,46 +142,40 @@ public class DownloadPresenter implements DownloadView.ILoadDownload {
     }
 
     @Override
-    public void downloadAudioStarted() {
-
-    }
+    public void downloadAudioStarted() {}
 
     @Override
     public void downloadAudioFinished(ArrayList<DownloadFile> downloadFiles) {
-        iPlaceholder.loadDownloadAudioData(downloadFiles, 1);
-        iPlaceholder.progressBarVisibility(View.GONE);
+        iDownloadAudioView.loadDownloadAudioData(downloadFiles, 1);
+        iDownloadAudioView.progressBarVisibility(View.GONE);
+        iDownload.storageDownloadFilesList(0, downloadFiles);
     }
 
     @Override
-    public void downloadAudioFailure() {
-
-    }
+    public void downloadAudioFailure() {}
 
     @Override
-    public void downloadVideoStarted() {
-
-    }
+    public void downloadVideoStarted() {}
 
     @Override
     public void downloadVideoFinished(ArrayList<DownloadFile> downloadFiles) {
-        iPlaceholder.loadDownloadVideoData(downloadFiles, 1);
-        iPlaceholder.progressBarVisibility(View.GONE);
+        iDownloadVideoView.loadDownloadVideoData(downloadFiles, 1);
+        iDownloadVideoView.progressBarVisibility(View.GONE);
+        iDownload.storageDownloadFilesList(1, downloadFiles);
     }
 
     @Override
-    public void downloadVideoFailure() {
-
-    }
+    public void downloadVideoFailure() {}
 
     @Override
     public void downloadPdfFinished(ArrayList<DownloadFile> downloadFiles) {
-        iPlaceholder.loadDownloadPdfData(downloadFiles, 1);
+        iDownloadPdfView.loadDownloadPdfData(downloadFiles, 1);
+        iDownloadPdfView.progressBarVisibility(View.GONE);
+        iDownload.storageDownloadFilesList(2, downloadFiles);
     }
 
     @Override
-    public void downloadPdfFailure() {
-
-    }
+    public void downloadPdfFailure() {}
 
     public void cancelAsyntask(){
         if(loadDownloadAudio != null) loadDownloadAudio.cancel(true);

@@ -26,14 +26,28 @@ public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecycl
     private ArrayList<DownloadFile> downloadItems;
     private String typeResource;
     private Hashtable<Integer, MyViewHolder> mViewHolder;
-    private DownloadView.IPlaceholder iPlaceholder;
+    private DownloadView.IDownloadAudioView iDownloadAudioView;
+    private DownloadView.IDownloadVideoView iDownloadVideoView;
+    private DownloadView.IDownloadPdfView iDownloadPdfView;
     private int positionVideoSelected;
     private int positionAudioSelected;
     private int positionPdfSelected;
 
-    public DownloadRecyclerAdapter(ArrayList<DownloadFile> downloadItems, DownloadView.IPlaceholder iPlaceholder) {
+    public DownloadRecyclerAdapter(ArrayList<DownloadFile> downloadItems, DownloadView.IDownloadAudioView iDownloadAudioView) {
         this.downloadItems = downloadItems;
-        this.iPlaceholder = iPlaceholder;
+        this.iDownloadAudioView = iDownloadAudioView;
+        mViewHolder = new Hashtable<>();
+    }
+
+    public DownloadRecyclerAdapter(ArrayList<DownloadFile> downloadItems, DownloadView.IDownloadVideoView iDownloadVideoView) {
+        this.downloadItems = downloadItems;
+        this.iDownloadVideoView = iDownloadVideoView;
+        mViewHolder = new Hashtable<>();
+    }
+
+    public DownloadRecyclerAdapter(ArrayList<DownloadFile> downloadItems, DownloadView.IDownloadPdfView iDownloadPdfView) {
+        this.downloadItems = downloadItems;
+        this.iDownloadPdfView = iDownloadPdfView;
         mViewHolder = new Hashtable<>();
     }
 

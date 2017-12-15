@@ -1,7 +1,6 @@
 package org.levraievangile.Model;
 
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -14,6 +13,8 @@ import org.levraievangile.Presenter.CommonPresenter;
 import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.DownloadView;
 import java.util.ArrayList;
+
+import static org.levraievangile.Presenter.CommonPresenter.getMediaVideoAlbumart;
 
 /**
  * Created by Maranatha on 11/12/2017.
@@ -61,7 +62,7 @@ public class LoadDownloadVideo extends AsyncTask<Void, Void, ArrayList<DownloadF
                     String shortcode = favoris.getType_shortcode();
                     int mipmap = CommonPresenter.getMipmapByTypeShortcode(shortcode);
                     String date = favoris.getDate();
-                    videoList.add(new DownloadFile(data, title, album, artist, duration, mipmap, date, shortcode));
+                    videoList.add(new DownloadFile(data, title, album, artist, duration, mipmap, date, shortcode, 0, null));
                 }
                 else{
                     // Delete in the list
@@ -91,13 +92,13 @@ public class LoadDownloadVideo extends AsyncTask<Void, Void, ArrayList<DownloadF
                 String duration = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DURATION));
                 String date = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATE_MODIFIED));
                 long albumId = cursor.getLong(cursor.getColumnIndex(MediaStore.Video.Media._ID));
-                Bitmap bitmap = getAlbumart(context, albumId);
+                Bitmap bitmap = getMediaVideoAlbumart(context, albumId);
                 if(bitmap == null){
                     bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.sm_video);
                 }
                 // Save to videoList
                 if(!data.contains("LVE/Videos/")) {
-                    videoList.add(new DownloadFile(data, title, album, artist, CommonPresenter.getHourMinuteSecondBy(Integer.parseInt(duration)), R.mipmap.sm_video, date, "download-video", bitmap));
+                    videoList.add(new DownloadFile(data, title, album, artist, CommonPresenter.getHourMinuteSecondBy(Integer.parseInt(duration)), R.mipmap.sm_video, date, "download-video", albumId, bitmap));
                 }
             }
         }
@@ -107,15 +108,5 @@ public class LoadDownloadVideo extends AsyncTask<Void, Void, ArrayList<DownloadF
     public void initializeData(Context context, DownloadView.ILoadDownload iLoadDownload){
         this.context = context;
         this.iLoadDownload = iLoadDownload;
-    }
-
-    private Bitmap getAlbumart(Context context, long resourceId) {
-        try {
-
-            Bitmap bitmap = MediaStore.Video.Thumbnails.getThumbnail(context.getContentResolver(), resourceId, MediaStore.Video.Thumbnails.MICRO_KIND, null);
-            return bitmap;
-        }
-        catch (Exception ex){}
-        return null;
     }
 }
