@@ -11,6 +11,7 @@ import java.io.Serializable;
 public class Favoris implements Serializable{
     private int id;
     private String type;
+    private int mipmap;
     private String urlacces;
     private String src;
     private String titre;
@@ -19,12 +20,12 @@ public class Favoris implements Serializable{
     private String date;
     private String type_libelle;
     private String type_shortcode;
-    private int mipmap;
     private int ressource_id; // VideoId, AudioId
 
-    public Favoris(int id, String type, String urlacces, String src, String titre, String auteur, String duree, String date, String type_libelle, String type_shortcode, int mipmap, int ressource_id) {
+    public Favoris(int id, String type, int mipmap, String urlacces, String src, String titre, String auteur, String duree, String date, String type_libelle, String type_shortcode, int ressource_id) {
         this.id = id;
         this.type = type;
+        this.mipmap = mipmap;
         this.urlacces = urlacces;
         this.src = src;
         this.titre = titre;
@@ -33,7 +34,6 @@ public class Favoris implements Serializable{
         this.date = date;
         this.type_libelle = type_libelle;
         this.type_shortcode = type_shortcode;
-        this.mipmap = mipmap;
         this.ressource_id = ressource_id;
     }
 

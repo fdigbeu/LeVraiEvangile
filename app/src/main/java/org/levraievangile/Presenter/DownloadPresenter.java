@@ -45,6 +45,7 @@ public class DownloadPresenter implements DownloadView.ILoadDownload {
         iPlaceholder.initialize(rootView);
         iPlaceholder.events();
         //--
+        iPlaceholder.progressBarVisibility(View.VISIBLE);
         loadFragmentData(context, positionFrag);
     }
 
@@ -92,6 +93,7 @@ public class DownloadPresenter implements DownloadView.ILoadDownload {
     @Override
     public void downloadAudioFinished(ArrayList<DownloadFile> downloadFiles) {
         iPlaceholder.loadDownloadAudioData(downloadFiles, 1);
+        iPlaceholder.progressBarVisibility(View.GONE);
     }
 
     @Override
@@ -107,6 +109,7 @@ public class DownloadPresenter implements DownloadView.ILoadDownload {
     @Override
     public void downloadVideoFinished(ArrayList<DownloadFile> downloadFiles) {
         iPlaceholder.loadDownloadVideoData(downloadFiles, 1);
+        iPlaceholder.progressBarVisibility(View.GONE);
     }
 
     @Override

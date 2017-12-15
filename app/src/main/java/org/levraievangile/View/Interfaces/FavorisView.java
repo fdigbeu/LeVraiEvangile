@@ -20,7 +20,9 @@ public class FavorisView {
     public interface IPlaceholder{
         public void initialize(View rootView);
         public void events();
-        public void loadFavorisData(ArrayList<Favoris> favoris, int numberColumns);
+        public void loadFavorisAudioData(ArrayList<Favoris> favorites, int numberColumns);
+        public void loadFavorisVideoData(ArrayList<Favoris> favorites, int numberColumns);
+        public void loadFavorisPdfData(ArrayList<Favoris> favorites, int numberColumns);
         public void progressBarVisibility(int visibility);
     }
 

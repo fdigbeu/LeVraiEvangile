@@ -47,17 +47,25 @@ public class LoadDownloadPdf extends AsyncTask<Void, Void, ArrayList<DownloadFil
         DAOFavoris daoFavoris = new DAOFavoris(context);
         ArrayList<Favoris> mList = daoFavoris.getAllData("download_pdf");
         if(mList != null && mList.size() > 0){
-            for (int i=mList.size()-1; i > 0; i--){
+            for (int i=0; i < mList.size(); i++){
                 Favoris favoris = mList.get(i);
-                String data = CommonPresenter.getVideoPath()+"/"+favoris.getSrc();
-                String title = favoris.getTitre();
-                String album = favoris.getType_libelle();
-                String artist = favoris.getAuteur();
-                String duration = favoris.getDuree();
-                int mipmap = CommonPresenter.getMipmapByTypeShortcode(favoris.getType_shortcode());
-                String shortcode = "download-pdf";
-                String date = favoris.getDate();
-                pdfList.add(new DownloadFile(data, title, album, artist, duration, mipmap, date, shortcode));
+                String data = CommonPresenter.getPdfPath()+"/"+favoris.getSrc();
+                // Verify if file is always in the mobile
+                if(CommonPresenter.isFileExists(data)) {
+                    String title = favoris.getTitre();
+                    String album = favoris.getType_libelle();
+                    String artist = favoris.getAuteur();
+                    String duration = favoris.getDuree();
+                    String shortcode = favoris.getType_shortcode();
+                    int mipmap = CommonPresenter.getMipmapByTypeShortcode(shortcode);
+                    String date = favoris.getDate();
+                    pdfList.add(new DownloadFile(data, title, album, artist, duration, mipmap, date, shortcode));
+                }
+                else{
+                    // Delete in the list
+                    DAOFavoris mFavorisItem = new DAOFavoris(context);
+                    mFavorisItem.deleteDataBy(favoris.getId());
+                }
             }
         }
         //--

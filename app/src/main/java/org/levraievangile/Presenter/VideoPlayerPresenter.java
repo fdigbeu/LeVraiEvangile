@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 
 import org.levraievangile.Model.DAOFavoris;
+import org.levraievangile.Model.Favoris;
 import org.levraievangile.Model.Video;
 import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.VideoPlayerView;
@@ -94,7 +95,9 @@ public class VideoPlayerPresenter {
                 case R.id.fab_player_favorite:
                     DAOFavoris daoFavoris = new DAOFavoris(view.getContext());
                     if(!daoFavoris.isFavorisExists(videoSelected.getSrc())){
-                        daoFavoris.insertData("video",""+videoSelected.getMipmap(), videoSelected.getUrlacces(), videoSelected.getSrc(), videoSelected.getTitre(), videoSelected.getAuteur(), videoSelected.getDuree(), videoSelected.getType_libelle(), videoSelected.getType_shortcode(), ""+videoSelected.getId());
+
+                        Favoris favoris = new Favoris(videoSelected.getId(), "video", videoSelected.getMipmap(), videoSelected.getUrlacces(), videoSelected.getSrc(), videoSelected.getTitre(), videoSelected.getAuteur(), videoSelected.getDuree(), videoSelected.getDate(), videoSelected.getType_libelle(), videoSelected.getType_shortcode(), videoSelected.getId());
+                        daoFavoris.insertData(favoris);
                         Toast.makeText(view.getContext(), view.getContext().getResources().getString(R.string.video_add_to_favorite), Toast.LENGTH_SHORT).show();
                     }
                     else{

@@ -218,7 +218,7 @@ public class HomePresenter {
             for (int i=0; i<downloadList.size(); i++){
                 DAOFavoris daoFavoris = new DAOFavoris(context);
                 Favoris favoris = downloadList.get(i);
-                daoFavoris.insertData(favoris.getType(), ""+favoris.getMipmap(), favoris.getUrlacces(), favoris.getSrc(), favoris.getTitre(), favoris.getAuteur(), favoris.getDuree(),  favoris.getType_libelle(),  favoris.getType_shortcode(), ""+favoris.getRessource_id());
+                daoFavoris.insertData(favoris);
                 Log.i("TAG_DOWNLOAD_SERVICE", "DOWNLOAD_LIST = "+downloadList.toString());
             }
             // Clear download list

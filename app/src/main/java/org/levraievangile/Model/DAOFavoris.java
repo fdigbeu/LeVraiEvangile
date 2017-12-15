@@ -2,6 +2,7 @@ package org.levraievangile.Model;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import org.levraievangile.Presenter.CommonPresenter;
 
@@ -51,21 +52,22 @@ public class DAOFavoris {
         CommonPresenter.getDb().execSQL(sql);
     }
 
-    public void insertData(String type, String mipmap, String urlacces, String src,  String titre,  String auteur,  String duree,  String type_libelle,  String type_shortcode, String ressource_id){
+    public void insertData(Favoris favoris){
         createTable();
         String sql = "INSERT INTO "+TABLE_NAME+" ("+COL_2+", "+COL_3+", "+COL_4+", "+COL_5+", "+COL_6+", "+COL_7+", "+COL_8+", "+COL_9+", "+COL_10+", "+COL_11+", "+COL_12+")" +
-                " VALUES ('"+type+"', " +
-                "'"+mipmap.replace("'","''")+"',  " +
-                "'"+urlacces.replace("'","''")+"',  " +
-                "'"+src.replace("'","''")+"',  " +
-                "'"+titre.replace("'","''")+"',  " +
-                "'"+auteur.replace("'","''")+"',  " +
-                "'"+duree.replace("'","''")+"',  " +
+                " VALUES ('"+favoris.getType()+"', " +
+                "'"+favoris.getMipmap()+"',  " +
+                "'"+favoris.getUrlacces().replace("'","''")+"',  " +
+                "'"+favoris.getSrc().replace("'","''")+"',  " +
+                "'"+favoris.getTitre().replace("'","''")+"',  " +
+                "'"+favoris.getAuteur().replace("'","''")+"',  " +
+                "'"+favoris.getDuree().replace("'","''")+"',  " +
                 "CURRENT_DATE,  " +
-                "'"+type_libelle.replace("'","''")+"',  " +
-                "'"+type_shortcode.replace("'","''")+"',  " +
-                "'"+ressource_id.replace("'","''")+"');";
+                "'"+favoris.getType_libelle().replace("'","''")+"',  " +
+                "'"+favoris.getType_shortcode().replace("'","''")+"',  " +
+                "'"+favoris.getRessource_id()+"');";
         CommonPresenter.getDb().execSQL(sql);
+        Log.i("TAG_INSERT_FAVORIS", "favoris.getType_shortcode() = "+favoris.getType_shortcode());
     }
 
     public ArrayList<Favoris> getAllData(String type){
@@ -90,7 +92,7 @@ public class DAOFavoris {
             String ressourec_id = cursor.getString(cursor.getColumnIndex(COL_12));
             //--
             int mMipmap = CommonPresenter.getMipmapByTypeShortcode(type_shortcode);
-            resultat.add(new Favoris(id, type, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, mMipmap, Integer.parseInt(ressourec_id)));
+            resultat.add(new Favoris(id, type, mMipmap, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, Integer.parseInt(ressourec_id)));
             //--
             cursor.moveToNext();
         }
@@ -120,7 +122,7 @@ public class DAOFavoris {
             String ressourec_id = cursor.getString(cursor.getColumnIndex(COL_12));
             //--
             int mMipmap = CommonPresenter.getMipmapByTypeShortcode(type_shortcode);
-            resultat.add(new Favoris(id, type, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, mMipmap, Integer.parseInt(ressourec_id)));
+            resultat.add(new Favoris(id, type, mMipmap, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, Integer.parseInt(ressourec_id)));
             //--
             cursor.moveToNext();
         }

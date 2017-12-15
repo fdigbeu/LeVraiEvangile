@@ -1,6 +1,7 @@
 package org.levraievangile.View.Adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,10 +69,11 @@ public class PdfRecyclerAdapter extends RecyclerView.Adapter<PdfRecyclerAdapter.
         }
         else if(iPdf!= null){
             String dateFormat = CommonPresenter.changeFormatDate(pdf.getDate());
+            String auteur = pdf.getAuteur();
             //--
             holder.itemIcon.setImageResource(CommonPresenter.getMipmapByTypeShortcode(pdf.getType_shortcode()));
             holder.itemTitle.setText(pdf.getTitre());
-            holder.itemSubTitle.setText(dateFormat+(pdf.getAuteur() != null ? " | "+pdf.getAuteur() : ""));
+            holder.itemSubTitle.setText(dateFormat+(auteur != null ? " | "+auteur : ""));
         }
         else{}
     }

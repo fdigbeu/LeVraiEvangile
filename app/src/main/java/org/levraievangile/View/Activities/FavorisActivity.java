@@ -2,6 +2,8 @@ package org.levraievangile.View.Activities;
 
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
@@ -15,11 +17,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.levraievangile.Model.Favoris;
 import org.levraievangile.Presenter.FavorisPresenter;
 import org.levraievangile.R;
+import org.levraievangile.View.Adapters.FavorisRecyclerAdapter;
 import org.levraievangile.View.Interfaces.FavorisView;
 
 import java.util.ArrayList;
@@ -88,6 +92,13 @@ public class FavorisActivity extends AppCompatActivity implements FavorisView.IF
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment implements FavorisView.IPlaceholder {
+        private RecyclerView favorisRecyclerView;
+        private ProgressBar favorisProgressBar;
+        // Presenter
+        private FavorisPresenter favorisPresenter;
+        //--
+        private int fragNumber;
+        
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -113,14 +124,18 @@ public class FavorisActivity extends AppCompatActivity implements FavorisView.IF
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_favoris, container, false);
-            //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+
+            // Show data
+            fragNumber = getArguments().getInt(ARG_SECTION_NUMBER)-1;
+            favorisPresenter = new FavorisPresenter(this);
+            favorisPresenter.loadPlaceHolderData(getActivity(), rootView, fragNumber);
             return rootView;
         }
 
         @Override
         public void initialize(View rootView) {
-
+            favorisRecyclerView = rootView.findViewById(R.id.favorisRecyclerView);
+            favorisProgressBar = rootView.findViewById(R.id.favorisProgressBar);
         }
 
         @Override
@@ -129,13 +144,35 @@ public class FavorisActivity extends AppCompatActivity implements FavorisView.IF
         }
 
         @Override
-        public void loadFavorisData(ArrayList<Favoris> favoris, int numberColumns) {
+        public void loadFavorisAudioData(ArrayList<Favoris> favorites, int numberColumns) {
+            GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), numberColumns);
+            favorisRecyclerView.setLayoutManager(gridLayout);
+            favorisRecyclerView.setHasFixedSize(true);
+            FavorisRecyclerAdapter adapter = new FavorisRecyclerAdapter(favorites, this);
+            favorisRecyclerView.setAdapter(adapter);
+        }
 
+        @Override
+        public void loadFavorisVideoData(ArrayList<Favoris> favorites, int numberColumns) {
+            GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), numberColumns);
+            favorisRecyclerView.setLayoutManager(gridLayout);
+            favorisRecyclerView.setHasFixedSize(true);
+            FavorisRecyclerAdapter adapter = new FavorisRecyclerAdapter(favorites, this);
+            favorisRecyclerView.setAdapter(adapter);
+        }
+
+        @Override
+        public void loadFavorisPdfData(ArrayList<Favoris> favorites, int numberColumns) {
+            GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), numberColumns);
+            favorisRecyclerView.setLayoutManager(gridLayout);
+            favorisRecyclerView.setHasFixedSize(true);
+            FavorisRecyclerAdapter adapter = new FavorisRecyclerAdapter(favorites, this);
+            favorisRecyclerView.setAdapter(adapter);
         }
 
         @Override
         public void progressBarVisibility(int visibility) {
-
+            favorisProgressBar.setVisibility(visibility);
         }
     }
 

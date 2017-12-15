@@ -54,8 +54,8 @@ public class FavorisRecyclerAdapter extends RecyclerView.Adapter<FavorisRecycler
         //--
         holder.itemImage.setImageResource(CommonPresenter.getMipmapByTypeShortcode(favorisItems.get(position).getType_shortcode()));
         holder.itemTitle.setText(favorisItems.get(position).getTitre());
-        String auteur = favorisItems.get(position).getAuteur();
-        holder.itemSubTitle.setText(dateFormat+(durationFormat != null ? " | "+durationFormat : "")+(auteur != null ? " | "+favorisItems.get(position).getAuteur() : ""));
+        String auteur = favorisItems.get(position).getAuteur().replace("null", "");
+        holder.itemSubTitle.setText(dateFormat+(durationFormat != null ? " | "+durationFormat : "")+(auteur != null && !auteur.isEmpty() ? " | "+auteur : ""));
     }
 
     @Override

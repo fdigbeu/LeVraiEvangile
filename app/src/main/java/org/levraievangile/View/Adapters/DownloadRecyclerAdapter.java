@@ -12,6 +12,8 @@ import org.levraievangile.Presenter.CommonPresenter;
 import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.DownloadView;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -45,9 +47,18 @@ public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecycl
     public void onBindViewHolder(MyViewHolder holder, int position) {
         holder.positionItem = position;
         mViewHolder.put(position, holder);
-        holder.itemImage.setImageResource(CommonPresenter.getMipmapByTypeShortcode(downloadItems.get(position).getShortcode()));
+        if(downloadItems.get(position).getBitmap() == null){
+            holder.itemImage.setImageResource(CommonPresenter.getMipmapByTypeShortcode(downloadItems.get(position).getShortcode()));
+        }
+        else if(downloadItems.get(position).getBitmap() != null){
+            holder.itemImage.setImageBitmap(downloadItems.get(position).getBitmap());
+        }
+        else{}
         holder.itemTitle.setText(downloadItems.get(position).getTitle());
-        holder.itemSubTitle.setText(downloadItems.get(position).getDuration()+" | "+downloadItems.get(position).getArtist());
+        String dateFormat = CommonPresenter.changeFormatDate(downloadItems.get(position).getDate());
+        String durationFormat = CommonPresenter.changeFormatDuration(downloadItems.get(position).getDuration());
+        String auteur = downloadItems.get(position).getArtist().replace("null", "");
+        holder.itemSubTitle.setText((dateFormat.equalsIgnoreCase("01/18/1970") ? "" : dateFormat+" | ")+(durationFormat != null ? durationFormat : "")+(auteur != null && !auteur.isEmpty() ? " | "+auteur : ""));
     }
 
     @Override

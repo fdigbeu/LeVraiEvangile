@@ -28,6 +28,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.Html;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Display;
 import android.view.MenuItem;
@@ -62,8 +63,11 @@ import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.CommonView;
 
 import java.io.File;
+import java.sql.Timestamp;
 import java.text.Normalizer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 
@@ -124,6 +128,14 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
 
     private static final String FOLDER_NAME[] = {"LVE", "LVE/Audios", "LVE/Videos", "LVE/Pdfs"};
 
+    // External media audio album art
+    public static final String VALUE_MEDIA_EXTERNAL_AUDIO_ALBUMART = "content://media/external/audio/albumart";
+
+    // Manage download data
+    public static final String KEY_DOWNLOAD_AUDIO_DATA = "KEY_DOWNLOAD_AUDIO_DATA";
+    public static final String KEY_DOWNLOAD_VIDEO_DATA = "KEY_DOWNLOAD_VIDEO_DATA";
+    public static final String KEY_DOWNLOAD_PDF_DATA = "KEY_DOWNLOAD_PDF_DATA";
+
     // Contact Form
     private static String civility;
     private static String name;
@@ -153,6 +165,10 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
 
     public CommonPresenter(){}
 
+    /**
+     * SubMenu audio list
+     * @return
+     */
     public static ArrayList<Video> listeSousMenuVideo(){
         ArrayList<Video> liste = new ArrayList<>();
         liste.add(new Video(R.mipmap.sm_enseignement,"Enseignements", "enseignements"));
@@ -168,6 +184,10 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
         return liste;
     }
 
+    /**
+     * SubMenu audio list
+     * @return
+     */
     public static ArrayList<Audio> listeSousMenuAudio(){
         ArrayList<Audio> liste = new ArrayList<Audio>();
         liste.add(new Audio(R.mipmap.sm_enseignement,"Enseignements", "enseignements"));
@@ -177,6 +197,10 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
         return liste;
     }
 
+    /**
+     * SubMenu PDF List
+     * @return
+     */
     public static ArrayList<Pdf> listeSousMenuPdf(){
         ArrayList<Pdf> liste = new ArrayList<Pdf>();
         liste.add(new Pdf(R.mipmap.sm_pdf,"Livres", "livres"));
@@ -227,6 +251,16 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     }
 
     /**
+     * Verify if this file exists
+     * @param path
+     * @return
+     */
+    public static boolean isFileExists(String path){
+        File file = new File(path);
+        return file.exists();
+    }
+
+    /**
      * Build textview to Html
      * @param textView
      * @param textValue
@@ -247,18 +281,20 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
      */
     public static String getHourMinuteSecondBy(int milliseconde){
         String timeReturn = "";
+        //--
         int heureReturn = 0;
         int seconde = milliseconde/1000;
         int minuteReturn = seconde/60;
         int secondeReturn = (seconde - (minuteReturn*60));
-        int heure = minuteReturn/24;
+        int heure = minuteReturn/60;
         if(heure > 0){
             heureReturn = heure;
-            minuteReturn = (minuteReturn - (heureReturn*24));
+            minuteReturn = (minuteReturn - (heureReturn*60));
         }
         timeReturn += (heureReturn > 9 ? heureReturn : "0"+heureReturn);
         timeReturn += (minuteReturn > 9 ? ":"+minuteReturn : ":0"+minuteReturn);
         timeReturn += (secondeReturn > 9 ? ":"+secondeReturn : ":0"+secondeReturn);
+        //--
         return timeReturn;
     }
 
@@ -393,7 +429,18 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
      * @return
      */
     public static String changeFormatDate(String date){
-        return date.split("-")[2].trim()+"/"+date.split("-")[1].trim()+"/"+date.split("-")[0].trim();
+        String dateReturn = null;
+        if(date.contains("-")){
+            dateReturn = date.split("-")[2].trim()+"/"+date.split("-")[1].trim()+"/"+date.split("-")[0].trim();
+        }
+        else{
+            try {
+                long longTime = Long.parseLong(date);
+                dateReturn = DateFormat.format("MM/dd/yyyy", new Date(longTime)).toString();
+            }
+            catch (Exception ex){}
+        }
+        return dateReturn;
     }
 
     public static String changeFormatDuration(String duration){
@@ -490,15 +537,15 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
             switch (typeOfFile){
                 case "audio":
                     Audio audio = getAudioSelected(context);
-                    favoris = new Favoris(audio.getId(), "download_audio", audio.getUrlacces(), audio.getSrc(), audio.getTitre(), audio.getAuteur(), audio.getDuree(), audio.getDate(), audio.getType_libelle(), audio.getType_shortcode(), audio.getMipmap(), audio.getId());
+                    favoris = new Favoris(audio.getId(), "download_audio", audio.getMipmap(), audio.getUrlacces(), audio.getSrc(), audio.getTitre(), audio.getAuteur(), audio.getDuree(), audio.getDate(), audio.getType_libelle(), audio.getType_shortcode(), audio.getId());
                     break;
                 case "video":
                     Video video = getVideoSelected(context);
-                    favoris = new Favoris(video.getId(), "download_video", video.getUrlacces(), video.getSrc(), video.getTitre(), video.getAuteur(), video.getDuree(), video.getDate(), video.getType_libelle(), video.getType_shortcode(), video.getMipmap(), video.getId());
+                    favoris = new Favoris(video.getId(), "download_video", video.getMipmap(), video.getUrlacces(), video.getSrc(), video.getTitre(), video.getAuteur(), video.getDuree(), video.getDate(), video.getType_libelle(), video.getType_shortcode(), video.getId());
                     break;
                 case "pdf":
                     Pdf pdf = getPdfSelected(context);
-                    favoris = new Favoris(pdf.getId(), "download_pdf", pdf.getUrlacces(), pdf.getSrc(), pdf.getTitre(), pdf.getAuteur(), "00:00:00", pdf.getDate(), pdf.getType_libelle(), pdf.getType_shortcode(), pdf.getMipmap(), pdf.getId());
+                    favoris = new Favoris(pdf.getId(), "download_pdf", pdf.getMipmap(), pdf.getUrlacces(), pdf.getSrc(), pdf.getTitre(), pdf.getAuteur(), "00:00:00", pdf.getDate(), pdf.getType_libelle(), pdf.getType_shortcode(), pdf.getId());
                     break;
             }
             //--
@@ -1433,11 +1480,11 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
                 String duree = jsonObject.getString("duree");
                 String date = jsonObject.getString("date");
                 String type_libelle = jsonObject.getString("type_libelle");
-                String type_shortcode = jsonObject.getString("titre");
+                String type_shortcode = jsonObject.getString("type_shortcode");
                 int mipmap = getMipmapByTypeShortcode(type_shortcode);
                 int ressource_id = jsonObject.getInt("ressource_id");
                 //--
-                mList.add(new Favoris(id, type, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, mipmap, ressource_id));
+                mList.add(new Favoris(id, type, mipmap, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, ressource_id));
             }
         }
         catch (JSONException e)

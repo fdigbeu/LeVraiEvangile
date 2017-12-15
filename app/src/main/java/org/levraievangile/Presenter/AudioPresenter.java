@@ -12,6 +12,7 @@ import android.widget.Toast;
 import org.levraievangile.Model.ApiClient;
 import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.DAOFavoris;
+import org.levraievangile.Model.Favoris;
 import org.levraievangile.Model.LoadStreamAudio;
 import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.AudioView;
@@ -250,7 +251,8 @@ public class AudioPresenter implements AudioView.IStreamAudio {
                 case R.id.fab_player_favorite:
                     DAOFavoris daoFavoris = new DAOFavoris(view.getContext());
                     if(!daoFavoris.isFavorisExists(audioSelected.getSrc())){
-                        daoFavoris.insertData("audio",""+audioSelected.getMipmap(), audioSelected.getUrlacces(), audioSelected.getSrc(), audioSelected.getTitre(), audioSelected.getAuteur(), audioSelected.getDuree(), audioSelected.getType_libelle(), audioSelected.getType_shortcode(), ""+audioSelected.getId());
+                        Favoris favoris = new Favoris(audioSelected.getId(), "audio", audioSelected.getMipmap(), audioSelected.getUrlacces(), audioSelected.getSrc(), audioSelected.getTitre(), audioSelected.getAuteur(), audioSelected.getDuree(), audioSelected.getDate(), audioSelected.getType_libelle(), audioSelected.getType_shortcode(), audioSelected.getId());
+                        daoFavoris.insertData(favoris);
                         Toast.makeText(view.getContext(), view.getContext().getResources().getString(R.string.audio_add_to_favorite), Toast.LENGTH_SHORT).show();
                     }
                     else{
