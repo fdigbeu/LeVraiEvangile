@@ -18,7 +18,6 @@ import org.levraievangile.Model.Pdf;
 import org.levraievangile.Model.Video;
 import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.HomeView;
-import org.levraievangile.View.Services.DownloadService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +29,8 @@ import retrofit2.Response;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_ALL_GOOD_TO_KNOW_LIST;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_ALL_NEWS_YEARS_LIST;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_DOWNLOAD_FILES_LIST;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_RELOAD_NEW_DATA_GOOD_TO_KNOW;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_RELOAD_NEW_DATA_NEWS_YEAR;
 import static org.levraievangile.Presenter.CommonPresenter.getAllDownloadFiles;
 import static org.levraievangile.Presenter.CommonPresenter.saveDataInSharePreferences;
 
@@ -61,14 +62,6 @@ public class HomePresenter {
         iHome.initialize();
         iHome.events();
         iHome.askPermissionToSaveFile();
-        //--
-        // Initialize the settings
-        CommonPresenter.initializeAppSetting(context);
-        // Initialise notification data
-        CommonPresenter.initializeNotificationTimeLapsed(context);
-        // Start Download Service receiver
-        Intent downloadIntent = new Intent(context, DownloadService.class);
-        context.startService(downloadIntent);
     }
 
     // Launch activity
@@ -83,41 +76,57 @@ public class HomePresenter {
         iPlaceholder.progressBarVisibility(View.VISIBLE);
         //--
         if(CommonPresenter.isMobileConnected(context)){
-            //Get list news years
-            iApiRessource = ApiClient.getApiClientLeVraiEvangile().create(HomeView.IApiRessource.class);
-            Call<List<Annee>> callAnnees = iApiRessource.getAllNewsYears();
-            callAnnees.enqueue(new Callback<List<Annee>>() {
-                @Override
-                public void onResponse(Call<List<Annee>> call, Response<List<Annee>> response) {
-                    ArrayList<Annee> newsYears = (ArrayList<Annee>)response.body();
-                    iPlaceholder.progressBarVisibility(View.GONE);
-                    // Save news years list
-                    CommonPresenter.saveDataInSharePreferences(context, KEY_ALL_NEWS_YEARS_LIST, newsYears.toString());
-                }
+            // Verify if newsYears data must to be reloaded
+            String reloadNewsYearsData = CommonPresenter.getDataFromSharePreferences(context, KEY_RELOAD_NEW_DATA_NEWS_YEAR);
+            if(reloadNewsYearsData == null || reloadNewsYearsData.isEmpty() || reloadNewsYearsData.equalsIgnoreCase("YES")){
+                //Get list news years
+                iApiRessource = ApiClient.getApiClientLeVraiEvangile().create(HomeView.IApiRessource.class);
+                Call<List<Annee>> callAnnees = iApiRessource.getAllNewsYears();
+                callAnnees.enqueue(new Callback<List<Annee>>() {
+                    @Override
+                    public void onResponse(Call<List<Annee>> call, Response<List<Annee>> response) {
+                        ArrayList<Annee> newsYears = (ArrayList<Annee>)response.body();
+                        iPlaceholder.progressBarVisibility(View.GONE);
+                        // Save news years list
+                        CommonPresenter.saveDataInSharePreferences(context, KEY_ALL_NEWS_YEARS_LIST, newsYears.toString());
+                        CommonPresenter.saveDataInSharePreferences(context, KEY_RELOAD_NEW_DATA_NEWS_YEAR, "NO");
+                    }
 
-                @Override
-                public void onFailure(Call<List<Annee>> call, Throwable t) {
-                    iPlaceholder.progressBarVisibility(View.GONE);
-                }
-            });
+                    @Override
+                    public void onFailure(Call<List<Annee>> call, Throwable t) {
+                        iPlaceholder.progressBarVisibility(View.GONE);
+                    }
+                });
+            }
+            else{
+                iPlaceholder.progressBarVisibility(View.GONE);
+            }
 
-            //Get list good to know
-            iApiRessource = ApiClient.getApiClientLeVraiEvangile().create(HomeView.IApiRessource.class);
-            Call<List<BonASavoir>> callGoodToKnows = iApiRessource.getAllGoodToKnows();
-            callGoodToKnows.enqueue(new Callback<List<BonASavoir>>() {
-                @Override
-                public void onResponse(Call<List<BonASavoir>> call, Response<List<BonASavoir>> response) {
-                    ArrayList<BonASavoir> goodToKnows = (ArrayList<BonASavoir>)response.body();
-                    iPlaceholder.progressBarVisibility(View.GONE);
-                    // Save good to know list
-                    CommonPresenter.saveDataInSharePreferences(context, KEY_ALL_GOOD_TO_KNOW_LIST, goodToKnows.toString());
-                }
+            // Verify if GoodToKnow data must to be reloaded
+            String reloadGoodToKnowData = CommonPresenter.getDataFromSharePreferences(context, KEY_RELOAD_NEW_DATA_GOOD_TO_KNOW);
+            if(reloadGoodToKnowData == null || reloadGoodToKnowData.isEmpty() || reloadGoodToKnowData.equalsIgnoreCase("YES")){
+                //Get list good to know
+                iApiRessource = ApiClient.getApiClientLeVraiEvangile().create(HomeView.IApiRessource.class);
+                Call<List<BonASavoir>> callGoodToKnows = iApiRessource.getAllGoodToKnows();
+                callGoodToKnows.enqueue(new Callback<List<BonASavoir>>() {
+                    @Override
+                    public void onResponse(Call<List<BonASavoir>> call, Response<List<BonASavoir>> response) {
+                        ArrayList<BonASavoir> goodToKnows = (ArrayList<BonASavoir>)response.body();
+                        iPlaceholder.progressBarVisibility(View.GONE);
+                        // Save good to know list
+                        CommonPresenter.saveDataInSharePreferences(context, KEY_ALL_GOOD_TO_KNOW_LIST, goodToKnows.toString());
+                        CommonPresenter.saveDataInSharePreferences(context, KEY_RELOAD_NEW_DATA_GOOD_TO_KNOW, "NO");
+                    }
 
-                @Override
-                public void onFailure(Call<List<BonASavoir>> call, Throwable t) {
-                    iPlaceholder.progressBarVisibility(View.GONE);
-                }
-            });
+                    @Override
+                    public void onFailure(Call<List<BonASavoir>> call, Throwable t) {
+                        iPlaceholder.progressBarVisibility(View.GONE);
+                    }
+                });
+            }
+            else{
+                iPlaceholder.progressBarVisibility(View.GONE);
+            }
         }
         //--
         loadFragmentData(context, positionFrag);

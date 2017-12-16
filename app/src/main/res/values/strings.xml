@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Le Vrai Évangile</string>
+    <string name="lb_titile_the">Le</string>
+    <string name="lb_titile_true">Vrai</string>
+    <string name="lb_titile_gospel">Évangile</string>
     <string name="tab_text_video">VIDÉOS</string>
     <string name="tab_text_audio">AUDIOS</string>
     <string name="tab_text_pdf">PDF</string>

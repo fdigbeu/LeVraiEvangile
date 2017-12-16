@@ -119,6 +119,14 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     public static final String KEY_NOTIF_PLAYER_PLAY_NEXT = "KEY_NOTIF_PLAYER_PLAY_NEXT";
     public static final String KEY_NOTIF_PLAYER_PREVIOUS = "KEY_NOTIF_PLAYER_PREVIOUS";
 
+    // Notify if new data must be reload
+    public static final String KEY_RELOAD_NEW_DATA_NEWS_YEAR = "KEY_RELOAD_NEW_DATA_NEWS_YEAR";
+    public static final String KEY_RELOAD_NEW_DATA_GOOD_TO_KNOW = "KEY_RELOAD_NEW_DATA_GOOD_TO_KNOW";
+
+    // Manage download audios and videos
+    public static final String KEY_DOWNLOAD_AUDIO_DATA = "KEY_DOWNLOAD_AUDIO_DATA";
+    public static final String KEY_DOWNLOAD_VIDEO_DATA = "KEY_DOWNLOAD_VIDEO_DATA";
+
     // Manage settings
     public static final String KEY_SETTING_CONFIRM_BEFORE_QUIT_APP = "KEY_SETTING_CONFIRM_BEFORE_QUIT_APP";
     public static final String KEY_SETTING_AUDIO_NOTIFICATION = "KEY_SETTING_AUDIO_NOTIFICATION";

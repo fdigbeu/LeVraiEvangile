@@ -1,46 +1,67 @@
 package org.levraievangile.View.Services;
 
-import android.app.Service;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.IBinder;
+import android.os.PowerManager;
+
+import static org.levraievangile.Presenter.CommonPresenter.KEY_RELOAD_NEW_DATA_GOOD_TO_KNOW;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_RELOAD_NEW_DATA_NEWS_YEAR;
+import static org.levraievangile.Presenter.CommonPresenter.saveDataInSharePreferences;
 
 /**
  * Created by Maranatha on 16/12/2017.
  */
 
-public class MultiTaskService extends Service {
+public class AlarmReceiverService extends BroadcastReceiver {
 
-    private boolean isRunning;
-    private Context context;
+    private final int timeRepeat = 60000*60; //1 min = 60000; // 1000 = 1s
 
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    public void onReceive(Context context, Intent intent) {
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "LVE");
+        //Acquire the lock
+        wl.acquire();
+        //--
+
+        // TODO = Make functionality here
+
+        // Notify tonreload new data
+        notifyToReloadNewData(context);
+
+        //Release the lock
+        wl.release();
     }
 
-    @Override
-    public void onCreate() {
-        this.context = this;
-        this.isRunning = false;
+
+    public void startTimerAlarm(Context context)
+    {
+        AlarmManager am=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, AlarmReceiverService.class);
+        PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
+        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), timeRepeat , pi);
     }
 
-    private Runnable myTask = new Runnable() {
-        public void run() {
-            stopSelf();
-        }
-    };
-
-    @Override
-    public void onDestroy() {
-        this.isRunning = false;
+    public void stopTimerAlarm(Context context)
+    {
+        Intent intent = new Intent(context, AlarmReceiverService.class);
+        PendingIntent sender = PendingIntent.getBroadcast(context, 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(sender);
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if(!this.isRunning) {
-            this.isRunning = true;
-        }
-        return START_STICKY;
+    public void setOnetimeTimer(Context context){
+        AlarmManager am=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, AlarmReceiverService.class);
+        PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
+        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pi);
+    }
+
+    private void notifyToReloadNewData(Context context){
+        saveDataInSharePreferences(context, KEY_RELOAD_NEW_DATA_NEWS_YEAR, "YES");
+        saveDataInSharePreferences(context, KEY_RELOAD_NEW_DATA_GOOD_TO_KNOW, "YES");
     }
 }

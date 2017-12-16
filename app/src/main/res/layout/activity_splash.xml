@@ -1,9 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorLayout"
     tools:context="org.levraievangile.View.Activities.SplashActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@mipmap/logo"
+        android:contentDescription="@string/image_description"/>
+
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_below="@+id/logo"
+        android:gravity="center_horizontal"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/title_the"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/text_size_40_sp"
+            android:padding="@dimen/size_5_dp"
+            android:textStyle="bold"
+            android:text="@string/lb_titile_the"/>
+
+        <TextView
+            android:id="@+id/title_true"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/text_size_40_sp"
+            android:textStyle="bold"
+            android:padding="@dimen/size_5_dp"
+            android:text="@string/lb_titile_true"/>
+
+        <TextView
+            android:id="@+id/title_gospel"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/text_size_40_sp"
+            android:textStyle="bold"
+            android:padding="@dimen/size_5_dp"
+            android:text="@string/lb_titile_gospel"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

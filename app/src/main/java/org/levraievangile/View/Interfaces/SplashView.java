@@ -5,4 +5,11 @@ package org.levraievangile.View.Interfaces;
  */
 
 public class SplashView {
+    public interface ISplash{
+        public void initialize();
+        public void events();
+        public void launchHomeActivity();
+        public void startAlarmService();
+        public void stopAlarmService();
+    }
 }

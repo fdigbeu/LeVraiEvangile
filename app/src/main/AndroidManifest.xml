@@ -22,11 +22,6 @@
             android:name=".View.Activities.HomeActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".View.Activities.VideoActivity"
@@ -52,19 +47,31 @@
             android:label="@string/lb_top_parameter" />
         <activity
             android:name=".View.Activities.DownloadActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/title_activity_download"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:configChanges="orientation|screenSize|keyboardHidden" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".View.Activities.FavorisActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/title_activity_favoris"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:configChanges="orientation|screenSize|keyboardHidden"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- Service for media player notification -->
         <service android:name=".View.Services.PlayerAudioService" />
         <!-- Service for downloader -->
         <service android:name=".View.Services.DownloadService" />
+        <!-- Alarm Service for background task -->
+        <receiver android:name=".View.Services.AlarmReceiverService" />
+
+        <activity android:name=".View.Activities.SplashActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
     </application>
 
 </manifest>

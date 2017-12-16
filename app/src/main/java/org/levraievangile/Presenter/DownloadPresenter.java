@@ -5,12 +5,16 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import org.levraievangile.Model.DownloadFile;
 import org.levraievangile.Model.LoadDownloadAudio;
 import org.levraievangile.Model.LoadDownloadPdf;
 import org.levraievangile.Model.LoadDownloadVideo;
 import org.levraievangile.View.Interfaces.DownloadView;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 /**

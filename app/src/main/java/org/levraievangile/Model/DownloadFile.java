@@ -18,17 +18,6 @@ public class DownloadFile {
     private Bitmap bitmap;
     private long albumId;
 
-    /*public DownloadFile(String data, String title, String album, String artist, String duration, int mipmap, String date, String shortcode, long albumId) {
-        this.data = data;
-        this.title = title;
-        this.album = album;
-        this.artist = artist;
-        this.duration = duration;
-        this.mipmap = mipmap;
-        this.date = date;
-        this.shortcode = shortcode;
-    }*/
-
     public DownloadFile(String data, String title, String album, String artist, String duration, int mipmap, String date, String shortcode, long albumId, Bitmap bitmap) {
         this.data = data;
         this.title = title;

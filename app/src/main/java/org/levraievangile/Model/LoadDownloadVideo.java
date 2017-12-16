@@ -9,9 +9,13 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import org.levraievangile.Presenter.CommonPresenter;
 import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.DownloadView;
+
 import java.util.ArrayList;
 
 import static org.levraievangile.Presenter.CommonPresenter.getMediaVideoAlbumart;
