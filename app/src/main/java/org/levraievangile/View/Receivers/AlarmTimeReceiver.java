@@ -1,4 +1,4 @@
-package org.levraievangile.View.Services;
+package org.levraievangile.View.Receivers;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -15,7 +15,7 @@ import static org.levraievangile.Presenter.CommonPresenter.saveDataInSharePrefer
  * Created by Maranatha on 16/12/2017.
  */
 
-public class AlarmReceiverService extends BroadcastReceiver {
+public class AlarmTimeReceiver extends BroadcastReceiver {
 
     private final int timeRepeat = 60000*60; //1 min = 60000; // 1000 = 1s
 
@@ -40,14 +40,14 @@ public class AlarmReceiverService extends BroadcastReceiver {
     public void startTimerAlarm(Context context)
     {
         AlarmManager am=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, AlarmReceiverService.class);
+        Intent intent = new Intent(context, AlarmTimeReceiver.class);
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
         am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), timeRepeat , pi);
     }
 
     public void stopTimerAlarm(Context context)
     {
-        Intent intent = new Intent(context, AlarmReceiverService.class);
+        Intent intent = new Intent(context, AlarmTimeReceiver.class);
         PendingIntent sender = PendingIntent.getBroadcast(context, 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(sender);
@@ -55,7 +55,7 @@ public class AlarmReceiverService extends BroadcastReceiver {
 
     public void setOnetimeTimer(Context context){
         AlarmManager am=(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, AlarmReceiverService.class);
+        Intent intent = new Intent(context, AlarmTimeReceiver.class);
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
         am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pi);
     }

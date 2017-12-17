@@ -76,14 +76,16 @@ public class AudioPresenter implements AudioView.IStreamAudio {
 
                         @Override
                         public void onFailure(Call<List<Audio>> call, Throwable t) {
-                            ArrayList<Audio> audios = CommonPresenter.getAllAudioSavedBy(context, shortCode);
+                            String key = KEY_ALL_AUDIOS_LIST+"-"+shortCode;
+                            ArrayList<Audio> audios = CommonPresenter.getAllAudiosByKey(context, key);
                             iAudio.loadAudioData(audios, 1);
                             iAudio.progressBarVisibility(View.GONE);
                         }
                     });
                 }
                 else{
-                    ArrayList<Audio> audios = CommonPresenter.getAllAudioSavedBy(context, shortCode);
+                    String key = KEY_ALL_AUDIOS_LIST+"-"+shortCode;
+                    ArrayList<Audio> audios = CommonPresenter.getAllAudiosByKey(context, key);
                     iAudio.loadAudioData(audios, 1);
                     iAudio.progressBarVisibility(View.GONE);
                 }
@@ -153,7 +155,7 @@ public class AudioPresenter implements AudioView.IStreamAudio {
             loadStreamAudio.execute();
             // Save for notification data
             CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_SELECTED, ""+position);
-            ArrayList<Audio> mList = CommonPresenter.getAllNotificationAudios(context);
+            ArrayList<Audio> mList = CommonPresenter.getAllAudiosByKey(context, KEY_NOTIF_AUDIOS_LIST);
             int previousPosition = CommonPresenter.getNotifPlayerPreviousValue(position, mList.size());
             CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PREVIOUS, ""+previousPosition);
             int nextPosition = CommonPresenter.getNotifPlayerNextValue(position, mList.size());
@@ -250,7 +252,7 @@ public class AudioPresenter implements AudioView.IStreamAudio {
 
                 case R.id.fab_player_favorite:
                     DAOFavoris daoFavoris = new DAOFavoris(view.getContext());
-                    if(!daoFavoris.isFavorisExists(audioSelected.getSrc())){
+                    if(!daoFavoris.isFavorisExists(audioSelected.getSrc(), "audio")){
                         Favoris favoris = new Favoris(audioSelected.getId(), "audio", audioSelected.getMipmap(), audioSelected.getUrlacces(), audioSelected.getSrc(), audioSelected.getTitre(), audioSelected.getAuteur(), audioSelected.getDuree(), audioSelected.getDate(), audioSelected.getType_libelle(), audioSelected.getType_shortcode(), audioSelected.getId());
                         daoFavoris.insertData(favoris);
                         Toast.makeText(view.getContext(), view.getContext().getResources().getString(R.string.audio_add_to_favorite), Toast.LENGTH_SHORT).show();
@@ -280,15 +282,10 @@ public class AudioPresenter implements AudioView.IStreamAudio {
                 String description = "LVE-APP-DOWNLOADER ("+audioSelected.getDuree()+" | "+audioSelected.getAuteur()+")";
                 CommonPresenter.getFileByDownloadManager(context, url, filename, description, "audio");
                 Toast.makeText(context, context.getResources().getString(R.string.lb_downloading), Toast.LENGTH_SHORT).show();
-                Log.i("TAG_DOWNLOAD_FILE", "URL = "+url);
             }
             else{
                 iAudio.askPermissionToSaveFile();
             }
-        }
-        else{
-
-            Log.i("TAG_METHODE", "downloadThisAudio() : audioSelected == NULL");
         }
     }
 

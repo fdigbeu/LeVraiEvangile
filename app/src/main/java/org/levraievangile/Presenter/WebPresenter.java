@@ -74,7 +74,7 @@ public class WebPresenter implements ILoadWebPage {
             // Save to favorite
             case R.id.fab_pdf_favorite:
                 DAOFavoris daoFavoris = new DAOFavoris(view.getContext());
-                if(!daoFavoris.isFavorisExists(pdfSelected.getSrc())){
+                if(!daoFavoris.isFavorisExists(pdfSelected.getSrc(), "pdf")){
 
                     Favoris favoris = new Favoris(pdfSelected.getId(), "pdf", pdfSelected.getMipmap(), pdfSelected.getUrlacces(), pdfSelected.getSrc(), pdfSelected.getTitre(), pdfSelected.getAuteur(), "00:00:00", pdfSelected.getDate(), pdfSelected.getType_libelle(), pdfSelected.getType_shortcode(), pdfSelected.getId());
                     daoFavoris.insertData(favoris);

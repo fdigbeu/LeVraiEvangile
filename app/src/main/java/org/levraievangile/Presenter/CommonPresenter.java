@@ -58,7 +58,6 @@ import org.json.JSONObject;
 import org.levraievangile.Model.Annee;
 import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.BonASavoir;
-import org.levraievangile.Model.DownloadFile;
 import org.levraievangile.Model.Favoris;
 import org.levraievangile.Model.JsonReturn;
 import org.levraievangile.Model.Mois;
@@ -112,6 +111,10 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     public static final String KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED = "KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED";
     public static final String KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED = "KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED";
     public static final String KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID = "KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID";
+
+    // Manage when new videos or audios has been posted
+    public static final String KEY_NOTIF_NEW_VIDEOS_ARE_POSTED_TO_DAY = "KEY_NOTIF_NEW_VIDEOS_ARE_POSTED_TO_DAY";
+    public static final String KEY_NOTIF_NEW_AUDIOS_ARE_POSTED_TO_DAY = "KEY_NOTIF_NEW_AUDIOS_ARE_POSTED_TO_DAY";
 
     // Manage notification audio
     public static final String KEY_NOTIF_AUDIOS_LIST = "KEY_NOTIF_AUDIOS_LIST";
@@ -771,14 +774,13 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     }
 
     /**
-     * Get all save videos saved
+     * Get all videos by key
      * @param context
      * @return
      */
-    public static ArrayList<Video> getAllVideoSavedBy(Context context, String shortCode){
+    public static ArrayList<Video> getAllVideosByKey(Context context, String key){
         ArrayList<Video> mList = new ArrayList<>();
-        String keyShortCode = KEY_ALL_VIDEOS_LIST+"-"+shortCode;
-        String srcFichier = getDataFromSharePreferences(context, keyShortCode);
+        String srcFichier = getDataFromSharePreferences(context, key);
         try {
             JSONArray jsonArray = new JSONArray(srcFichier);
             //--
@@ -794,7 +796,7 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
                 String type_libelle = jsonObject.getString("type_libelle");
                 String type_shortcode = jsonObject.getString("type_shortcode");
                 String date = jsonObject.getString("date");
-                int mipmap = getMipmapByTypeShortcode(shortCode);
+                int mipmap = getMipmapByTypeShortcode(type_shortcode);
                 mList.add(new Video(id, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, mipmap));
             }
         }
@@ -895,48 +897,13 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     }
 
     /**
-     * Get all save audios saved
+     * Get all audios by key
      * @param context
      * @return
      */
-    public static ArrayList<Audio> getAllAudioSavedBy(Context context, String shortCode){
+    public static ArrayList<Audio> getAllAudiosByKey(Context context, String key){
         ArrayList<Audio> mList = new ArrayList<>();
-        String keyShortCode = KEY_ALL_AUDIOS_LIST+"-"+shortCode;
-        String srcFichier = getDataFromSharePreferences(context, keyShortCode);
-        try {
-            JSONArray jsonArray = new JSONArray(srcFichier);
-            //--
-            for(int i = 0; i < jsonArray.length(); i++)
-            {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                int id = jsonObject.getInt("id");
-                String titre = jsonObject.getString("titre");
-                String duree = jsonObject.getString("duree");
-                String urlacces = jsonObject.getString("urlacces");
-                String src = jsonObject.getString("src");
-                String auteur = jsonObject.getString("auteur");
-                String type_libelle = jsonObject.getString("type_libelle");
-                String type_shortcode = jsonObject.getString("type_shortcode");
-                String date = jsonObject.getString("date");
-                int mipmap = getMipmapByTypeShortcode(shortCode);
-                mList.add(new Audio(id, urlacces, src, titre, auteur, duree, date, type_libelle, type_shortcode, mipmap));
-            }
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        return mList;
-    }
-
-    /**
-     * Get all notification audios list saved
-     * @param context
-     * @return
-     */
-    public static ArrayList<Audio> getAllNotificationAudios(Context context){
-        ArrayList<Audio> mList = new ArrayList<>();
-        String srcFichier = getDataFromSharePreferences(context, KEY_NOTIF_AUDIOS_LIST);
+        String srcFichier = getDataFromSharePreferences(context, key);
         try {
             JSONArray jsonArray = new JSONArray(srcFichier);
             //--
@@ -1468,15 +1435,14 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     }
 
 
-
     /**
-     * Get all save good to know
+     * Get all download files by key
      * @param context
      * @return
      */
-    public static ArrayList<Favoris> getAllDownloadFiles(Context context){
+    public static ArrayList<Favoris> getAllDownloadFilesByKey(Context context, String key){
         ArrayList<Favoris> mList = new ArrayList<>();
-        String srcFichier = getDataFromSharePreferences(context, KEY_DOWNLOAD_FILES_LIST);
+        String srcFichier = getDataFromSharePreferences(context, key);
         try {
             JSONArray jsonArray = new JSONArray(srcFichier);
             //--
@@ -1508,7 +1474,7 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
 
     // Add file to tempon downloaded file list
     private static void addDownloadFileToTheTemponList(Context context, Favoris favoris){
-        ArrayList<Favoris> downloadList = getAllDownloadFiles(context);
+        ArrayList<Favoris> downloadList = getAllDownloadFilesByKey(context, KEY_DOWNLOAD_FILES_LIST);
         if(downloadList == null || downloadList.isEmpty()){
             downloadList = new ArrayList<>();
             downloadList.add(favoris);

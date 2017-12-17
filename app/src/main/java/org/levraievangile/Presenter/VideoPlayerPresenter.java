@@ -94,7 +94,7 @@ public class VideoPlayerPresenter {
                 // Add to video favorite
                 case R.id.fab_player_favorite:
                     DAOFavoris daoFavoris = new DAOFavoris(view.getContext());
-                    if(!daoFavoris.isFavorisExists(videoSelected.getSrc())){
+                    if(!daoFavoris.isFavorisExists(videoSelected.getSrc(), "video")){
 
                         Favoris favoris = new Favoris(videoSelected.getId(), "video", videoSelected.getMipmap(), videoSelected.getUrlacces(), videoSelected.getSrc(), videoSelected.getTitre(), videoSelected.getAuteur(), videoSelected.getDuree(), videoSelected.getDate(), videoSelected.getType_libelle(), videoSelected.getType_shortcode(), videoSelected.getId());
                         daoFavoris.insertData(favoris);

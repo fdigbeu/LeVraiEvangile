@@ -63,14 +63,16 @@ public class VideoPresenter {
 
                         @Override
                         public void onFailure(Call<List<Video>> call, Throwable t) {
-                            ArrayList<Video> videos = CommonPresenter.getAllVideoSavedBy(context, shortCode);
+                            String key = KEY_ALL_VIDEOS_LIST+"-"+shortCode;
+                            ArrayList<Video> videos = CommonPresenter.getAllVideosByKey(context, key);
                             iVideo.loadVideoData(videos, 1);
                             iVideo.progressBarVisibility(View.GONE);
                         }
                     });
                 }
                 else{
-                    ArrayList<Video> videos = CommonPresenter.getAllVideoSavedBy(context, shortCode);
+                    String key = KEY_ALL_VIDEOS_LIST+"-"+shortCode;
+                    ArrayList<Video> videos = CommonPresenter.getAllVideosByKey(context, key);
                     iVideo.loadVideoData(videos, 1);
                     iVideo.progressBarVisibility(View.GONE);
                 }

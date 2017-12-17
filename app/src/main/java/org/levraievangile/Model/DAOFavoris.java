@@ -100,10 +100,10 @@ public class DAOFavoris {
         return resultat;
     }
 
-    public boolean isFavorisExists(String src){
+    public boolean isFavorisExists(String src, String typeResource){
         createTable();
         ArrayList<Favoris> resultat = new ArrayList<>();
-        Cursor cursor = CommonPresenter.getDb().rawQuery("SELECT * FROM "+TABLE_NAME+" WHERE "+COL_5+" LIKE '"+src+"'", null);
+        Cursor cursor = CommonPresenter.getDb().rawQuery("SELECT * FROM "+TABLE_NAME+" WHERE "+COL_2+" LIKE '"+typeResource+"' AND "+COL_5+" LIKE '"+src+"'", null);
         int count = cursor.getCount();
         cursor.moveToFirst();
         //--

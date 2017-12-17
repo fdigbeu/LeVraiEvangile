@@ -19,6 +19,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".View.Activities.SplashActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+        <activity
             android:name=".View.Activities.HomeActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
@@ -59,19 +70,13 @@
         <!-- Service for media player notification -->
         <service android:name=".View.Services.PlayerAudioService" />
         <!-- Service for downloader -->
-        <service android:name=".View.Services.DownloadService" />
-        <!-- Alarm Service for background task -->
-        <receiver android:name=".View.Services.AlarmReceiverService" />
-
-        <activity android:name=".View.Activities.SplashActivity">
-
+        <receiver android:name=".View.Receivers.DownloadReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
             </intent-filter>
-
-        </activity>
+        </receiver>
+        <!-- Alarm Service for background task -->
+        <receiver android:name=".View.Receivers.AlarmTimeReceiver" />
     </application>
 
 </manifest>

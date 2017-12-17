@@ -13,7 +13,7 @@ import android.widget.TextView;
 import org.levraievangile.Presenter.SplashPresenter;
 import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.SplashView;
-import org.levraievangile.View.Services.AlarmReceiverService;
+import org.levraievangile.View.Receivers.AlarmTimeReceiver;
 
 public class SplashActivity extends AppCompatActivity implements SplashView.ISplash {
     // Ref CountDownTimer
@@ -78,14 +78,14 @@ public class SplashActivity extends AppCompatActivity implements SplashView.ISpl
 
     @Override
     public void startAlarmService() {
-        AlarmReceiverService alarmReceiverService = new AlarmReceiverService();
-        alarmReceiverService.startTimerAlarm(SplashActivity.this);
+        AlarmTimeReceiver alarmTimeReceiver = new AlarmTimeReceiver();
+        alarmTimeReceiver.startTimerAlarm(SplashActivity.this);
     }
 
     @Override
     public void stopAlarmService() {
-        AlarmReceiverService alarmReceiverService = new AlarmReceiverService();
-        alarmReceiverService.stopTimerAlarm(SplashActivity.this);
+        AlarmTimeReceiver alarmTimeReceiver = new AlarmTimeReceiver();
+        alarmTimeReceiver.stopTimerAlarm(SplashActivity.this);
     }
 
     @Override

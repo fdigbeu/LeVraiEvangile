@@ -31,7 +31,7 @@ import static org.levraievangile.Presenter.CommonPresenter.KEY_ALL_NEWS_YEARS_LI
 import static org.levraievangile.Presenter.CommonPresenter.KEY_DOWNLOAD_FILES_LIST;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_RELOAD_NEW_DATA_GOOD_TO_KNOW;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_RELOAD_NEW_DATA_NEWS_YEAR;
-import static org.levraievangile.Presenter.CommonPresenter.getAllDownloadFiles;
+import static org.levraievangile.Presenter.CommonPresenter.getAllDownloadFilesByKey;
 import static org.levraievangile.Presenter.CommonPresenter.saveDataInSharePreferences;
 
 /**
@@ -217,21 +217,18 @@ public class HomePresenter {
     /**
      * Manage action when files (audios, videos and pdf are correctly downloaded
      * @param context
-     * @param intent
      */
-    public void fileIsDownloadSuccessFully(Context context, Intent intent) {
-        String action = intent.getAction();
-        if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
-            //--
-            ArrayList<Favoris> downloadList =  getAllDownloadFiles(context);
-            for (int i=0; i<downloadList.size(); i++){
-                DAOFavoris daoFavoris = new DAOFavoris(context);
-                Favoris favoris = downloadList.get(i);
+    public void fileIsDownloadSuccessFully(Context context) {
+        //--
+        ArrayList<Favoris> downloadList =  getAllDownloadFilesByKey(context, KEY_DOWNLOAD_FILES_LIST);
+        for (int i=0; i<downloadList.size(); i++){
+            DAOFavoris daoFavoris = new DAOFavoris(context);
+            Favoris favoris = downloadList.get(i);
+            if(!daoFavoris.isFavorisExists(favoris.getSrc(), favoris.getType())){
                 daoFavoris.insertData(favoris);
-                Log.i("TAG_DOWNLOAD_SERVICE", "DOWNLOAD_LIST = "+downloadList.toString());
             }
-            // Clear download list
-            saveDataInSharePreferences(context, KEY_DOWNLOAD_FILES_LIST, "");
         }
+        // Clear download list
+        saveDataInSharePreferences(context, KEY_DOWNLOAD_FILES_LIST, "");
     }
 }

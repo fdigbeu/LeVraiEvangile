@@ -23,6 +23,7 @@ import org.levraievangile.View.Interfaces.NotificationView;
 
 import java.util.List;
 
+import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIOS_LIST;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_NEXT;
@@ -46,7 +47,7 @@ public class PlayerAudioService extends Service implements MediaPlayer.OnPrepare
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getAction().equals(NotificationView.ACTION.STARTFOREGROUND_ACTION)) {
-            audios = CommonPresenter.getAllNotificationAudios(getApplicationContext());
+            audios = CommonPresenter.getAllAudiosByKey(getApplicationContext(), KEY_NOTIF_AUDIOS_LIST);
             positionSelected = Integer.parseInt(CommonPresenter.getDataFromSharePreferences(getApplicationContext(), KEY_NOTIF_PLAYER_SELECTED));
             CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, ""+audios.get(positionSelected).getId());
             //--

@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/text_size_40_sp"
+            android:textSize="@dimen/text_size_35_sp"
             android:padding="@dimen/size_5_dp"
             android:textStyle="bold"
             android:text="@string/lb_titile_the"/>
@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/text_size_40_sp"
+            android:textSize="@dimen/text_size_35_sp"
             android:textStyle="bold"
             android:padding="@dimen/size_5_dp"
             android:text="@string/lb_titile_true"/>
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/text_size_40_sp"
+            android:textSize="@dimen/text_size_35_sp"
             android:textStyle="bold"
             android:padding="@dimen/size_5_dp"
             android:text="@string/lb_titile_gospel"/>
