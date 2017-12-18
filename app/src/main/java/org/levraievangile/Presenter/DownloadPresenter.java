@@ -219,7 +219,6 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
         }
     }
 
-
     // Set DownloadVideoFragment DownloadRecyclerAdapter Attribute
     public void retrieveAndSetIDownloadVideoRecyclerReference(DownloadView.IDownloadVideoRecycler iDownloadVideoRecycler){
         if(iDownloadVideoView != null){
@@ -227,6 +226,28 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
         }
     }
 
+    public void readPdfFile(String path){
+        if(iDownloadPdfView != null){
+            try {
+                iDownloadPdfView.readPdfFile(path);
+            }
+            catch (Exception ex){}
+        }
+    }
+
+    // Set DownloadPdfFragment DownloadRecyclerAdapter Attribute
+    public void retrieveAndSetIDownloadPdfRecyclerReference(DownloadView.IDownloadPdfRecycler iDownloadPdfRecycler){
+        if(iDownloadPdfView != null){
+            iDownloadPdfView.instanciateIDownloadPdfRecycler(iDownloadPdfRecycler);
+        }
+    }
+
+    // Set DownloadAudioFragment DownloadRecyclerAdapter Attribute
+    public void retrieveAndSetIDownloadAudioRecyclerReference(DownloadView.IDownloadAudioRecycler iDownloadAudioRecycler){
+        if(iDownloadAudioView != null){
+            iDownloadAudioView.instanciateIDownloadAudioRecycler(iDownloadAudioRecycler);
+        }
+    }
 
     /**
      * Play video player

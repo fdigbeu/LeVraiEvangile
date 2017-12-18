@@ -21,7 +21,7 @@ import java.util.Hashtable;
  * Created by Maranatha on 10/10/2017.
  */
 
-public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecyclerAdapter.MyViewHolder> implements DownloadView.IDownloadVideoRecycler {
+public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecyclerAdapter.MyViewHolder> implements DownloadView.IDownloadVideoRecycler, DownloadView.IDownloadAudioRecycler, DownloadView.IDownloadPdfRecycler {
 
     private ArrayList<DownloadFile> downloadItems;
     private String typeResource;
@@ -42,6 +42,9 @@ public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecycl
         this.downloadItems = downloadItems;
         this.iDownloadAudioView = iDownloadAudioView;
         mViewHolder = new Hashtable<>();
+        //--
+        DownloadPresenter downloadPresenter = new DownloadPresenter(iDownloadAudioView);
+        downloadPresenter.retrieveAndSetIDownloadAudioRecyclerReference(this);
     }
 
     /**
@@ -67,6 +70,9 @@ public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecycl
         this.downloadItems = downloadItems;
         this.iDownloadPdfView = iDownloadPdfView;
         mViewHolder = new Hashtable<>();
+        //--
+        DownloadPresenter downloadPresenter = new DownloadPresenter(iDownloadPdfView);
+        downloadPresenter.retrieveAndSetIDownloadPdfRecyclerReference(this);
     }
 
     @Override
@@ -128,6 +134,16 @@ public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecycl
         mViewHolder.get(previousVideoPosition).container.performClick();
     }
 
+    @Override
+    public void playNextAudio() {
+
+    }
+
+    @Override
+    public void playPreviousAudio() {
+
+    }
+
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
 
@@ -155,7 +171,6 @@ public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecycl
                     if(iDownloadVideoView != null){
                         DownloadFile downloadFile = downloadItems.get(positionSelected);
                         Video videoSelected = new Video(0, "", downloadFile.getData(), downloadFile.getTitle(), downloadFile.getArtist(), downloadFile.getDuration(), downloadFile.getDate(), "", downloadFile.getShortcode(), downloadFile.getMipmap());
-                        addFocusToItemSelection(view);
 
                         previousVideoPosition = CommonPresenter.getPreviousRessourceValue(positionItem);;
                         nextVideoProsition = CommonPresenter.getNextRessourceValue(positionItem, downloadItems.size());
@@ -163,7 +178,17 @@ public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecycl
                         DownloadPresenter downloadPresenter = new DownloadPresenter(iDownloadVideoView);
                         downloadPresenter.playLVEVideoPlayer(videoSelected, positionSelected);
                     }
+                    else if(iDownloadPdfView != null){
+                        DownloadFile downloadFile = downloadItems.get(positionSelected);
+                        DownloadPresenter downloadPresenter = new DownloadPresenter(iDownloadPdfView);
+                        downloadPresenter.readPdfFile(downloadFile.getData());
+                    }
+                    else if(iDownloadAudioView != null){
+                        // TODO - Player audio and Notification
+                    }
                     else{}
+                    //--
+                    addFocusToItemSelection(view);
                 }
             });
         }

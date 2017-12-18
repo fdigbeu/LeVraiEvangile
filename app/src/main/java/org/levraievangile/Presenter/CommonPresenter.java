@@ -28,6 +28,7 @@ import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.ShareActionProvider;
@@ -223,6 +224,48 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
         liste.add(new Pdf(R.mipmap.sm_pdf,"Bon à savoir", "bon-a-savoir"));
         liste.add(new Pdf(R.mipmap.sm_pdf,"Sainte Bible", "sainte-bible"));
         return liste;
+    }
+
+
+    public static void readPDF(final Context context, final String pathPdf) {
+        try {
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        File file = new File(pathPdf);
+
+                        Uri uri = null; // Div header class = .navbar-fixed | .navbar-fixed
+
+                        // We use Provider if Android >= 7
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            uri = FileProvider.getUriForFile(context, "org.levraievangile.fileprovider", file);
+                            // Add in case of if We get Uri from fileProvider.
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        }
+                        else{
+                            uri = Uri.fromFile(file);
+                        }
+
+                        intent.setDataAndType(uri, "application/pdf");
+                        context.startActivity(intent);
+                    }
+                    catch(Exception e){
+                        String title = context.getResources().getString(R.string.lb_impossible_to_read_file);
+                        String message = context.getResources().getString(R.string.lb_pdf_reader_not_install);
+                        showMessage(context, title, message, false);
+                    }
+
+                }
+            }).start();
+        }
+        catch (Exception e){
+            String title = context.getResources().getString(R.string.lb_impossible_to_read_file);
+            String message = context.getResources().getString(R.string.lb_pdf_reader_not_install);
+            showMessage(context, title, message, false);
+        }
     }
 
     /**

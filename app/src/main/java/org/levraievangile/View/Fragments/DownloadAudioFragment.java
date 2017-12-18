@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.DownloadFile;
 import org.levraievangile.Presenter.DownloadPresenter;
 import org.levraievangile.R;
@@ -28,6 +29,8 @@ import java.util.ArrayList;
 public class DownloadAudioFragment extends Fragment implements DownloadView.IDownloadAudioView{
     // Ref Download interface
     private DownloadView.IDownload iDownload;
+    // Ref DownloadRecycler interface for audios list
+    private DownloadView.IDownloadAudioRecycler iDownloadAudioRecycler;
     // Ref widgets
     private RecyclerView downloadRecyclerView;
     private ProgressBar downloadProgressBar;
@@ -71,6 +74,21 @@ public class DownloadAudioFragment extends Fragment implements DownloadView.IDow
     @Override
     public void progressBarVisibility(int visibility) {
         downloadProgressBar.setVisibility(visibility);
+    }
+
+    @Override
+    public void scrollAudioDataToPosition(int positionScroll) {
+
+    }
+
+    @Override
+    public void instanciateIDownloadAudioRecycler(DownloadView.IDownloadAudioRecycler iDownloadAudioRecycler) {
+        this.iDownloadAudioRecycler = iDownloadAudioRecycler;
+    }
+
+    @Override
+    public void launchAudioToPlay(Audio audio, int position) {
+
     }
 
     @Override

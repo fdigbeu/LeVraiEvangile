@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import org.levraievangile.Model.DownloadFile;
+import org.levraievangile.Presenter.CommonPresenter;
 import org.levraievangile.Presenter.DownloadPresenter;
 import org.levraievangile.R;
 import org.levraievangile.View.Activities.DownloadActivity;
@@ -27,6 +28,8 @@ import java.util.ArrayList;
 public class DownloadPdfFragment extends Fragment implements DownloadView.IDownloadPdfView{
     // Ref Download interface
     private DownloadView.IDownload iDownload;
+    // Ref DownloadRecycler interface for pdf list
+    private DownloadView.IDownloadPdfRecycler iDownloadPdfRecycler;
     // Ref widgets
     private RecyclerView downloadRecyclerView;
     private ProgressBar downloadProgressBar;
@@ -71,6 +74,16 @@ public class DownloadPdfFragment extends Fragment implements DownloadView.IDownl
     @Override
     public void progressBarVisibility(int visibility) {
         downloadProgressBar.setVisibility(visibility);
+    }
+
+    @Override
+    public void instanciateIDownloadPdfRecycler(DownloadView.IDownloadPdfRecycler iDownloadPdfRecycler) {
+        this.iDownloadPdfRecycler = iDownloadPdfRecycler;
+    }
+
+    @Override
+    public void readPdfFile(String filepath) {
+        CommonPresenter.readPDF(getActivity(), filepath);
     }
 
     @Override

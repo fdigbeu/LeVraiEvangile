@@ -2,6 +2,7 @@ package org.levraievangile.View.Interfaces;
 
 import android.view.View;
 
+import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.DownloadFile;
 import org.levraievangile.Model.Video;
 
@@ -27,6 +28,10 @@ public class DownloadView {
         public void events();
         public void loadDownloadAudioData(ArrayList<DownloadFile> downloads, int numberColumns);
         public void progressBarVisibility(int visibility);
+        //--
+        public void scrollAudioDataToPosition(int positionScroll);
+        public void instanciateIDownloadAudioRecycler(DownloadView.IDownloadAudioRecycler iDownloadAudioRecycler);
+        public void launchAudioToPlay(Audio audio, int position);
     }
 
     public interface IDownloadVideoView{
@@ -40,11 +45,20 @@ public class DownloadView {
         public void launchVideoToPlay(Video video, int position);
     }
 
-
     // DownloadRecyclerAdapter interface for videos list
     public interface IDownloadVideoRecycler{
         public void playNextVideo();
         public void playPreviousVideo();
+    }
+
+    // DownloadRecyclerAdapter interface for audios list
+    public interface IDownloadAudioRecycler{
+        public void playNextAudio();
+        public void playPreviousAudio();
+    }
+
+    // DownloadRecyclerAdapter interface for pdf list
+    public interface IDownloadPdfRecycler{
     }
 
     public interface IDownloadPdfView{
@@ -52,6 +66,9 @@ public class DownloadView {
         public void events();
         public void loadDownloadPdfData(ArrayList<DownloadFile> downloads, int numberColumns);
         public void progressBarVisibility(int visibility);
+        //--
+        public void instanciateIDownloadPdfRecycler(DownloadView.IDownloadPdfRecycler iDownloadPdfRecycler);
+        public void readPdfFile(String filepath);
     }
 
     public interface IPresenter{}
