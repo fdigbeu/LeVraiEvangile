@@ -27,7 +27,7 @@ import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIOS_LIST
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_NEXT;
-import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PREVIOUS;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_PREVIOUS;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_SELECTED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED;
 
@@ -74,7 +74,7 @@ public class PlayerAudioService extends Service implements MediaPlayer.OnPrepare
             startForeground(NotificationView.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
         }
         else if (intent.getAction().equals(NotificationView.ACTION.PREVIOUS_ACTION)) {
-            positionSelected = Integer.parseInt(CommonPresenter.getDataFromSharePreferences(getApplicationContext(), KEY_NOTIF_PLAYER_PREVIOUS));
+            positionSelected = Integer.parseInt(CommonPresenter.getDataFromSharePreferences(getApplicationContext(), KEY_NOTIF_PLAYER_PLAY_PREVIOUS));
             //--
             CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, ""+audios.get(positionSelected).getId());
             //--

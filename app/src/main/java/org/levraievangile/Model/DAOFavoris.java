@@ -18,7 +18,8 @@ public class DAOFavoris {
     private final String TABLE_NAME = "lve_favoris";
 
     private final String COL_1 = "id";
-    private final String COL_2 = "type"; // audio, download_audio, video, download_video, pdf, download_pdf
+    // type = audio, download_audio, video, download_video, pdf, download_pdf/ notif_audio_today, notif_video_today
+    private final String COL_2 = "type";
     private final String COL_3 = "mipmap";
     private final String COL_4 = "urlacces";
     private final String COL_5 = "src";

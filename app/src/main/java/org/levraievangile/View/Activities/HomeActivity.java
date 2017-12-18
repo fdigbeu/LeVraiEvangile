@@ -63,7 +63,7 @@ public class HomeActivity extends AppCompatActivity implements HomeView.IHome {
         setContentView(R.layout.activity_home);
         // Load home Data
         homePresenter = new HomePresenter(this);
-        homePresenter.loadHomeData(HomeActivity.this);
+        homePresenter.loadHomeData(HomeActivity.this, this.getIntent());
     }
 
     @Override

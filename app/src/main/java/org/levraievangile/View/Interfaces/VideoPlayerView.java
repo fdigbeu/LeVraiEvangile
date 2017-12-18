@@ -25,6 +25,7 @@ public class VideoPlayerView {
         public void closeActivity();
         public void askPermissionToSaveFile();
         public void pauseNotificationAudio();
+        public boolean isCurrentVideoIsNotification();
     }
 
     public interface IPresenter{}

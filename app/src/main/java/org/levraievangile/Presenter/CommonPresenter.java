@@ -120,15 +120,11 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     public static final String KEY_NOTIF_AUDIOS_LIST = "KEY_NOTIF_AUDIOS_LIST";
     public static final String KEY_NOTIF_PLAYER_SELECTED = "KEY_NOTIF_PLAYER_SELECTED";
     public static final String KEY_NOTIF_PLAYER_PLAY_NEXT = "KEY_NOTIF_PLAYER_PLAY_NEXT";
-    public static final String KEY_NOTIF_PLAYER_PREVIOUS = "KEY_NOTIF_PLAYER_PREVIOUS";
+    public static final String KEY_NOTIF_PLAYER_PLAY_PREVIOUS = "KEY_NOTIF_PLAYER_PLAY_PREVIOUS";
 
     // Notify if new data must be reload
     public static final String KEY_RELOAD_NEW_DATA_NEWS_YEAR = "KEY_RELOAD_NEW_DATA_NEWS_YEAR";
     public static final String KEY_RELOAD_NEW_DATA_GOOD_TO_KNOW = "KEY_RELOAD_NEW_DATA_GOOD_TO_KNOW";
-
-    // Manage download audios and videos
-    public static final String KEY_DOWNLOAD_AUDIO_DATA = "KEY_DOWNLOAD_AUDIO_DATA";
-    public static final String KEY_DOWNLOAD_VIDEO_DATA = "KEY_DOWNLOAD_VIDEO_DATA";
 
     // Manage settings
     public static final String KEY_SETTING_CONFIRM_BEFORE_QUIT_APP = "KEY_SETTING_CONFIRM_BEFORE_QUIT_APP";
@@ -137,6 +133,10 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     public static final String KEY_SETTING_CONCATENATE_AUDIO_READING = "KEY_SETTING_CONCATENATE_AUDIO_READING";
     public static final String KEY_SETTING_CONCATENATE_VIDEO_READING = "KEY_SETTING_CONCATENATE_VIDEO_READING";
     public static final String KEY_SETTING_WIFI_EXCLUSIF = "KEY_SETTING_WIFI_EXCLUSIF";
+
+    // Manage to load new notif audio or video
+    public static final String KEY_SHOW_NEW_AUDIO_NOTIF_PLAYER = "KEY_SHOW_NEW_AUDIO_NOTIF_PLAYER";
+    public static final String KEY_SHOW_NEW_VIDEO_NOTIF_PLAYER = "KEY_SHOW_NEW_VIDEO_NOTIF_PLAYER";
 
     public static final String KEY_DOWNLOAD_FILES_LIST = "KEY_DOWNLOAD_FILES_LIST";
 
@@ -1268,7 +1268,7 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     public static void saveNotificationParameters(Context context, int positionSelected, int totalAudios){
         CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_SELECTED, ""+positionSelected);
         int previousPosition = CommonPresenter.getNotifPlayerPreviousValue(positionSelected, totalAudios);
-        CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PREVIOUS, ""+previousPosition);
+        CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_PREVIOUS, ""+previousPosition);
         int nextPosition = CommonPresenter.getNotifPlayerNextValue(positionSelected, totalAudios);
         CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_NEXT, ""+nextPosition);
     }

@@ -1,5 +1,6 @@
 package org.levraievangile.Presenter;
 
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +18,10 @@ import org.levraievangile.Model.Favoris;
 import org.levraievangile.Model.Pdf;
 import org.levraievangile.Model.Video;
 import org.levraievangile.R;
+import org.levraievangile.View.Activities.VideoPlayerActivity;
 import org.levraievangile.View.Interfaces.HomeView;
+import org.levraievangile.View.Interfaces.NotificationView;
+import org.levraievangile.View.Services.PlayerAudioService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +33,17 @@ import retrofit2.Response;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_ALL_GOOD_TO_KNOW_LIST;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_ALL_NEWS_YEARS_LIST;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_DOWNLOAD_FILES_LIST;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIOS_LIST;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_NEXT;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_PREVIOUS;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_SELECTED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_RELOAD_NEW_DATA_GOOD_TO_KNOW;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_RELOAD_NEW_DATA_NEWS_YEAR;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_SHOW_NEW_AUDIO_NOTIF_PLAYER;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_SHOW_NEW_VIDEO_NOTIF_PLAYER;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_VALUE_POSITION_VIDEO_SELECTED;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_VIDEO_PLAYER_SEND_DATA;
+import static org.levraievangile.Presenter.CommonPresenter.VALUE_VIDEO_SELECTED_REQUEST_CODE;
 import static org.levraievangile.Presenter.CommonPresenter.getAllDownloadFilesByKey;
 import static org.levraievangile.Presenter.CommonPresenter.saveDataInSharePreferences;
 
@@ -58,10 +71,24 @@ public class HomePresenter {
     }
 
     // Methods
-    public void loadHomeData(Context context){
+    public void loadHomeData(Context context, Intent intent){
         iHome.initialize();
         iHome.events();
         iHome.askPermissionToSaveFile();
+        //--
+        if(intent != null){
+            Audio audio = (Audio) intent.getSerializableExtra(KEY_SHOW_NEW_AUDIO_NOTIF_PLAYER);
+            // Launch audio notification
+            if(audio != null){
+                CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_AUDIOS_LIST, "["+audio.toString()+"]");
+                CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_SELECTED, "0");
+                CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_NEXT, "0");
+                CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_PREVIOUS, "0");
+                Intent mIntent = new Intent(context, PlayerAudioService.class);
+                mIntent.setAction(NotificationView.ACTION.STARTFOREGROUND_ACTION);
+                context.startService(mIntent);
+            }
+        }
     }
 
     // Launch activity

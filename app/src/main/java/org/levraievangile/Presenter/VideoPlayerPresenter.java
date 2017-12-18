@@ -1,6 +1,7 @@
 package org.levraievangile.Presenter;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,11 +17,13 @@ import org.levraievangile.Model.DAOFavoris;
 import org.levraievangile.Model.Favoris;
 import org.levraievangile.Model.Video;
 import org.levraievangile.R;
+import org.levraievangile.View.Activities.HomeActivity;
 import org.levraievangile.View.Interfaces.VideoPlayerView;
 import org.levraievangile.View.Interfaces.VideoView;
 
 import java.util.Hashtable;
 
+import static org.levraievangile.Presenter.CommonPresenter.KEY_VALUE_POSITION_VIDEO_SELECTED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_VIDEO_PLAYER_SEND_DATA;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_VIDEO_SELECTED;
 import static org.levraievangile.Presenter.CommonPresenter.saveDataInSharePreferences;
@@ -72,6 +75,17 @@ public class VideoPlayerPresenter {
         }
     }
 
+    // Mange back pressed
+    public void onActivityBackPressed(Context context){
+        if(iVideoPlayer.isCurrentVideoIsNotification()){
+            Intent intent = new Intent(context, HomeActivity.class);
+            context.startActivity(intent);
+            ((Activity)context).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
+        //--
+        iVideoPlayer.closeActivity();
+    }
+
     // When the video is finished
     public void retrieveOnCompletionAction(){
         iVideoPlayer.playNextVideo();
@@ -112,17 +126,43 @@ public class VideoPlayerPresenter {
 
                     // Hide video player
                 case R.id.fab_player_down:
+                    if(iVideoPlayer.isCurrentVideoIsNotification()){
+                        Intent intent = new Intent(view.getContext(), HomeActivity.class);
+                        view.getContext().startActivity(intent);
+                        ((Activity)view.getContext()).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    }
+                    //--
                     iVideoPlayer.closeActivity();
                     break;
 
                 // Play previous video
                 case R.id.btn_video_nav_left:
-                    iVideoPlayer.playPreviousVideo();
+                    // Is it video notification
+                    if(iVideoPlayer.isCurrentVideoIsNotification()){
+                        Intent intent = new Intent(view.getContext(), HomeActivity.class);
+                        view.getContext().startActivity(intent);
+                        ((Activity)view.getContext()).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        //--
+                        iVideoPlayer.closeActivity();
+                    }
+                    else{
+                        iVideoPlayer.playPreviousVideo();
+                    }
                     break;
 
                 // Play next video
                 case R.id.btn_video_nav_right:
-                    iVideoPlayer.playNextVideo();
+                    // Is it video notification
+                    if(iVideoPlayer.isCurrentVideoIsNotification()){
+                        Intent intent = new Intent(view.getContext(), HomeActivity.class);
+                        view.getContext().startActivity(intent);
+                        ((Activity)view.getContext()).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        //--
+                        iVideoPlayer.closeActivity();
+                    }
+                    else {
+                        iVideoPlayer.playNextVideo();
+                    }
                     break;
             }
         }

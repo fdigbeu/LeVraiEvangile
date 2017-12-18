@@ -75,7 +75,6 @@ public class VideoActivity extends AppCompatActivity implements IVideo {
     public void initialize() {
         recyclerView = findViewById(R.id.videoRecyclerView);
         progressBar = findViewById(R.id.videoProgressBar);
-
         // Display Home Back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

@@ -28,7 +28,7 @@ import static org.levraievangile.Presenter.CommonPresenter.KEY_ALL_AUDIOS_LIST;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_AUDIO_SELECTED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIOS_LIST;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_NEXT;
-import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PREVIOUS;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_PREVIOUS;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_SELECTED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_SHORT_CODE;
@@ -157,7 +157,7 @@ public class AudioPresenter implements AudioView.IStreamAudio {
             CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_SELECTED, ""+position);
             ArrayList<Audio> mList = CommonPresenter.getAllAudiosByKey(context, KEY_NOTIF_AUDIOS_LIST);
             int previousPosition = CommonPresenter.getNotifPlayerPreviousValue(position, mList.size());
-            CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PREVIOUS, ""+previousPosition);
+            CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_PREVIOUS, ""+previousPosition);
             int nextPosition = CommonPresenter.getNotifPlayerNextValue(position, mList.size());
             CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_NEXT, ""+nextPosition);
         }
@@ -282,6 +282,8 @@ public class AudioPresenter implements AudioView.IStreamAudio {
                 String description = "LVE-APP-DOWNLOADER ("+audioSelected.getDuree()+" | "+audioSelected.getAuteur()+")";
                 CommonPresenter.getFileByDownloadManager(context, url, filename, description, "audio");
                 Toast.makeText(context, context.getResources().getString(R.string.lb_downloading), Toast.LENGTH_SHORT).show();
+                Log.i("TAG_DOWNLOAD_FILE", "URL = "+url);
+                Log.i("TAG_DOWNLOAD_SERVICE", "DOWNLOAD_LIST = "+audioSelected.toString());
             }
             else{
                 iAudio.askPermissionToSaveFile();

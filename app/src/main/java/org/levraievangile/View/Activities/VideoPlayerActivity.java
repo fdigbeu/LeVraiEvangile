@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -33,6 +34,7 @@ import org.levraievangile.View.Interfaces.NotificationView;
 import org.levraievangile.View.Interfaces.VideoPlayerView;
 import org.levraievangile.View.Services.PlayerAudioService;
 
+import static org.levraievangile.Presenter.CommonPresenter.KEY_VALUE_POSITION_VIDEO_SELECTED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_VALUE_VIDEO_PLAY_NEXT;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_VALUE_VIDEO_PLAY_PREVIOUS;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_VIDEO_PLAYER_RETURN_DATA;
@@ -256,6 +258,8 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
 
     @Override
     public void closeActivity() {
+        playerPresenter.cancelCountDownTimer(downTimer);
+        playerPresenter.stopVideoViewPlayer(player_video);
         this.finish();
     }
 
@@ -264,6 +268,12 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
         Intent serviceIntent = new Intent(VideoPlayerActivity.this, PlayerAudioService.class);
         serviceIntent.setAction(NotificationView.ACTION.PAUSE_ACTION);
         startService(serviceIntent);
+    }
+
+    @Override
+    public boolean isCurrentVideoIsNotification() {
+        String currentData = this.getIntent().getStringExtra(KEY_VALUE_POSITION_VIDEO_SELECTED);
+        return (currentData == null || currentData.isEmpty() ? false : true);
     }
 
     @Override
@@ -305,8 +315,6 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
 
     @Override
     public void onBackPressed() {
-        playerPresenter.cancelCountDownTimer(downTimer);
-        playerPresenter.stopVideoViewPlayer(player_video);
-        super.onBackPressed();
+        playerPresenter.onActivityBackPressed(VideoPlayerActivity.this);
     }
 }

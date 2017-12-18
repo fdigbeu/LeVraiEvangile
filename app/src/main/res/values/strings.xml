@@ -40,6 +40,9 @@
     <string name="lb_fermer">FERMER</string>
     <string name="image_description"></string>
 
+    <string name="lb_notif_new_audio">Nouvel audio en ligne</string>
+    <string name="lb_notif_new_video">Nouvelle vidéo en ligne</string>
+
     <string name="lb_form_search_title">EFFECTUER UNE RECHERCHE</string>
     <string name="lb_form_search_indication">La saisie du mot clé ou de l\'orateur est obligatoire</string>
     <string name="lb_form_search_select_category">Sélectionnez une ressource</string>
