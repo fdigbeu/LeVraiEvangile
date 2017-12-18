@@ -55,23 +55,35 @@ public class VideoPlayerPresenter {
         iVideoPlayer.fabVisibility(View.GONE);
         iVideoPlayer.btnNavigationVisibility(View.GONE);
         iVideoPlayer.pauseNotificationAudio();
-        // Verify connexion state
-        if(CommonPresenter.isMobileConnected(context)) {
-            if(intent != null) {
-                videoSelected = (Video) intent.getSerializableExtra(KEY_VIDEO_PLAYER_SEND_DATA);
+
+        if(intent != null) {
+            boolean continueAction = false;
+            videoSelected = (Video) intent.getSerializableExtra(KEY_VIDEO_PLAYER_SEND_DATA);
+            if(videoSelected.getId()==0){
+                iVideoPlayer.hideBtnDownloadShareFavorite();
+                continueAction = true;
+            }
+            else{
+                // Verify connexion state
+                if(CommonPresenter.isMobileConnected(context)) {
+                    continueAction = true;
+                }
+                else{
+                    String title = context.getResources().getString(R.string.no_connection);
+                    String message = context.getResources().getString(R.string.detail_no_connection);
+                    CommonPresenter.showMessage(context, title.toUpperCase(), message, true);
+                }
+            }
+            //--
+            if(continueAction){
                 Hashtable<String, Integer> resolutionEcran = CommonPresenter.getScreenSize(context);
                 iVideoPlayer.displayPlayer(videoSelected, resolutionEcran.get("largeur"), resolutionEcran.get("hauteur"));
                 // Save video selected data
                 saveDataInSharePreferences(context, KEY_VIDEO_SELECTED, videoSelected.toString());
             }
-            else{
-                iVideoPlayer.closeActivity();
-            }
         }
         else{
-            String title = context.getResources().getString(R.string.no_connection);
-            String message = context.getResources().getString(R.string.detail_no_connection);
-            CommonPresenter.showMessage(context, title.toUpperCase(), message, true);
+            iVideoPlayer.closeActivity();
         }
     }
 

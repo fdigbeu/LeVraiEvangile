@@ -19,6 +19,7 @@ public class VideoPlayerView {
         public void headerVisibility(int visibility);
         public void progressBarVisibility(int visibility);
         public void btnNavigationVisibility(int visibility);
+        public void hideBtnDownloadShareFavorite();
         public void showPlayerWidgetsOnTouch();
         public void playNextVideo();
         public void playPreviousVideo();

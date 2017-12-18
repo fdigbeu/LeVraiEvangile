@@ -3,6 +3,7 @@ package org.levraievangile.View.Interfaces;
 import android.view.View;
 
 import org.levraievangile.Model.DownloadFile;
+import org.levraievangile.Model.Video;
 
 import java.util.ArrayList;
 
@@ -33,6 +34,17 @@ public class DownloadView {
         public void events();
         public void loadDownloadVideoData(ArrayList<DownloadFile> downloads, int numberColumns);
         public void progressBarVisibility(int visibility);
+        //--
+        public void scrollVideoDataToPosition(int positionScroll);
+        public void instanciateIDownloadVideoRecycler(DownloadView.IDownloadVideoRecycler iDownloadVideoRecycler);
+        public void launchVideoToPlay(Video video, int position);
+    }
+
+
+    // DownloadRecyclerAdapter interface for videos list
+    public interface IDownloadVideoRecycler{
+        public void playNextVideo();
+        public void playPreviousVideo();
     }
 
     public interface IDownloadPdfView{

@@ -212,6 +212,13 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
     }
 
     @Override
+    public void hideBtnDownloadShareFavorite() {
+        fab_player_download.setVisibility(View.GONE);
+        fab_player_share_app.setVisibility(View.GONE);
+        fab_player_favorite.setVisibility(View.GONE);
+    }
+
+    @Override
     public void showPlayerWidgetsOnTouch() {
         progress_player_video.setVisibility(View.GONE);
         title_video.setVisibility(View.VISIBLE);

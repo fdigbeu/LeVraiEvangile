@@ -12,6 +12,8 @@ import org.levraievangile.Model.DownloadFile;
 import org.levraievangile.Model.LoadDownloadAudio;
 import org.levraievangile.Model.LoadDownloadPdf;
 import org.levraievangile.Model.LoadDownloadVideo;
+import org.levraievangile.Model.Video;
+import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.DownloadView;
 
 import java.lang.reflect.Type;
@@ -185,5 +187,53 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
         if(loadDownloadAudio != null) loadDownloadAudio.cancel(true);
         if(loadDownloadVideo != null) loadDownloadVideo.cancel(true);
         if(loadDownloadPdf != null) loadDownloadPdf.cancel(true);
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Scroll video data items to positon
+     * @param position
+     */
+    public void srcollVideoDataItemsToPosition(int position){
+        iDownloadVideoView.scrollVideoDataToPosition(position);
+    }
+
+    /**
+     * Play next video from DownloadRecyclerAdapter
+     * @param iDownloadVideoRecycler
+     */
+    public void playNextVideoInPlayer(DownloadView.IDownloadVideoRecycler iDownloadVideoRecycler){
+        if(iDownloadVideoRecycler != null){
+            iDownloadVideoRecycler.playNextVideo();
+        }
+    }
+
+    /**
+     * Play previous video from DownloadRecyclerAdapter
+     * @param iDownloadVideoRecycler
+     */
+    public void playPreviousVideoInPlayer(DownloadView.IDownloadVideoRecycler iDownloadVideoRecycler){
+        if(iDownloadVideoRecycler != null){
+            iDownloadVideoRecycler.playPreviousVideo();
+        }
+    }
+
+
+    // Set DownloadVideoFragment DownloadRecyclerAdapter Attribute
+    public void retrieveAndSetIDownloadVideoRecyclerReference(DownloadView.IDownloadVideoRecycler iDownloadVideoRecycler){
+        if(iDownloadVideoView != null){
+            iDownloadVideoView.instanciateIDownloadVideoRecycler(iDownloadVideoRecycler);
+        }
+    }
+
+
+    /**
+     * Play video player
+     * @param video
+     * @param position
+     */
+    public void playLVEVideoPlayer(Video video, int position){
+        iDownloadVideoView.launchVideoToPlay(video, position);
     }
 }
