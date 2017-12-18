@@ -57,7 +57,7 @@ import static org.levraievangile.Presenter.CommonPresenter.saveDataInSharePrefer
 public class AlarmTimeReceiver extends BroadcastReceiver {
 
     private final String shortCode = "all-aujourdhui";
-    private final int timeRepeat = 60000*5; //1 min = 60000; // 1000 = 1s
+    private final int timeRepeat = 60000*60; //1 min = 60000; // 1000 = 1s
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -81,19 +81,19 @@ public class AlarmTimeReceiver extends BroadcastReceiver {
                         if(allVideos.size() >= 50){
                             for (int i=0; i<allVideos.size(); i++){
                                 DAOFavoris daoFav = new DAOFavoris(context);
-                                daoFav.deleteDataBy(allVideos.get(0).getId());
+                                daoFav.deleteDataBy(allVideos.get(i).getId());
                             }
                         }
                     }
                     else{
-                        Log.i("TAG_NOTIF_VIDEOS_TODAY", "videos.toString() = "+videos.toString());
                         // Launch video notification
                         int increment = 0;
                         for (int i=0; i<videos.size(); i++){
                             increment++;
                             DAOFavoris daoFavoris = new DAOFavoris(context);
-                            Video video = videos.get(0);
+                            Video video = videos.get(i);
                             if(!daoFavoris.isFavorisExists(video.getSrc(), "notif_video_today") && increment == 1){
+                                Log.i("TAG_NOTIF_VIDEOS_TODAY", "video.getTitre() = "+video.getTitre());
                                 Favoris favoris = new Favoris(video.getId(), "notif_video_today", video.getMipmap(), video.getUrlacces(), video.getSrc(), video.getTitre(), video.getAuteur(), video.getDuree(), video.getDate(), video.getType_libelle(), video.getType_shortcode(), video.getId());
                                 daoFavoris.insertData(favoris);
                                 notification(context, favoris);
@@ -119,19 +119,19 @@ public class AlarmTimeReceiver extends BroadcastReceiver {
                         if(allAudios.size() >= 50){
                             for (int i=0; i<allAudios.size(); i++){
                                 DAOFavoris daoFav = new DAOFavoris(context);
-                                daoFav.deleteDataBy(allAudios.get(0).getId());
+                                daoFav.deleteDataBy(allAudios.get(i).getId());
                             }
                         }
                     }
                     else{
                         // Launch audio notification
                         int increment = 0;
-                        Log.i("TAG_NOTIF_AUDIOS_TODAY", "audios.toString() = "+audios.toString());
                         for (int i=0; i<audios.size(); i++){
                             increment++;
                             DAOFavoris daoFavoris = new DAOFavoris(context);
-                            Audio audio = audios.get(0);
+                            Audio audio = audios.get(i);
                             if(!daoFavoris.isFavorisExists(audio.getSrc(), "notif_audio_today") && increment == 1){
+                                Log.i("TAG_NOTIF_AUDIOS_TODAY", "audio.getTitre() = "+audio.getTitre());
                                 Favoris favoris = new Favoris(audio.getId(), "notif_audio_today", audio.getMipmap(), audio.getUrlacces(), audio.getSrc(), audio.getTitre(), audio.getAuteur(), audio.getDuree(), audio.getDate(), audio.getType_libelle(), audio.getType_shortcode(), audio.getId());
                                 daoFavoris.insertData(favoris);
                                 notification(context, favoris);

@@ -46,70 +46,73 @@ public class PlayerAudioService extends Service implements MediaPlayer.OnPrepare
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getAction().equals(NotificationView.ACTION.STARTFOREGROUND_ACTION)) {
-            audios = CommonPresenter.getAllAudiosByKey(getApplicationContext(), KEY_NOTIF_AUDIOS_LIST);
-            positionSelected = Integer.parseInt(CommonPresenter.getDataFromSharePreferences(getApplicationContext(), KEY_NOTIF_PLAYER_SELECTED));
-            CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, ""+audios.get(positionSelected).getId());
-            //--
-            showNotification();
-            // Play Media player
-            playAudioMediaPlayer();
-        }
-        else if (intent.getAction().equals(NotificationView.ACTION.PLAY_ACTION)) {
-            // If notif player is playing
-            if(mediaPlayer.isPlaying()){
-                mediaPlayer.pause();
-                // Change Image on reading player
-                views.setImageViewResource(R.id.notif_player_play, R.drawable.btn_media_player_play);
-                bigViews.setImageViewResource(R.id.notif_player_play, R.drawable.btn_media_player_play);
-            }
-            else{
-                mediaPlayer.start();
-                // Change Image on reading player
-                views.setImageViewResource(R.id.notif_player_play, R.drawable.btn_media_player_pause);
-                bigViews.setImageViewResource(R.id.notif_player_play, R.drawable.btn_media_player_pause);
-                //--
-                stopOtherMediaPlayerSound();
-            }
-            startForeground(NotificationView.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
-        }
-        else if (intent.getAction().equals(NotificationView.ACTION.PREVIOUS_ACTION)) {
-            positionSelected = Integer.parseInt(CommonPresenter.getDataFromSharePreferences(getApplicationContext(), KEY_NOTIF_PLAYER_PLAY_PREVIOUS));
-            //--
-            CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, ""+audios.get(positionSelected).getId());
-            //--
-            CommonPresenter.saveNotificationParameters(getApplicationContext(), positionSelected, audios.size());
-            // Play Media player
-            playAudioMediaPlayer();
-        }
-        else if (intent.getAction().equals(NotificationView.ACTION.NEXT_ACTION)) {
-            positionSelected = Integer.parseInt(CommonPresenter.getDataFromSharePreferences(getApplicationContext(), KEY_NOTIF_PLAYER_PLAY_NEXT));
-            //--
-            CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, ""+audios.get(positionSelected).getId());
-            //--
-            CommonPresenter.saveNotificationParameters(getApplicationContext(), positionSelected, audios.size());
-            // Play Media player
-            playAudioMediaPlayer();
-        }
-        else if (intent.getAction().equals(NotificationView.ACTION.PAUSE_ACTION)) {
-            if(mediaPlayer != null && mediaPlayer.isPlaying()){
-                mediaPlayer.pause();
-                // Change Image on reading player
-                views.setImageViewResource(R.id.notif_player_play, R.drawable.btn_media_player_play);
-                bigViews.setImageViewResource(R.id.notif_player_play, R.drawable.btn_media_player_play);
-            }
-        }
-        else if (intent.getAction().equals(NotificationView.ACTION.STOPFOREGROUND_ACTION)) {
-            // Close Media player
-            if(mediaPlayer != null && mediaPlayer.isPlaying()){
-                CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED, ""+mediaPlayer.getCurrentPosition());
+        try {
+            if (intent.getAction().equals(NotificationView.ACTION.STARTFOREGROUND_ACTION)) {
+                audios = CommonPresenter.getAllAudiosByKey(getApplicationContext(), KEY_NOTIF_AUDIOS_LIST);
+                positionSelected = Integer.parseInt(CommonPresenter.getDataFromSharePreferences(getApplicationContext(), KEY_NOTIF_PLAYER_SELECTED));
                 CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, ""+audios.get(positionSelected).getId());
-                mediaPlayer.stop();
+                //--
+                showNotification();
+                // Play Media player
+                playAudioMediaPlayer();
             }
-            //--
-            stopForeground(true);
-            stopSelf();
+            else if (intent.getAction().equals(NotificationView.ACTION.PLAY_ACTION)) {
+                // If notif player is playing
+                if(mediaPlayer.isPlaying()){
+                    mediaPlayer.pause();
+                    // Change Image on reading player
+                    views.setImageViewResource(R.id.notif_player_play, R.drawable.btn_media_player_play);
+                    bigViews.setImageViewResource(R.id.notif_player_play, R.drawable.btn_media_player_play);
+                }
+                else{
+                    mediaPlayer.start();
+                    // Change Image on reading player
+                    views.setImageViewResource(R.id.notif_player_play, R.drawable.btn_media_player_pause);
+                    bigViews.setImageViewResource(R.id.notif_player_play, R.drawable.btn_media_player_pause);
+                    //--
+                    stopOtherMediaPlayerSound();
+                }
+                startForeground(NotificationView.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
+            }
+            else if (intent.getAction().equals(NotificationView.ACTION.PREVIOUS_ACTION)) {
+                positionSelected = Integer.parseInt(CommonPresenter.getDataFromSharePreferences(getApplicationContext(), KEY_NOTIF_PLAYER_PLAY_PREVIOUS));
+                //--
+                CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, ""+audios.get(positionSelected).getId());
+                //--
+                CommonPresenter.saveNotificationParameters(getApplicationContext(), positionSelected, audios.size());
+                // Play Media player
+                playAudioMediaPlayer();
+            }
+            else if (intent.getAction().equals(NotificationView.ACTION.NEXT_ACTION)) {
+                positionSelected = Integer.parseInt(CommonPresenter.getDataFromSharePreferences(getApplicationContext(), KEY_NOTIF_PLAYER_PLAY_NEXT));
+                //--
+                CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, ""+audios.get(positionSelected).getId());
+                //--
+                CommonPresenter.saveNotificationParameters(getApplicationContext(), positionSelected, audios.size());
+                // Play Media player
+                playAudioMediaPlayer();
+            }
+            else if (intent.getAction().equals(NotificationView.ACTION.PAUSE_ACTION)) {
+                if(mediaPlayer != null && mediaPlayer.isPlaying()){
+                    mediaPlayer.pause();
+                    // Change Image on reading player
+                    views.setImageViewResource(R.id.notif_player_play, R.drawable.btn_media_player_play);
+                    bigViews.setImageViewResource(R.id.notif_player_play, R.drawable.btn_media_player_play);
+                }
+            }
+            else if (intent.getAction().equals(NotificationView.ACTION.STOPFOREGROUND_ACTION)) {
+                // Close Media player
+                if(mediaPlayer != null && mediaPlayer.isPlaying()){
+                    CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED, ""+mediaPlayer.getCurrentPosition());
+                    CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, ""+audios.get(positionSelected).getId());
+                    mediaPlayer.stop();
+                }
+                //--
+                stopForeground(true);
+                stopSelf();
+            }
         }
+        catch (Exception ex){}
         //--
         return START_STICKY;
     }
