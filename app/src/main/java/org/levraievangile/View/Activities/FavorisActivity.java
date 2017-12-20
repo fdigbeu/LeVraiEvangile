@@ -1,5 +1,8 @@
 package org.levraievangile.View.Activities;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -11,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,12 +25,21 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.levraievangile.Model.Favoris;
+import org.levraievangile.Model.Video;
 import org.levraievangile.Presenter.FavorisPresenter;
 import org.levraievangile.R;
 import org.levraievangile.View.Adapters.FavorisRecyclerAdapter;
 import org.levraievangile.View.Interfaces.FavorisView;
 
 import java.util.ArrayList;
+
+import static org.levraievangile.Presenter.CommonPresenter.KEY_SHORT_CODE;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_VALUE_POSITION_VIDEO_SELECTED;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_VALUE_VIDEO_PLAY_NEXT;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_VALUE_VIDEO_PLAY_PREVIOUS;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_VIDEO_PLAYER_RETURN_DATA;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_VIDEO_PLAYER_SEND_DATA;
+import static org.levraievangile.Presenter.CommonPresenter.VALUE_VIDEO_SELECTED_REQUEST_CODE;
 
 public class FavorisActivity extends AppCompatActivity implements FavorisView.IFravoris {
 
@@ -92,8 +105,11 @@ public class FavorisActivity extends AppCompatActivity implements FavorisView.IF
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment implements FavorisView.IPlaceholder {
+        // Ref widgets
         private RecyclerView favorisRecyclerView;
         private ProgressBar favorisProgressBar;
+        // Ref IFavorisRecycler
+        private FavorisView.IFavorisRecycler iFavorisRecycler;
         // Presenter
         private FavorisPresenter favorisPresenter;
         //--
@@ -171,8 +187,59 @@ public class FavorisActivity extends AppCompatActivity implements FavorisView.IF
         }
 
         @Override
+        public void scrollVideoDataToPosition(int positionScroll) {
+            favorisRecyclerView.scrollToPosition(positionScroll);
+        }
+
+        @Override
         public void progressBarVisibility(int visibility) {
             favorisProgressBar.setVisibility(visibility);
+        }
+
+
+        @Override
+        public void launchActivity(String value) {
+            Intent intent = new Intent(getActivity(), WebActivity.class);
+            intent.putExtra(KEY_SHORT_CODE, value);
+            startActivity(intent);
+            getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
+
+        @Override
+        public void launchVideoToPlay(Video video, int position) {
+            Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
+            intent.putExtra(KEY_VIDEO_PLAYER_SEND_DATA, video);
+            intent.putExtra(KEY_VALUE_POSITION_VIDEO_SELECTED, position);
+            startActivityForResult(intent, VALUE_VIDEO_SELECTED_REQUEST_CODE);
+            getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            if (requestCode == VALUE_VIDEO_SELECTED_REQUEST_CODE) {
+                if (resultCode == Activity.RESULT_OK) {
+                    String result = data.getStringExtra(KEY_VIDEO_PLAYER_RETURN_DATA);
+                    switch (result){
+                        case KEY_VALUE_VIDEO_PLAY_NEXT:
+                            favorisPresenter.playNextVideoInPlayer(iFavorisRecycler);
+                            break;
+
+                        case KEY_VALUE_VIDEO_PLAY_PREVIOUS:
+                            favorisPresenter.playPreviousVideoInPlayer(iFavorisRecycler);
+                            break;
+                    }
+                }
+                else if (resultCode == Activity.RESULT_CANCELED) {
+                    Log.i("TAG_VIDEO_FRAGMENT", "Activity.RESULT_CANCELED = "+requestCode);
+                    Log.i("TAG_VIDEO_FRAGMENT", "Activity.RESULT_CANCELED = "+resultCode);
+                }
+            }
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+
+        @Override
+        public void instanciateIFavorisRecycler(FavorisView.IFavorisRecycler iFavorisRecycler) {
+            this.iFavorisRecycler = iFavorisRecycler;
         }
     }
 

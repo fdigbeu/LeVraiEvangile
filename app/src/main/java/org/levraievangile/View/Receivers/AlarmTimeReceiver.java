@@ -92,7 +92,7 @@ public class AlarmTimeReceiver extends BroadcastReceiver {
                             increment++;
                             DAOFavoris daoFavoris = new DAOFavoris(context);
                             Video video = videos.get(i);
-                            if(!daoFavoris.isFavorisExists(video.getSrc(), "notif_video_today") && increment == 1){
+                            if(!daoFavoris.isFavorisExists(video.getSrc(), "notif_video_today") && increment <= 2){
                                 Log.i("TAG_NOTIF_VIDEOS_TODAY", "video.getTitre() = "+video.getTitre());
                                 Favoris favoris = new Favoris(video.getId(), "notif_video_today", video.getMipmap(), video.getUrlacces(), video.getSrc(), video.getTitre(), video.getAuteur(), video.getDuree(), video.getDate(), video.getType_libelle(), video.getType_shortcode(), video.getId());
                                 daoFavoris.insertData(favoris);
@@ -130,7 +130,7 @@ public class AlarmTimeReceiver extends BroadcastReceiver {
                             increment++;
                             DAOFavoris daoFavoris = new DAOFavoris(context);
                             Audio audio = audios.get(i);
-                            if(!daoFavoris.isFavorisExists(audio.getSrc(), "notif_audio_today") && increment == 1){
+                            if(!daoFavoris.isFavorisExists(audio.getSrc(), "notif_audio_today") && increment <= 2){
                                 Log.i("TAG_NOTIF_AUDIOS_TODAY", "audio.getTitre() = "+audio.getTitre());
                                 Favoris favoris = new Favoris(audio.getId(), "notif_audio_today", audio.getMipmap(), audio.getUrlacces(), audio.getSrc(), audio.getTitre(), audio.getAuteur(), audio.getDuree(), audio.getDate(), audio.getType_libelle(), audio.getType_shortcode(), audio.getId());
                                 daoFavoris.insertData(favoris);

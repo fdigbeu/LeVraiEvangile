@@ -41,6 +41,31 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/size_65_dp"
+        android:layout_marginRight="@dimen/size_10_dp"
+        android:orientation="horizontal"
+        android:id="@+id/fab_player_layout_orientation"
+        android:background="@drawable/btn_video_header">
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fab_player_screen_orientation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_media_player_screen_rotation_32dp"
+        android:layout_gravity="center"
+        fab:fab_size="mini"
+        android:layout_weight="1"
+        fab:fab_colorNormal="@color/colorWhite"
+        fab:fab_colorPressed="@color/colorAccentOpacity50"
+        fab:fab_colorRipple="@color/colorAccent" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_margin="@dimen/size_5_dp"

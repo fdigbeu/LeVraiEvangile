@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
@@ -226,6 +227,22 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
         return liste;
     }
 
+    /**
+     * Change screen orientation
+     * @param context
+     */
+    public static void changeActivityOrientation(Context context) {
+        int value = context.getResources().getConfiguration().orientation;
+        switch (value){
+            case Configuration.ORIENTATION_PORTRAIT:
+                ((Activity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+                break;
+
+            case Configuration.ORIENTATION_LANDSCAPE:
+                ((Activity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+                break;
+        }
+    }
 
     public static void readPDF(final Context context, final String pathPdf) {
         try {

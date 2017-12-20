@@ -1,9 +1,12 @@
 package org.levraievangile.View.Activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -14,7 +17,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -47,11 +52,11 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
     private MediaController mediaController;
     private ProgressBar progress_player_video;
     private TextView title_video;
-    private View fab_player_layout;
+    private View fab_player_layout, fab_player_layout_orientation;
     private ImageButton btn_video_nav_left, btn_video_nav_right;
     // Ref fab button
     private FloatingActionButton fab_player_download, fab_player_share_app;
-    private FloatingActionButton fab_player_favorite;
+    private FloatingActionButton fab_player_favorite, fab_player_screen_orientation;
     private FloatingActionButton fab_player_volume, fab_player_down;
 
     private CountDownTimer downTimer;
@@ -78,6 +83,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
     @Override
     public void initialize() {
         fab_player_layout = findViewById(R.id.fab_player_layout);
+        fab_player_layout_orientation = findViewById(R.id.fab_player_layout_orientation);
         title_video = findViewById(R.id.titre_video);
         progress_player_video = findViewById(R.id.progress_player_video);
         player_video = findViewById(R.id.player_video);
@@ -90,6 +96,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
         fab_player_download = findViewById(R.id.fab_player_download);
         fab_player_share_app = findViewById(R.id.fab_player_share_app);
         fab_player_favorite = findViewById(R.id.fab_player_favorite);
+        fab_player_screen_orientation = findViewById(R.id.fab_player_screen_orientation);
         fab_player_volume = findViewById(R.id.fab_player_volume);
         fab_player_down = findViewById(R.id.fab_player_down);
     }
@@ -112,6 +119,13 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
         });
         // Fab add to video favorite
         fab_player_favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playerPresenter.retrieveUserAction(view);
+            }
+        });
+        // Fab screen orientation
+        fab_player_screen_orientation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 playerPresenter.retrieveUserAction(view);
@@ -193,6 +207,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
     @Override
     public void fabVisibility(int visibility) {
         fab_player_layout.setVisibility(visibility);
+        fab_player_layout_orientation.setVisibility(visibility);
     }
 
     @Override
@@ -223,6 +238,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
         progress_player_video.setVisibility(View.GONE);
         title_video.setVisibility(View.VISIBLE);
         fab_player_layout.setVisibility(View.VISIBLE);
+        fab_player_layout_orientation.setVisibility(View.VISIBLE);
         btn_video_nav_left.setVisibility(View.VISIBLE);
         btn_video_nav_right.setVisibility(View.VISIBLE);
         widgetsIsOpened = true;
@@ -234,6 +250,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
             public void onFinish() {
                 title_video.setVisibility(View.GONE);
                 fab_player_layout.setVisibility(View.GONE);
+                fab_player_layout_orientation.setVisibility(View.GONE);
                 btn_video_nav_left.setVisibility(View.GONE);
                 btn_video_nav_right.setVisibility(View.GONE);
                 widgetsIsOpened = false;

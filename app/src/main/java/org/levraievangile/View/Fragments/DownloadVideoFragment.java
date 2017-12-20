@@ -97,8 +97,6 @@ public class DownloadVideoFragment extends Fragment implements DownloadView.IDow
         this.iDownloadVideoRecycler = iDownloadVideoRecycler;
     }
 
-
-
     @Override
     public void launchVideoToPlay(Video video, int position) {
         Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);

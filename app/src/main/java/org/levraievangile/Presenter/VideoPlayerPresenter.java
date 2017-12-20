@@ -131,6 +131,11 @@ public class VideoPlayerPresenter {
                     }
                     break;
 
+                // Orientation of screen
+                case R.id.fab_player_screen_orientation:
+                    CommonPresenter.changeActivityOrientation(view.getContext());
+                    break;
+
                 // Open volume for video player
                 case R.id.fab_player_volume:
                     CommonPresenter.getApplicationVolume(view.getContext());

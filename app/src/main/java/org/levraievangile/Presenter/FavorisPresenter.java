@@ -1,11 +1,14 @@
 package org.levraievangile.Presenter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
 import org.levraievangile.Model.DAOFavoris;
 import org.levraievangile.Model.Favoris;
+import org.levraievangile.Model.Video;
+import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.FavorisView;
 
 import java.util.ArrayList;
@@ -81,6 +84,65 @@ public class FavorisPresenter {
             case android.R.id.home:
                 iFravoris.closeActivity();
                 break;
+        }
+    }
+
+    // Launch activity
+    public void launchActivity(String value){
+        iPlaceholder.launchActivity(value);
+    }
+
+    /**
+     * Play video player
+     * @param context
+     * @param video
+     * @param position
+     */
+    public void playLVEVideoPlayer(Context context, Video video, int position){
+        if(CommonPresenter.isMobileConnected(context)){
+            iPlaceholder.launchVideoToPlay(video, position);
+        }
+        else{
+            String title = context.getResources().getString(R.string.no_connection);
+            String message = context.getResources().getString(R.string.detail_no_connection);
+            CommonPresenter.showMessage(context, title.toUpperCase(), message, false);
+        }
+    }
+
+    /**
+     * Scroll video data items to positon
+     * @param position
+     */
+    public void srcollVideoDataItemsToPosition(int position){
+        iPlaceholder.scrollVideoDataToPosition(position);
+    }
+
+    /**
+     * Play next video from FavorisRecyclerAdapter
+     * @param iFavorisRecycler
+     */
+    public void playNextVideoInPlayer(FavorisView.IFavorisRecycler iFavorisRecycler){
+        if(iFavorisRecycler != null){
+            iFavorisRecycler.playNextVideo();
+            Log.i("TAG_NEXT_VIDEO", "TAG_NEXT_VIDEO : iFavorisRecycler != null");
+        }
+    }
+
+    /**
+     * Play previous video from FavorisRecyclerAdapter
+     * @param iFavorisRecycler
+     */
+    public void playPreviousVideoInPlayer(FavorisView.IFavorisRecycler iFavorisRecycler){
+        if(iFavorisRecycler != null){
+            iFavorisRecycler.playPreviousVideo();
+            Log.i("TAG_PREVIOUS_VIDEO", "TAG_PREVIOUS_VIDEO : iFavorisRecycler != null");
+        }
+    }
+
+    // Set FavorisActivity FavorisRecyclerAdapter Attribute
+    public void retrieveAndSetIFavorisRecyclerReference(FavorisView.IFavorisRecycler iFavorisRecycler){
+        if(iPlaceholder != null){
+            iPlaceholder.instanciateIFavorisRecycler(iFavorisRecycler);
         }
     }
 }

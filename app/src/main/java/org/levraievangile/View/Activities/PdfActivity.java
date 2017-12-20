@@ -93,7 +93,6 @@ public class PdfActivity extends AppCompatActivity implements PdfView.IPdf{
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
-
     @Override
     public void askPermissionToSaveFile() {
         int permissionCheck = ContextCompat.checkSelfPermission(PdfActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
