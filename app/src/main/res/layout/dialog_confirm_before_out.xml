@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorLayout">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="@dimen/size_15_dp"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_size_18_sp"/>
+
+        <TextView
+            android:id="@+id/msg_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/size_5_dp"
+            android:layout_marginStart="@dimen/size_5_dp"
+            android:layout_marginEnd="@dimen/size_5_dp"
+            android:layout_marginBottom="@dimen/size_25_dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/text_size_18_sp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/size_5_dp"
+            android:background="@color/colorPrimaryOpacity50">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_month_news"
+                android:padding="@dimen/size_10_dp"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/size_5_dp"
+                android:textColor="@color/colorWhite"
+                android:text="@string/lb_no"
+                android:id="@+id/button_no"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_month_news"
+                android:padding="@dimen/size_10_dp"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/size_5_dp"
+                android:textColor="@color/colorWhite"
+                android:text="@string/lb_yes"
+                android:id="@+id/button_yes"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
