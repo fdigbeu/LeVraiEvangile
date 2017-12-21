@@ -12,6 +12,7 @@ import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.DAOFavoris;
 import org.levraievangile.Model.Favoris;
 import org.levraievangile.Model.LoadAudioMediaPlayer;
+import org.levraievangile.Model.Setting;
 import org.levraievangile.Model.Video;
 import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.FavorisView;
@@ -24,6 +25,8 @@ import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_PREVIOUS;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_SELECTED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_SETTING_CONCATENATE_AUDIO_READING;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_SETTING_WIFI_EXCLUSIF;
 
 /**
  * Created by Maranatha on 11/12/2017.
@@ -189,7 +192,23 @@ public class FavorisPresenter {
                     break;
 
                 case R.id.fab_player_download:
-                    downloadThisAudio(view.getContext());
+                    boolean isAuthorizeDownload = false;
+                    Setting mSetting = CommonPresenter.getSettingObjectFromSharePreferences(view.getContext(), KEY_SETTING_WIFI_EXCLUSIF);
+                    if(mSetting.getChoice()){
+                        if(CommonPresenter.isMobileWIFIConnected(view.getContext())){
+                            isAuthorizeDownload = true;
+                        }
+                        else{
+                            CommonPresenter.showWifiExclusiveMessage(view.getContext());
+                        }
+                    }
+                    else {
+                        isAuthorizeDownload = true;
+                    }
+                    //--
+                    if(isAuthorizeDownload) {
+                        downloadThisAudio(view.getContext());
+                    }
                     break;
 
                 case R.id.fab_player_share_app:
@@ -205,8 +224,11 @@ public class FavorisPresenter {
     }
 
     // When the audio is finished
-    public void retrieveOnCompletionAction(){
-        iFravoris.playNextAudio();
+    public void retrieveOnCompletionAction(Context context){
+        Setting mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, KEY_SETTING_CONCATENATE_AUDIO_READING);
+        if(mSetting.getChoice()) {
+            iFravoris.playNextAudio();
+        }
     }
 
     // Download audio

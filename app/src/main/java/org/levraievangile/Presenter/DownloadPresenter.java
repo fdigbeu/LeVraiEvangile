@@ -17,6 +17,7 @@ import org.levraievangile.Model.LoadAudioMediaPlayer;
 import org.levraievangile.Model.LoadDownloadAudio;
 import org.levraievangile.Model.LoadDownloadPdf;
 import org.levraievangile.Model.LoadDownloadVideo;
+import org.levraievangile.Model.Setting;
 import org.levraievangile.Model.Video;
 import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.DownloadView;
@@ -30,6 +31,7 @@ import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_PREVIOUS;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_SELECTED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_SETTING_CONCATENATE_AUDIO_READING;
 
 /**
  * Created by Maranatha on 11/12/2017.
@@ -282,8 +284,11 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
     }
 
     // When the audio is finished
-    public void retrieveOnCompletionAction(){
-        iDownload.playNextAudio();
+    public void retrieveOnCompletionAction(Context context){
+        Setting mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, KEY_SETTING_CONCATENATE_AUDIO_READING);
+        if(mSetting.getChoice()) {
+            iDownload.playNextAudio();
+        }
     }
 
     /**

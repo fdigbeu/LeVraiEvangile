@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import org.levraievangile.Model.DAOFavoris;
 import org.levraievangile.Model.Favoris;
+import org.levraievangile.Model.Setting;
 import org.levraievangile.Model.Video;
 import org.levraievangile.R;
 import org.levraievangile.View.Activities.HomeActivity;
@@ -23,6 +24,8 @@ import org.levraievangile.View.Interfaces.VideoView;
 
 import java.util.Hashtable;
 
+import static org.levraievangile.Presenter.CommonPresenter.KEY_SETTING_CONCATENATE_VIDEO_READING;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_SETTING_WIFI_EXCLUSIF;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_VALUE_POSITION_VIDEO_SELECTED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_VIDEO_PLAYER_SEND_DATA;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_VIDEO_SELECTED;
@@ -99,8 +102,12 @@ public class VideoPlayerPresenter {
     }
 
     // When the video is finished
-    public void retrieveOnCompletionAction(){
-        iVideoPlayer.playNextVideo();
+    public void retrieveOnCompletionAction(Context context){
+        // If user accepts automatic reading
+        Setting mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, KEY_SETTING_CONCATENATE_VIDEO_READING);
+        if(mSetting.getChoice()) {
+            iVideoPlayer.playNextVideo();
+        }
     }
 
     // Manage all video player button
@@ -109,7 +116,23 @@ public class VideoPlayerPresenter {
             switch (view.getId()){
                 // Download video
                 case R.id.fab_player_download:
-                    downloadThisVideo(view.getContext());
+                    boolean isAuthorizeDownload = false;
+                    Setting mSetting = CommonPresenter.getSettingObjectFromSharePreferences(view.getContext(), KEY_SETTING_WIFI_EXCLUSIF);
+                    if(mSetting.getChoice()){
+                        if(CommonPresenter.isMobileWIFIConnected(view.getContext())){
+                            isAuthorizeDownload = true;
+                        }
+                        else{
+                            CommonPresenter.showWifiExclusiveMessage(view.getContext());
+                        }
+                    }
+                    else {
+                        isAuthorizeDownload = true;
+                    }
+                    //--
+                    if(isAuthorizeDownload){
+                        downloadThisVideo(view.getContext());
+                    }
                     break;
 
                 // Share video

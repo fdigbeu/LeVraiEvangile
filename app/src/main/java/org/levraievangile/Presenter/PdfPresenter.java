@@ -70,6 +70,11 @@ public class PdfPresenter {
                     ArrayList<Pdf> pdfs = CommonPresenter.getAllPdfSavedBy(context, shortCode);
                     iPdf.loadPdfData(pdfs, 1);
                     iPdf.progressBarVisibility(View.GONE);
+                    //--
+                    if(pdfs.size()==0){
+                        // Display no connection message
+                        CommonPresenter.showNoConnectionMessage(context, true);
+                    }
                 }
             }
             catch (Exception ex){}

@@ -18,6 +18,7 @@ import org.levraievangile.Model.ApiClient;
 import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.DAOFavoris;
 import org.levraievangile.Model.Favoris;
+import org.levraievangile.Model.Setting;
 import org.levraievangile.Model.Video;
 import org.levraievangile.Presenter.CommonPresenter;
 import org.levraievangile.R;
@@ -69,81 +70,89 @@ public class AlarmTimeReceiver extends BroadcastReceiver {
         //--
 
         if(CommonPresenter.isMobileConnected(context)) {
-            // Get all videos posted to day, notify one and save
-            Call<List<Video>> callVideos = ApiClient.getApiClientLeVraiEvangile().create(VideoView.IApiRessource.class).getAllVideos(shortCode);
-            callVideos.enqueue(new Callback<List<Video>>() {
-                @Override
-                public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
-                    ArrayList<Video> videos = (ArrayList<Video>) response.body();
-                    // Get all videos notification and delete
-                    if(videos.size()==0) {
-                        DAOFavoris daoFavoris = new DAOFavoris(context);
-                        ArrayList<Favoris> allVideos = daoFavoris.getAllData("notif_video_today");
-                        if(allVideos.size() >= 50){
-                            for (int i=0; i<allVideos.size(); i++){
-                                DAOFavoris daoFav = new DAOFavoris(context);
-                                daoFav.deleteDataBy(allVideos.get(i).getId());
-                            }
-                        }
-                    }
-                    else{
-                        // Launch video notification
-                        int increment = 0;
-                        for (int i=0; i<videos.size(); i++){
-                            increment++;
+            // User accepts video notification
+            Setting mVideoSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_VIDEO_NOTIFICATION);
+            if(mVideoSetting.getChoice()){
+                // Get all videos posted to day, notify one and save
+                Call<List<Video>> callVideos = ApiClient.getApiClientLeVraiEvangile().create(VideoView.IApiRessource.class).getAllVideos(shortCode);
+                callVideos.enqueue(new Callback<List<Video>>() {
+                    @Override
+                    public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
+                        ArrayList<Video> videos = (ArrayList<Video>) response.body();
+                        // Get all videos notification and delete
+                        if(videos.size()==0) {
                             DAOFavoris daoFavoris = new DAOFavoris(context);
-                            Video video = videos.get(i);
-                            if(!daoFavoris.isFavorisExists(video.getSrc(), "notif_video_today") && increment == 1){
-                                Log.i("TAG_NOTIF_VIDEOS_TODAY", "video.getTitre() = "+video.getTitre());
-                                Favoris favoris = new Favoris(video.getId(), "notif_video_today", video.getMipmap(), video.getUrlacces(), video.getSrc(), video.getTitre(), video.getAuteur(), video.getDuree(), video.getDate(), video.getType_libelle(), video.getType_shortcode(), video.getId());
-                                daoFavoris.insertData(favoris);
-                                notification(context, favoris);
+                            ArrayList<Favoris> allVideos = daoFavoris.getAllData("notif_video_today");
+                            if(allVideos.size() >= 50){
+                                for (int i=0; i<allVideos.size(); i++){
+                                    DAOFavoris daoFav = new DAOFavoris(context);
+                                    daoFav.deleteDataBy(allVideos.get(i).getId());
+                                }
+                            }
+                        }
+                        else{
+                            // Launch video notification
+                            int increment = 0;
+                            for (int i=0; i<videos.size(); i++){
+                                increment++;
+                                DAOFavoris daoFavoris = new DAOFavoris(context);
+                                Video video = videos.get(i);
+                                if(!daoFavoris.isFavorisExists(video.getSrc(), "notif_video_today") && increment == 1){
+                                    Log.i("TAG_NOTIF_VIDEOS_TODAY", "video.getTitre() = "+video.getTitre());
+                                    Favoris favoris = new Favoris(video.getId(), "notif_video_today", video.getMipmap(), video.getUrlacces(), video.getSrc(), video.getTitre(), video.getAuteur(), video.getDuree(), video.getDate(), video.getType_libelle(), video.getType_shortcode(), video.getId());
+                                    daoFavoris.insertData(favoris);
+                                    notification(context, favoris);
+                                }
                             }
                         }
                     }
-                }
 
-                @Override
-                public void onFailure(Call<List<Video>> call, Throwable t) {}
-            });
+                    @Override
+                    public void onFailure(Call<List<Video>> call, Throwable t) {}
+                });
+            }
 
-            // Get all audios posted to day, notify one and save
-            Call<List<Audio>> callAudios = ApiClient.getApiClientLeVraiEvangile().create(AudioView.IApiRessource.class).getAllAudios(shortCode);
-            callAudios.enqueue(new Callback<List<Audio>>() {
-                @Override
-                public void onResponse(Call<List<Audio>> call, Response<List<Audio>> response) {
-                    ArrayList<Audio> audios = (ArrayList<Audio>) response.body();
-                    // Get all audios notification and delete
-                    if(audios.size()==0) {
-                        DAOFavoris daoFavoris = new DAOFavoris(context);
-                        ArrayList<Favoris> allAudios = daoFavoris.getAllData("notif_audio_today");
-                        if(allAudios.size() >= 50){
-                            for (int i=0; i<allAudios.size(); i++){
-                                DAOFavoris daoFav = new DAOFavoris(context);
-                                daoFav.deleteDataBy(allAudios.get(i).getId());
-                            }
-                        }
-                    }
-                    else{
-                        // Launch audio notification
-                        int increment = 0;
-                        for (int i=0; i<audios.size(); i++){
-                            increment++;
+            // User accepts audio notification
+            Setting mAudioSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_AUDIO_NOTIFICATION);
+            if (mAudioSetting.getChoice()){
+                // Get all audios posted to day, notify one and save
+                Call<List<Audio>> callAudios = ApiClient.getApiClientLeVraiEvangile().create(AudioView.IApiRessource.class).getAllAudios(shortCode);
+                callAudios.enqueue(new Callback<List<Audio>>() {
+                    @Override
+                    public void onResponse(Call<List<Audio>> call, Response<List<Audio>> response) {
+                        ArrayList<Audio> audios = (ArrayList<Audio>) response.body();
+                        // Get all audios notification and delete
+                        if(audios.size()==0) {
                             DAOFavoris daoFavoris = new DAOFavoris(context);
-                            Audio audio = audios.get(i);
-                            if(!daoFavoris.isFavorisExists(audio.getSrc(), "notif_audio_today") && increment == 1){
-                                Log.i("TAG_NOTIF_AUDIOS_TODAY", "audio.getTitre() = "+audio.getTitre());
-                                Favoris favoris = new Favoris(audio.getId(), "notif_audio_today", audio.getMipmap(), audio.getUrlacces(), audio.getSrc(), audio.getTitre(), audio.getAuteur(), audio.getDuree(), audio.getDate(), audio.getType_libelle(), audio.getType_shortcode(), audio.getId());
-                                daoFavoris.insertData(favoris);
-                                notification(context, favoris);
+                            ArrayList<Favoris> allAudios = daoFavoris.getAllData("notif_audio_today");
+                            if(allAudios.size() >= 50){
+                                for (int i=0; i<allAudios.size(); i++){
+                                    DAOFavoris daoFav = new DAOFavoris(context);
+                                    daoFav.deleteDataBy(allAudios.get(i).getId());
+                                }
+                            }
+                        }
+                        else{
+                            // Launch audio notification
+                            int increment = 0;
+                            for (int i=0; i<audios.size(); i++){
+                                increment++;
+                                DAOFavoris daoFavoris = new DAOFavoris(context);
+                                Audio audio = audios.get(i);
+                                if(!daoFavoris.isFavorisExists(audio.getSrc(), "notif_audio_today") && increment == 1){
+                                    Log.i("TAG_NOTIF_AUDIOS_TODAY", "audio.getTitre() = "+audio.getTitre());
+                                    Favoris favoris = new Favoris(audio.getId(), "notif_audio_today", audio.getMipmap(), audio.getUrlacces(), audio.getSrc(), audio.getTitre(), audio.getAuteur(), audio.getDuree(), audio.getDate(), audio.getType_libelle(), audio.getType_shortcode(), audio.getId());
+                                    daoFavoris.insertData(favoris);
+                                    notification(context, favoris);
+                                }
                             }
                         }
                     }
-                }
 
-                @Override
-                public void onFailure(Call<List<Audio>> call, Throwable t) {}
-            });
+                    @Override
+                    public void onFailure(Call<List<Audio>> call, Throwable t) {}
+                });
+            }
         }
 
         // Notify to reload new data

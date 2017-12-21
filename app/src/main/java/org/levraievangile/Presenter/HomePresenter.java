@@ -8,6 +8,7 @@ import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import org.levraievangile.Model.Annee;
 import org.levraievangile.Model.ApiClient;
@@ -16,6 +17,7 @@ import org.levraievangile.Model.BonASavoir;
 import org.levraievangile.Model.DAOFavoris;
 import org.levraievangile.Model.Favoris;
 import org.levraievangile.Model.Pdf;
+import org.levraievangile.Model.Setting;
 import org.levraievangile.Model.Video;
 import org.levraievangile.R;
 import org.levraievangile.View.Activities.VideoPlayerActivity;
@@ -39,6 +41,7 @@ import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_SELECTED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_RELOAD_NEW_DATA_GOOD_TO_KNOW;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_RELOAD_NEW_DATA_NEWS_YEAR;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_SETTING_CONFIRM_BEFORE_QUIT_APP;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_SHOW_NEW_AUDIO_NOTIF_PLAYER;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_SHOW_NEW_VIDEO_NOTIF_PLAYER;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_VALUE_POSITION_VIDEO_SELECTED;
@@ -155,6 +158,10 @@ public class HomePresenter {
                 iPlaceholder.progressBarVisibility(View.GONE);
             }
         }
+        else{
+            iPlaceholder.progressBarVisibility(View.GONE);
+            Toast.makeText(context, context.getResources().getString(R.string.no_connection), Toast.LENGTH_LONG).show();
+        }
         //--
         loadFragmentData(context, positionFrag);
     }
@@ -257,5 +264,25 @@ public class HomePresenter {
         }
         // Clear download list
         saveDataInSharePreferences(context, KEY_DOWNLOAD_FILES_LIST, "");
+    }
+
+    /**
+     * Ask before leaving the app
+     * @param context
+     */
+    public void retrieveBackPressedAction(Context context, HomeView.IHome iHome){
+        Setting mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, KEY_SETTING_CONFIRM_BEFORE_QUIT_APP);
+        if(mSetting.getChoice()){
+            String title = context.getResources().getString(R.string.lb_title_confirm);
+            String message = context.getResources().getString(R.string.lb_msg_confirm);
+            CommonPresenter.showConfirmMessage(context, title, message, iHome);
+        }
+        else{
+            iHome.closeActivity();
+        }
+    }
+
+    public void closeLVEApplication(){
+        iHome.closeActivity();
     }
 }

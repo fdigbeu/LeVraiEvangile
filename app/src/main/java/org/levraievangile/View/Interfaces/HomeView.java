@@ -28,6 +28,7 @@ public class HomeView {
         public void launchParameterActivity();
         public void launchDownloadActivity();
         public void launchFavorisActivity();
+        public void closeActivity();
     }
 
     public interface IPlaceholder{

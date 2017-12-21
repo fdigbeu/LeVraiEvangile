@@ -262,23 +262,6 @@ public class AudioActivity extends AppCompatActivity implements AudioView.IAudio
                 try {
                     mediaPlayer.start();
                     //--
-                    // Retrieve time to continue
-                    /*String audioId = CommonPresenter.getDataFromSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID);
-                    if (audioId != null && !audioId.equalsIgnoreCase("0")) {
-                        String timeElapse = CommonPresenter.getDataFromSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED);
-                        if (timeElapse != null) {
-                            // If it's the same audio
-                            if (Integer.parseInt(audioId) == audio.getId()) {
-                                mediaPlayer.seekTo(Integer.parseInt(timeElapse));
-                                CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED, "0");
-                                CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, "0");
-                            }
-                        }
-                        Log.i("TAG_AUDIO_ID", "audio.getId() = "+audio.getId());
-                        Log.i("TAG_AUDIO_ID", "audioId = "+audioId);
-                    }*/
-                    Log.i("TAG_AUDIO_ID", "setOnPreparedListener()");
-                    //--
                     finalTime = mediaPlayer.getDuration();
                     timeElapsed = mediaPlayer.getCurrentPosition();
                     audio_player_seekbar.setProgress((int) timeElapsed);

@@ -73,6 +73,7 @@ import org.levraievangile.View.Activities.AudioActivity;
 import org.levraievangile.View.Activities.PdfActivity;
 import org.levraievangile.View.Activities.VideoActivity;
 import org.levraievangile.View.Interfaces.CommonView;
+import org.levraievangile.View.Interfaces.HomeView;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -323,6 +324,62 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
                 if(closeActivity){
                     ((Activity)context).finish();
                 }
+            }
+        });
+
+        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                if(closeActivity){
+                    ((Activity)context).finish();
+                }
+            }
+        });
+
+        dialog.show();
+    }
+
+    /**
+     * Display simple message text
+     * @param context
+     * @param title
+     * @param message
+     */
+    public static void showConfirmMessage(final Context context, String title, String message, final HomeView.IHome iHome){
+        Hashtable<String, Integer> resolutionEcran = getScreenSize(context);
+        int width = resolutionEcran.get("largeur");
+        int height = resolutionEcran.get("hauteur");
+        int imgWidth = width <= height ? width : height;
+        int newWidth = (int)(imgWidth*0.75f);
+        int newHeight = (int)(imgWidth*0.40f);
+
+        final Dialog dialog=new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_confirm_before_out);
+        dialog.getWindow().setLayout((int)(newWidth*1.30f), ActionBar.LayoutParams.WRAP_CONTENT);
+
+        TextView titre = dialog.findViewById(R.id.title);
+        TextView detaille = dialog.findViewById(R.id.msg_detail);
+
+        titre.setText(title);
+
+        buildTextViewToHtmlData(detaille, message);
+
+        Button button_no = dialog.findViewById(R.id.button_no);
+        button_no.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        Button button_yes = dialog.findViewById(R.id.button_yes);
+        button_yes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                HomePresenter homePresenter = new HomePresenter(iHome);
+                homePresenter.closeLVEApplication();
             }
         });
 
@@ -1206,7 +1263,8 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
                     }
                 }
                 else{
-                    Toast.makeText(context, context.getResources().getString(R.string.no_connection), Toast.LENGTH_LONG).show();
+                    // Display no connection message
+                    CommonPresenter.showNoConnectionMessage(context, false);
                 }
             }
         });
@@ -1256,12 +1314,12 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
             //--
             title = "Notification audio";
             libelle = "Recevoir une alerte lorsqu'un nouvel audio est mise en ligne";
-            choice = false;
+            choice = true;
             saveDataInSharePreferences(context, KEY_SETTING_AUDIO_NOTIFICATION, new Setting(title, libelle, choice).toString());
             //--
             title = "Notification vidéo";
             libelle = "Recevoir une alerte lorsqu'une nouvelle vidéo est mise en ligne";
-            choice = false;
+            choice = true;
             saveDataInSharePreferences(context, KEY_SETTING_VIDEO_NOTIFICATION, new Setting(title, libelle, choice).toString());
             //--
             title = "AUDIO, Enchaîner la lecture";
@@ -1343,6 +1401,33 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
         }
     }
 
+    /**
+     * Show Wifi exclusive message
+     * @param context
+     */
+    public static void showWifiExclusiveMessage(Context context){
+        String title = context.getResources().getString(R.string.lb_wifi_only);
+        String message = context.getResources().getString(R.string.lb_wifi_exclusif_message);
+        showMessage(context, title.toUpperCase(), message, false);
+    }
+
+    /**
+     * Show no connexion message
+     * @param context
+     * @param closeActivity
+     */
+    public static void showNoConnectionMessage(Context context, boolean closeActivity){
+        String title = context.getResources().getString(R.string.no_connection);
+        String message = context.getResources().getString(R.string.detail_no_connection);
+        showMessage(context, title.toUpperCase(), message, closeActivity);
+    }
+
+    /**
+     * Save notification parameters
+     * @param context
+     * @param positionSelected
+     * @param totalAudios
+     */
     public static void saveNotificationParameters(Context context, int positionSelected, int totalAudios){
         CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_SELECTED, ""+positionSelected);
         int previousPosition = CommonPresenter.getNotifPlayerPreviousValue(positionSelected, totalAudios);
@@ -1434,7 +1519,8 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
                     sendContactFormData(context);
                 }
                 else{
-                    Toast.makeText(context, context.getResources().getString(R.string.no_connection), Toast.LENGTH_LONG).show();
+                    // Display no connection message
+                    CommonPresenter.showNoConnectionMessage(context, false);
                 }
             }
         });

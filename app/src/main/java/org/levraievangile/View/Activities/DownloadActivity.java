@@ -388,7 +388,7 @@ public class DownloadActivity extends AppCompatActivity implements DownloadView.
 
             @Override
             public void onCompletion(MediaPlayer mp) {
-                downloadPresenter.retrieveOnCompletionAction();
+                downloadPresenter.retrieveOnCompletionAction(DownloadActivity.this);
             }
         });
 

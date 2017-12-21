@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.CountDownTimer;
 
+import org.levraievangile.Model.Setting;
 import org.levraievangile.View.Interfaces.SplashView;
 import org.levraievangile.View.Receivers.AlarmTimeReceiver;
 import org.levraievangile.View.Receivers.DownloadReceiver;
@@ -27,8 +28,18 @@ public class SplashPresenter {
         // Verify if alarm is running
         Intent alarm = new Intent(context, AlarmTimeReceiver.class);
         boolean alarmRunning = (PendingIntent.getBroadcast(context, 0, alarm, PendingIntent.FLAG_NO_CREATE) != null);
-        if(!alarmRunning){
-            iSplash.startAlarmService();
+        //--
+        Setting mAudioSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_AUDIO_NOTIFICATION);
+        Setting mVideoSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_VIDEO_NOTIFICATION);
+        if(!mAudioSetting.getChoice() && !mVideoSetting.getChoice()){
+            if(alarmRunning) {
+                iSplash.stopAlarmService();
+            }
+        }
+        else{
+            if(!alarmRunning){
+                iSplash.startAlarmService();
+            }
         }
         // Initialize the settings
         CommonPresenter.initializeAppSetting(context);
@@ -36,7 +47,7 @@ public class SplashPresenter {
         CommonPresenter.initializeNotificationTimeLapsed(context);
         // Start Download Service receiver
         Intent downloadIntent = new Intent(context, DownloadReceiver.class);
-        context.stopService(downloadIntent);
+        context.startService(downloadIntent);
     }
 
     public void cancelCountDownTimer(CountDownTimer countDownTimer){

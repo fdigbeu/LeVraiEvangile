@@ -190,7 +190,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
         player_video.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                playerPresenter.retrieveOnCompletionAction();
+                playerPresenter.retrieveOnCompletionAction(VideoPlayerActivity.this);
             }
         });
 

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -76,6 +77,11 @@ public class VideoPresenter {
                     ArrayList<Video> videos = CommonPresenter.getAllVideosByKey(context, key);
                     iVideo.loadVideoData(videos, 1);
                     iVideo.progressBarVisibility(View.GONE);
+                    //--
+                    if(videos.size()==0){
+                        // Display no connection message
+                        CommonPresenter.showNoConnectionMessage(context, true);
+                    }
                 }
             }
             catch (Exception ex){}
@@ -159,9 +165,8 @@ public class VideoPresenter {
             iVideo.launchVideoToPlay(video, position);
         }
         else{
-            String title = context.getResources().getString(R.string.no_connection);
-            String message = context.getResources().getString(R.string.detail_no_connection);
-            CommonPresenter.showMessage(context, title.toUpperCase(), message, false);
+            // Display no connection message
+            CommonPresenter.showNoConnectionMessage(context, true);
         }
     }
 }

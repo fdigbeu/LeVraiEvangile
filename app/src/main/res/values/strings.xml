@@ -39,6 +39,13 @@
 
     <string name="lb_fermer">FERMER</string>
     <string name="image_description"></string>
+    <string name="lb_yes">OUI</string>
+    <string name="lb_no">NON</string>
+
+    <string name="lb_title_confirm">DEMANDE DE CONFIRMATION</string>
+    <string name="lb_msg_confirm">Voulez-vous vraiment quitter cette application?</string>
+    <string name="lb_wifi_only">WI-FI EXCLUSIF</string>
+    <string name="lb_wifi_exclusif_message">Aucune connexion Wi-Fi trouvée.</string>
 
     <string name="lb_notif_new_audio">Nouvel audio en ligne</string>
     <string name="lb_notif_new_video">Nouvelle vidéo en ligne</string>

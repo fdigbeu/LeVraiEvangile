@@ -557,7 +557,7 @@ public class FavorisActivity extends AppCompatActivity implements FavorisView.IF
 
             @Override
             public void onCompletion(MediaPlayer mp) {
-                favorisPresenter.retrieveOnCompletionAction();
+                favorisPresenter.retrieveOnCompletionAction(FavorisActivity.this);
             }
         });
 

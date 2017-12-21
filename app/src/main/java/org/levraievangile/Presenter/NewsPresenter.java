@@ -82,6 +82,10 @@ public class NewsPresenter {
                 else{
                     ArrayList<Mois> months = CommonPresenter.getAllNewsMonthSavedBy(context, yearValue);
                     iNews.loadNewsMonth(months, Integer.parseInt(yearValue));
+                    //--
+                    if(months.size()==0){
+                        CommonPresenter.showNoConnectionMessage(context, true);
+                    }
                 }
             }
             catch (Exception ex){}

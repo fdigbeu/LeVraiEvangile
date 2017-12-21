@@ -312,4 +312,14 @@ public class HomeActivity extends AppCompatActivity implements HomeView.IHome {
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
+
+    @Override
+    public void closeActivity(){
+        this.finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        homePresenter.retrieveBackPressedAction(HomeActivity.this, this);
+    }
 }

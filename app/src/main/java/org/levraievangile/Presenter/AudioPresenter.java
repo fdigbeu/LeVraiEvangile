@@ -14,6 +14,7 @@ import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.DAOFavoris;
 import org.levraievangile.Model.Favoris;
 import org.levraievangile.Model.LoadStreamAudio;
+import org.levraievangile.Model.Setting;
 import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.AudioView;
 
@@ -32,6 +33,8 @@ import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_PREVIOUS;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_SELECTED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_SETTING_CONCATENATE_AUDIO_READING;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_SETTING_WIFI_EXCLUSIF;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_SHORT_CODE;
 
 /**
@@ -89,6 +92,11 @@ public class AudioPresenter implements AudioView.IStreamAudio {
                     ArrayList<Audio> audios = CommonPresenter.getAllAudiosByKey(context, key);
                     iAudio.loadAudioData(audios, 1);
                     iAudio.progressBarVisibility(View.GONE);
+                    //--
+                    if(audios.size()==0){
+                        // Display no connection message
+                        CommonPresenter.showNoConnectionMessage(context, true);
+                    }
                 }
             }
             catch (Exception ex){}
@@ -176,9 +184,8 @@ public class AudioPresenter implements AudioView.IStreamAudio {
             CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_NEXT, ""+nextPosition);
         }
         else{
-            String title = context.getResources().getString(R.string.no_connection);
-            String message = context.getResources().getString(R.string.detail_no_connection);
-            CommonPresenter.showMessage(context, title.toUpperCase(), message, false);
+            // Show no connection message
+            CommonPresenter.showNoConnectionMessage(context, false);
         }
     }
 
@@ -255,7 +262,23 @@ public class AudioPresenter implements AudioView.IStreamAudio {
                     break;
 
                 case R.id.fab_player_download:
-                    downloadThisAudio(view.getContext());
+                    boolean isAuthorizeDownload = false;
+                    Setting mSetting = CommonPresenter.getSettingObjectFromSharePreferences(view.getContext(), KEY_SETTING_WIFI_EXCLUSIF);
+                    if(mSetting.getChoice()){
+                        if(CommonPresenter.isMobileWIFIConnected(view.getContext())){
+                            isAuthorizeDownload = true;
+                        }
+                        else{
+                            CommonPresenter.showWifiExclusiveMessage(view.getContext());
+                        }
+                    }
+                    else {
+                        isAuthorizeDownload = true;
+                    }
+                    //--
+                    if(isAuthorizeDownload) {
+                        downloadThisAudio(view.getContext());
+                    }
                     break;
 
                 case R.id.fab_player_share_app:
@@ -281,7 +304,10 @@ public class AudioPresenter implements AudioView.IStreamAudio {
 
     // When the audio is finished
     public void retrieveOnCompletionAction(Context context){
-        iAudio.playNextAudio();
+        Setting mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, KEY_SETTING_CONCATENATE_AUDIO_READING);
+        if(mSetting.getChoice()) {
+            iAudio.playNextAudio();
+        }
     }
 
     // Download audio
@@ -294,8 +320,6 @@ public class AudioPresenter implements AudioView.IStreamAudio {
                 String description = "LVE-APP-DOWNLOADER ("+audioSelected.getDuree()+" | "+audioSelected.getAuteur()+")";
                 CommonPresenter.getFileByDownloadManager(context, url, filename, description, "audio");
                 Toast.makeText(context, context.getResources().getString(R.string.lb_downloading), Toast.LENGTH_SHORT).show();
-                Log.i("TAG_DOWNLOAD_FILE", "URL = "+url);
-                Log.i("TAG_DOWNLOAD_SERVICE", "DOWNLOAD_LIST = "+audioSelected.toString());
             }
             else{
                 iAudio.askPermissionToSaveFile();
