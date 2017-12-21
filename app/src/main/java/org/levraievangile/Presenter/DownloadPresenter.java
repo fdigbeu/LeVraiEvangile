@@ -1,14 +1,19 @@
 package org.levraievangile.Presenter;
 
 import android.content.Context;
+import android.media.MediaPlayer;
+import android.support.design.widget.TabLayout;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.DownloadFile;
+import org.levraievangile.Model.LoadAudioMediaPlayer;
 import org.levraievangile.Model.LoadDownloadAudio;
 import org.levraievangile.Model.LoadDownloadPdf;
 import org.levraievangile.Model.LoadDownloadVideo;
@@ -18,6 +23,8 @@ import org.levraievangile.View.Interfaces.DownloadView;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+
+import static org.levraievangile.Presenter.CommonPresenter.KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED;
 
 /**
  * Created by Maranatha on 11/12/2017.
@@ -29,6 +36,8 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
     private DownloadView.IDownloadAudioView iDownloadAudioView;
     private DownloadView.IDownloadVideoView iDownloadVideoView;
     private DownloadView.IDownloadPdfView iDownloadPdfView;
+    // Ref audio media player
+    private LoadAudioMediaPlayer loadAudioMediaPlayer;
     // Ref LoadDownloadFile
     private LoadDownloadAudio loadDownloadAudio;
     private LoadDownloadVideo loadDownloadVideo;
@@ -147,6 +156,188 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
         }
     }
 
+    /**
+     * Play next audio from DownloadRecyclerAdapter
+     * @param iDownloadAudioRecycler
+     */
+    public void playNextAudioInPlayer(DownloadView.IDownloadAudioRecycler iDownloadAudioRecycler){
+        if(iDownloadAudioRecycler != null){
+            iDownloadAudioRecycler.playNextAudio();
+        }
+    }
+
+    /**
+     * Play previous audio from DownloadRecyclerAdapter
+     * @param iDownloadAudioRecycler
+     */
+    public void playPreviousAudioInPlayer(DownloadView.IDownloadAudioRecycler iDownloadAudioRecycler){
+        if(iDownloadAudioRecycler != null){
+            iDownloadAudioRecycler.playPreviousAudio();
+        }
+    }
+
+    // Play audio notification
+    private void playAudioNotification(Context context, MediaPlayer mediaPlayer){
+        CommonPresenter.saveDataInSharePreferences(context, KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED, ""+mediaPlayer.getCurrentPosition());
+        closeAudioMediaPlayer(mediaPlayer);
+        iDownload.playNotificationAudio();
+    }
+
+    // When user clicks to play/Pause
+    public void retrievePlayPauseAction(MediaPlayer mediaPlayer, ImageButton imageButton){
+        if(mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
+            imageButton.setBackgroundResource(R.drawable.btn_media_player_play);
+        }
+        else{
+            mediaPlayer.start();
+            imageButton.setBackgroundResource(R.drawable.btn_media_player_pause);
+        }
+    }
+
+    // Manage audio player button
+    public void retrieveUserAction(View view, MediaPlayer mediaPlayer){
+        try {
+            switch (view.getId()){
+                // Play notification
+                case R.id.fab_player_notification:
+                    playAudioNotification(view.getContext(), mediaPlayer);
+                    break;
+
+                case R.id.audio_player_close:
+                    closeAudioMediaPlayer(mediaPlayer);
+                    break;
+            }
+        }
+        catch (Exception ex){}
+    }
+
+    // Close media player
+    private void closeAudioMediaPlayer(MediaPlayer mediaPlayer){
+        if(mediaPlayer.isPlaying()){
+            mediaPlayer.stop();
+        }
+        iDownload.audioPlayerVisibility(View.GONE);
+    }
+
+    // Manage audio player button
+    public void retrieveUserAction(View view){
+        try {
+            switch (view.getId()){
+                // Play next audio
+                case R.id.audio_player_next:
+                    iDownload.playNextAudio();
+                    break;
+
+                // Play previous audio
+                case R.id.audio_player_previous:
+                    iDownload.playPreviousAudio();
+                    break;
+
+                // Display volume
+                case R.id.fab_player_volume:
+                    CommonPresenter.getApplicationVolume(view.getContext());
+                    break;
+            }
+        }
+        catch (Exception ex){}
+    }
+
+    // Retrieve position page
+    public void retrieveUserAction(int pagePosition, ImageButton playButton, boolean isAudioSelected){
+        MediaPlayer mediaPlayer = iDownload.getInstanceMediaPlayer();
+        switch (pagePosition){
+            // AUDIOS
+            case 0:
+                if(mediaPlayer != null && !mediaPlayer.isPlaying()){
+                    if(isAudioSelected){
+                        playButton.performClick();
+                        audioPlayerVisibility(View.VISIBLE);
+                    }
+                }
+                else{
+                    audioPlayerVisibility(View.GONE);
+                }
+                break;
+            // VIDEOS
+            case 1:
+                if(mediaPlayer != null && mediaPlayer.isPlaying()){
+                    playButton.performClick();
+                }
+                audioPlayerVisibility(View.GONE);
+                break;
+            // PDFS
+            case 2:
+                if(mediaPlayer != null && mediaPlayer.isPlaying()){
+                    playButton.performClick();
+                }
+                audioPlayerVisibility(View.GONE);
+                break;
+        }
+    }
+
+
+
+    // When the audio is finished
+    public void retrieveOnCompletionAction(){
+        iDownload.playNextAudio();
+    }
+
+    /**
+     * Enable Floating Action Button
+     * @param enable
+     */
+    public void activateAllWidgets(boolean enable){
+        iDownload.activateAudioPlayerWidgets(enable);
+        // Stop Notification
+        iDownload.stopNotificationAudio();
+    }
+
+
+    /**
+     * Stop all medi sound
+     * @param audio
+     */
+    public void stopAllOtherMediaSound(Audio audio){
+        iDownload.stopOtherMediaPlayerSound(audio);
+    }
+
+    /**
+     * Stop audio Media player
+     * @param mediaPlayer
+     */
+    public void stopMediaPlayer(MediaPlayer mediaPlayer){
+        CommonPresenter.stopMediaPlayer(mediaPlayer);
+    }
+
+    // Activate audio player and play
+    public void playLVEAudioPlayer(Context context, Audio audio, int position){
+        if(iDownload != null){
+            if(CommonPresenter.isMobileConnected(context)){
+                loadAudioMediaPlayer = new LoadAudioMediaPlayer();
+                loadAudioMediaPlayer.initLoadAudioMediaPlayer(audio, position, iDownload);
+                loadAudioMediaPlayer.execute();
+            }
+            else{
+                String title = context.getResources().getString(R.string.no_connection);
+                String message = context.getResources().getString(R.string.detail_no_connection);
+                CommonPresenter.showMessage(context, title.toUpperCase(), message, false);
+            }
+        }
+    }
+
+    // Manage AUDIO : Selected From DownloadRecyclerAdapter
+    public void retrieveAudioSelected(Context context, Audio audio, int position){
+        if(CommonPresenter.isMobileConnected(context)){
+            iDownload.onAudioSelected(audio, position);
+        }
+        else{
+            String title = context.getResources().getString(R.string.no_connection);
+            String message = context.getResources().getString(R.string.detail_no_connection);
+            CommonPresenter.showMessage(context, title.toUpperCase(), message, false);
+        }
+    }
+
     @Override
     public void downloadAudioStarted() {}
 
@@ -226,6 +417,27 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
         }
     }
 
+    /**
+     * Audio player visibility
+     * @param visibility
+     */
+    public void audioPlayerVisibility(int visibility){
+        iDownload.audioPlayerVisibility(visibility);
+    }
+
+
+    /**
+     * Scroll audio data items to positon
+     * @param position
+     */
+    public void srcollAudioDataItemsToPosition(int position){
+        iDownloadAudioView.scrollAudioDataToPosition(position);
+    }
+
+    /**
+     * Read pdf file
+     * @param path
+     */
     public void readPdfFile(String path){
         if(iDownloadPdfView != null){
             try {
@@ -247,6 +459,10 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
         if(iDownloadAudioView != null){
             iDownloadAudioView.instanciateIDownloadAudioRecycler(iDownloadAudioRecycler);
         }
+        else if(iDownload != null){
+            iDownload.instanciateIDownloadAudioRecycler(iDownloadAudioRecycler);
+        }
+        else{}
     }
 
     /**

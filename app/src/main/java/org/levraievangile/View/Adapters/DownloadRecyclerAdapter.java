@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.DownloadFile;
 import org.levraievangile.Model.Video;
 import org.levraievangile.Presenter.CommonPresenter;
@@ -24,27 +25,33 @@ import java.util.Hashtable;
 public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecyclerAdapter.MyViewHolder> implements DownloadView.IDownloadVideoRecycler, DownloadView.IDownloadAudioRecycler, DownloadView.IDownloadPdfRecycler {
 
     private ArrayList<DownloadFile> downloadItems;
-    private String typeResource;
     private Hashtable<Integer, MyViewHolder> mViewHolder;
     private DownloadView.IDownloadAudioView iDownloadAudioView;
     private DownloadView.IDownloadVideoView iDownloadVideoView;
     private DownloadView.IDownloadPdfView iDownloadPdfView;
+    private DownloadView.IDownload iDownload;
     private int positionSelected = -1;
     private int previousVideoPosition = -1;
     private int nextVideoProsition = -1;
+    private int previousAudioPosition = -1;
+    private int nextAudioProsition = -1;
 
     /**
      * IDownloadAudioView constructor
      * @param downloadItems
      * @param iDownloadAudioView
      */
-    public DownloadRecyclerAdapter(ArrayList<DownloadFile> downloadItems, DownloadView.IDownloadAudioView iDownloadAudioView) {
+    public DownloadRecyclerAdapter(ArrayList<DownloadFile> downloadItems, DownloadView.IDownloadAudioView iDownloadAudioView, DownloadView.IDownload iDownload) {
         this.downloadItems = downloadItems;
         this.iDownloadAudioView = iDownloadAudioView;
+        this.iDownload = iDownload;
         mViewHolder = new Hashtable<>();
-        //--
+        //-- Set from iDownloadAudioView
         DownloadPresenter downloadPresenter = new DownloadPresenter(iDownloadAudioView);
         downloadPresenter.retrieveAndSetIDownloadAudioRecyclerReference(this);
+        //-- Set from iDownload
+        DownloadPresenter mDownloadPresenter = new DownloadPresenter(iDownload);
+        mDownloadPresenter.retrieveAndSetIDownloadAudioRecyclerReference(this);
     }
 
     /**
@@ -136,12 +143,20 @@ public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecycl
 
     @Override
     public void playNextAudio() {
-
+        // Scroll recyclerView
+        DownloadPresenter downloadPresenter = new DownloadPresenter(iDownloadAudioView);
+        downloadPresenter.srcollAudioDataItemsToPosition(CommonPresenter.getScrollToNextValue(nextAudioProsition, downloadItems.size()));
+        //--
+        mViewHolder.get(nextAudioProsition).container.performClick();
     }
 
     @Override
     public void playPreviousAudio() {
-
+        // Scroll recyclerView
+        DownloadPresenter downloadPresenter = new DownloadPresenter(iDownloadAudioView);
+        downloadPresenter.srcollAudioDataItemsToPosition(CommonPresenter.getScrollToPreviousValue(previousAudioPosition, downloadItems.size()));
+        //--
+        mViewHolder.get(previousAudioPosition).container.performClick();
     }
 
 
@@ -171,10 +186,8 @@ public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecycl
                     if(iDownloadVideoView != null){
                         DownloadFile downloadFile = downloadItems.get(positionSelected);
                         Video videoSelected = new Video(0, "", downloadFile.getData(), downloadFile.getTitle(), downloadFile.getArtist(), downloadFile.getDuration(), downloadFile.getDate(), "", downloadFile.getShortcode(), downloadFile.getMipmap());
-
                         previousVideoPosition = CommonPresenter.getPreviousRessourceValue(positionItem);;
                         nextVideoProsition = CommonPresenter.getNextRessourceValue(positionItem, downloadItems.size());
-
                         DownloadPresenter downloadPresenter = new DownloadPresenter(iDownloadVideoView);
                         downloadPresenter.playLVEVideoPlayer(videoSelected, positionSelected);
                     }
@@ -184,7 +197,12 @@ public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecycl
                         downloadPresenter.readPdfFile(downloadFile.getData());
                     }
                     else if(iDownloadAudioView != null){
-                        // TODO - Player audio and Notification
+                        DownloadFile downloadFile = downloadItems.get(positionSelected);
+                        Audio audioSelected = new Audio(0, "", downloadFile.getData(), downloadFile.getTitle(), downloadFile.getArtist(), downloadFile.getDuration(), downloadFile.getDate(), "", downloadFile.getShortcode(), downloadFile.getMipmap());
+                        previousAudioPosition = CommonPresenter.getPreviousRessourceValue(positionItem);
+                        nextAudioProsition = CommonPresenter.getNextRessourceValue(positionItem, downloadItems.size());
+                        DownloadPresenter downloadPresenter = new DownloadPresenter(iDownload);
+                        downloadPresenter.retrieveAudioSelected(view.getContext(), audioSelected, positionSelected);
                     }
                     else{}
                     //--

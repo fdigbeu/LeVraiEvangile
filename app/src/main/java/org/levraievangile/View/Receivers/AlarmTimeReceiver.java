@@ -31,6 +31,7 @@ import org.levraievangile.View.Interfaces.VideoView;
 import org.levraievangile.View.Services.PlayerAudioService;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -92,7 +93,7 @@ public class AlarmTimeReceiver extends BroadcastReceiver {
                             increment++;
                             DAOFavoris daoFavoris = new DAOFavoris(context);
                             Video video = videos.get(i);
-                            if(!daoFavoris.isFavorisExists(video.getSrc(), "notif_video_today") && increment <= 2){
+                            if(!daoFavoris.isFavorisExists(video.getSrc(), "notif_video_today") && increment == 1){
                                 Log.i("TAG_NOTIF_VIDEOS_TODAY", "video.getTitre() = "+video.getTitre());
                                 Favoris favoris = new Favoris(video.getId(), "notif_video_today", video.getMipmap(), video.getUrlacces(), video.getSrc(), video.getTitre(), video.getAuteur(), video.getDuree(), video.getDate(), video.getType_libelle(), video.getType_shortcode(), video.getId());
                                 daoFavoris.insertData(favoris);
@@ -130,7 +131,7 @@ public class AlarmTimeReceiver extends BroadcastReceiver {
                             increment++;
                             DAOFavoris daoFavoris = new DAOFavoris(context);
                             Audio audio = audios.get(i);
-                            if(!daoFavoris.isFavorisExists(audio.getSrc(), "notif_audio_today") && increment <= 2){
+                            if(!daoFavoris.isFavorisExists(audio.getSrc(), "notif_audio_today") && increment == 1){
                                 Log.i("TAG_NOTIF_AUDIOS_TODAY", "audio.getTitre() = "+audio.getTitre());
                                 Favoris favoris = new Favoris(audio.getId(), "notif_audio_today", audio.getMipmap(), audio.getUrlacces(), audio.getSrc(), audio.getTitre(), audio.getAuteur(), audio.getDuree(), audio.getDate(), audio.getType_libelle(), audio.getType_shortcode(), audio.getId());
                                 daoFavoris.insertData(favoris);
@@ -197,8 +198,8 @@ public class AlarmTimeReceiver extends BroadcastReceiver {
     }
 
     private void notification(Context context, Favoris favoris){
-        int notifID = (int)System.currentTimeMillis();
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, "LVE_"+notifID);
+        int notifID = (int)((new Date().getTime()/1000L) % Integer.MAX_VALUE);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, "LVE");
         if(favoris.getType().equalsIgnoreCase("notif_audio_today")){
             mBuilder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.lg_audio));
             mBuilder.setSmallIcon(R.mipmap.sm_audio);

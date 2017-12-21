@@ -1,5 +1,6 @@
 package org.levraievangile.View.Interfaces;
 
+import android.media.MediaPlayer;
 import android.view.View;
 
 import org.levraievangile.Model.Audio;
@@ -17,10 +18,24 @@ public class DownloadView {
         public void initialize();
         public void events();
         public void closeActivity();
+        public void instanciateIDownloadAudioRecycler(DownloadView.IDownloadAudioRecycler iDownloadAudioRecycler);
+        public MediaPlayer getInstanceMediaPlayer();
         public void storageDownloadFilesList(int key,  ArrayList<DownloadFile> downloadFilesList);
         public ArrayList<DownloadFile> getStorageDownloadFilesAudioData();
         public ArrayList<DownloadFile> getStorageDownloadFilesVideoData();
         public ArrayList<DownloadFile> getStorageDownloadFilesPdfData();
+        public void onAudioSelected(Audio audio, int position);
+        public void audioPlayerVisibility(int visibility);
+        public void activateAudioPlayerWidgets(boolean enable);
+        public void loadAudioPlayerAndPlay(final Audio audio);
+        public void stopOtherMediaPlayerSound(Audio audio);
+        public void progressBarAudioPlayerVisibility(int visibility);
+        public void launchNotificationAudio();
+        public void textMediaPlayInfoLoading();
+        public void playNextAudio();
+        public void playPreviousAudio();
+        public void playNotificationAudio();
+        public void stopNotificationAudio();
     }
 
     public interface IDownloadAudioView{

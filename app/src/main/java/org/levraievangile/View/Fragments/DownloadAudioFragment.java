@@ -67,7 +67,7 @@ public class DownloadAudioFragment extends Fragment implements DownloadView.IDow
         GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), numberColumns);
         downloadRecyclerView.setLayoutManager(gridLayout);
         downloadRecyclerView.setHasFixedSize(true);
-        DownloadRecyclerAdapter adapter = new DownloadRecyclerAdapter(downloads, this);
+        DownloadRecyclerAdapter adapter = new DownloadRecyclerAdapter(downloads, this, iDownload);
         downloadRecyclerView.setAdapter(adapter);
     }
 
@@ -78,7 +78,7 @@ public class DownloadAudioFragment extends Fragment implements DownloadView.IDow
 
     @Override
     public void scrollAudioDataToPosition(int positionScroll) {
-
+        downloadRecyclerView.scrollToPosition(positionScroll);
     }
 
     @Override

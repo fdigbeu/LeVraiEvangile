@@ -221,7 +221,6 @@ public class AudioPresenter implements AudioView.IStreamAudio {
         iAudio.audioPlayerVisibility(View.GONE);
     }
 
-
     // Manage audio player button
     public void retrieveUserAction(View view){
         Audio audioSelected = CommonPresenter.getAudioSelected(view.getContext());
