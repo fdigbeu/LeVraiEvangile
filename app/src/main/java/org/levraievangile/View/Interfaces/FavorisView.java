@@ -1,7 +1,9 @@
 package org.levraievangile.View.Interfaces;
 
+import android.media.MediaPlayer;
 import android.view.View;
 
+import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.Favoris;
 import org.levraievangile.Model.Video;
 
@@ -16,6 +18,19 @@ public class FavorisView {
         public void initialize();
         public void events();
         public void closeActivity();
+        public void activateAudioPlayerWidgets(boolean enable);
+        public void loadAudioPlayerAndPlay(final Audio audio);
+        public void stopOtherMediaPlayerSound(Audio audio);
+        public void progressBarAudioPlayerVisibility(int visibility);
+        public void textMediaPlayInfoLoading();
+        public void instanciateIFavorisRecycler(FavorisView.IFavorisRecycler iFavorisRecycler);
+        public MediaPlayer getInstanceMediaPlayer();
+        public void notifyThatAudioIsSelected();
+        public void playNextAudio();
+        public void playPreviousAudio();
+        public void playNotificationAudio();
+        public void stopNotificationAudio();
+        public void audioPlayerVisibility(int visibility);
     }
 
     public interface IPlaceholder{
@@ -37,5 +52,7 @@ public class FavorisView {
     public interface IFavorisRecycler{
         public void playNextVideo();
         public void playPreviousVideo();
+        public void playNextAudio();
+        public void playPreviousAudio();
     }
 }

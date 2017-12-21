@@ -71,12 +71,9 @@ import org.levraievangile.Model.Video;
 import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.CommonView;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
-import java.sql.Timestamp;
 import java.text.Normalizer;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -1495,10 +1492,29 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
         }
     }
 
+    /**
+     * Get Audios list from DownloadFile list
+     * @param downloadFiles
+     * @return
+     */
     public static ArrayList<Audio> getAudiosListByDownloadFilesList(ArrayList<DownloadFile> downloadFiles){
         ArrayList<Audio> mList = new ArrayList<>();
         for(int i=0; i<downloadFiles.size(); i++){
             Audio audio = new Audio(0, "", downloadFiles.get(i).getData(), downloadFiles.get(i).getTitle(), downloadFiles.get(i).getArtist(), downloadFiles.get(i).getDuration(), downloadFiles.get(i).getDate(), "", downloadFiles.get(i).getShortcode(), downloadFiles.get(i).getMipmap());
+            mList.add(audio);
+        }
+        return mList;
+    }
+
+    /**
+     * Get Audio list from Favoris list
+     * @param favoris
+     * @return
+     */
+    public static ArrayList<Audio> getAudiosListByFavorisList(ArrayList<Favoris> favoris){
+        ArrayList<Audio> mList = new ArrayList<>();
+        for(int i=0; i<favoris.size(); i++){
+            Audio audio = new Audio(favoris.get(i).getRessource_id(), favoris.get(i).getUrlacces(), favoris.get(i).getSrc(), favoris.get(i).getTitre(), favoris.get(i).getAuteur(), favoris.get(i).getDuree(), favoris.get(i).getDate(), favoris.get(i).getType_libelle(), favoris.get(i).getType_shortcode(), CommonPresenter.getMipmapByTypeShortcode(favoris.get(i).getType_shortcode()));
             mList.add(audio);
         }
         return mList;

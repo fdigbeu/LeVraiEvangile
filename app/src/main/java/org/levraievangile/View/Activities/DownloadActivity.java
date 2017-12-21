@@ -308,7 +308,6 @@ public class DownloadActivity extends AppCompatActivity implements DownloadView.
         audioPlayerLayout.setVisibility(visibility);
     }
 
-
     ///////////////////////////////////////////////// PLAYER AUDIO ////////////////////////////////////////////////////
     @Override
     public void activateAudioPlayerWidgets(boolean enable) {
@@ -377,7 +376,7 @@ public class DownloadActivity extends AppCompatActivity implements DownloadView.
                     String dateFormat = CommonPresenter.changeFormatDate(audio.getDate());
                     String durationFormat = CommonPresenter.changeFormatDuration(audio.getDuree());
                     audio_player_titre.setText(audio.getTitre());
-                    audio_player_soustitre.setText(dateFormat+" | "+durationFormat+" | "+audio.getAuteur());
+                    audio_player_soustitre.setText(durationFormat+" | "+audio.getAuteur());
                     audio_player_play.setBackgroundResource(R.drawable.btn_media_player_pause);
                 }
                 catch (Exception ex){}

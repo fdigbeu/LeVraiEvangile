@@ -61,4 +61,12 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+    <!-- Media player -->
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_margin="@dimen/size_5_dp"
+        layout="@layout/audio_player_content" />
+
 </android.support.design.widget.CoordinatorLayout>

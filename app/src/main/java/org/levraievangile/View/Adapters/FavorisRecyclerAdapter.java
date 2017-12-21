@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.Favoris;
 import org.levraievangile.Model.Video;
 import org.levraievangile.Presenter.CommonPresenter;
@@ -32,15 +33,19 @@ public class FavorisRecyclerAdapter extends RecyclerView.Adapter<FavorisRecycler
     private Hashtable<Integer, MyViewHolder> mViewHolder;
     private FavorisView.IPlaceholder iPlaceholder;
     // Audio favorites
-    private int positionAudioSelected;
+    private FavorisPresenter favorisAudioPresenter;
+    private FavorisView.IFravoris iFravoris;
+    private int positionAudioSelected = -1;
     // Videos favorites
     private FavorisPresenter favorisVideoPresenter;
-    private int positionVideoSelected;
+    private int positionVideoSelected = -1;
     private int previousVideoPosition = -1;
     private int nextVideoProsition = -1;
+    private int previousAudioPosition = -1;
+    private int nextAudioProsition = -1;
     // Pdf favorites
     private FavorisPresenter favorisPdfPresenter;
-    private int positionPdfSelected;
+    private int positionPdfSelected = -1;
 
     public FavorisRecyclerAdapter(ArrayList<Favoris> favorisItems, FavorisView.IPlaceholder iPlaceholder) {
         this.favorisItems = favorisItems;
@@ -49,6 +54,15 @@ public class FavorisRecyclerAdapter extends RecyclerView.Adapter<FavorisRecycler
         // Instanciate Ref IFavorisRecycler in PlaceholderFragment
         favorisVideoPresenter = new FavorisPresenter(iPlaceholder);
         favorisVideoPresenter.retrieveAndSetIFavorisRecyclerReference(this);
+    }
+
+    public FavorisRecyclerAdapter(ArrayList<Favoris> favorisItems, FavorisView.IFravoris iFravoris) {
+        this.favorisItems = favorisItems;
+        this.iFravoris = iFravoris;
+        mViewHolder = new Hashtable<>();
+        // Instanciate Ref IFavorisRecycler in FavorisActivity
+        favorisAudioPresenter = new FavorisPresenter(iFravoris);
+        favorisAudioPresenter.retrieveAndSetIFavorisRecyclerReference(this);
     }
 
     @Override
@@ -61,6 +75,21 @@ public class FavorisRecyclerAdapter extends RecyclerView.Adapter<FavorisRecycler
     public void onBindViewHolder(MyViewHolder holder, int position) {
         typeResource = favorisItems.get(position).getType();
         holder.positionItem = position;
+        //--
+        int positionSelected = -1;
+        switch (favorisItems.get(position).getType()) {
+            case "video":
+                positionSelected = positionVideoSelected;
+                break;
+            case "audio":
+                positionSelected = positionAudioSelected;
+                break;
+            case "pdf":
+                positionSelected = positionPdfSelected;
+                break;
+        }
+        holder.container.setBackgroundResource(positionSelected == position ? R.color.colorAccentOpacity35 : R.drawable.submenu_item_hover);
+        //--
         mViewHolder.put(position, holder);
         String dateFormat = CommonPresenter.changeFormatDate(favorisItems.get(position).getDate());
         String durationFormat = null;
@@ -97,6 +126,16 @@ public class FavorisRecyclerAdapter extends RecyclerView.Adapter<FavorisRecycler
         mViewHolder.get(previousVideoPosition).container.performClick();
     }
 
+    @Override
+    public void playNextAudio() {
+
+    }
+
+    @Override
+    public void playPreviousAudio() {
+
+    }
+
     public class MyViewHolder extends RecyclerView.ViewHolder{
 
         int positionItem;
@@ -116,28 +155,34 @@ public class FavorisRecyclerAdapter extends RecyclerView.Adapter<FavorisRecycler
             container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Favoris favorisSelected = favorisItems.get(positionPdfSelected);
-                    switch (favorisSelected.getType()){
+                    switch (favorisItems.get(positionItem).getType()){
                         // VIDEOS
                         case "video":
                             positionVideoSelected = positionItem;
+                            Favoris favorisVideoSelected = favorisItems.get(positionVideoSelected);
                             previousVideoPosition = CommonPresenter.getPreviousRessourceValue(positionVideoSelected);;
                             nextVideoProsition = CommonPresenter.getNextRessourceValue(positionVideoSelected, favorisItems.size());
                             //--
-                            Video video = new Video(favorisSelected.getRessource_id(), favorisSelected.getUrlacces(), favorisSelected.getSrc(), favorisSelected.getTitre(), favorisSelected.getAuteur(), favorisSelected.getDuree(), favorisSelected.getDate(), favorisSelected.getType_libelle(), favorisSelected.getType_shortcode(), CommonPresenter.getMipmapByTypeShortcode(favorisSelected.getType_shortcode()));
+                            Video video = new Video(favorisVideoSelected.getRessource_id(), favorisVideoSelected.getUrlacces(), favorisVideoSelected.getSrc(), favorisVideoSelected.getTitre(), favorisVideoSelected.getAuteur(), favorisVideoSelected.getDuree(), favorisVideoSelected.getDate(), favorisVideoSelected.getType_libelle(), favorisVideoSelected.getType_shortcode(), CommonPresenter.getMipmapByTypeShortcode(favorisVideoSelected.getType_shortcode()));
                             favorisVideoPresenter.playLVEVideoPlayer(view.getContext(), video, previousVideoPosition);
                             break;
                         // AUDIOS
                         case "audio":
                             positionAudioSelected = positionItem;
-                            // TODO - Player audio and Notification
+                            Favoris favorisAudioSelected = favorisItems.get(positionAudioSelected);
+                            previousAudioPosition = CommonPresenter.getPreviousRessourceValue(positionItem);;
+                            nextAudioProsition = CommonPresenter.getNextRessourceValue(positionItem, favorisItems.size());
+                            Audio audioSelected = new Audio(favorisAudioSelected.getRessource_id(), favorisAudioSelected.getUrlacces(), favorisAudioSelected.getSrc(), favorisAudioSelected.getTitre(), favorisAudioSelected.getAuteur(), favorisAudioSelected.getDuree(), favorisAudioSelected.getDate(), favorisAudioSelected.getType_libelle(), favorisAudioSelected.getType_shortcode(), CommonPresenter.getMipmapByTypeShortcode(favorisAudioSelected.getType_shortcode()));
+                            FavorisPresenter favorisPresenter = new FavorisPresenter(iFravoris);
+                            favorisPresenter.playLVEAudioPlayer(view.getContext(), audioSelected, positionAudioSelected);
                             break;
                         // PDFS
                         case "pdf":
                             positionPdfSelected = positionItem;
+                            Favoris favorisPdfSelected = favorisItems.get(positionPdfSelected);
                             favorisPdfPresenter = new FavorisPresenter(iPlaceholder);
-                            favorisPdfPresenter.launchActivity(GOOGLE_DRIVE_READER+favorisSelected.getUrlacces()+favorisSelected.getSrc());
-                            saveDataInSharePreferences(view.getContext(), KEY_PDF_SELECTED, favorisSelected.toString());
+                            favorisPdfPresenter.launchActivity(GOOGLE_DRIVE_READER+favorisPdfSelected.getUrlacces()+favorisPdfSelected.getSrc());
+                            saveDataInSharePreferences(view.getContext(), KEY_PDF_SELECTED, favorisPdfSelected.toString());
                             break;
                     }
                     //--

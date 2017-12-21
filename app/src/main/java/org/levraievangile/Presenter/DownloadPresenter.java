@@ -281,8 +281,6 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
         }
     }
 
-
-
     // When the audio is finished
     public void retrieveOnCompletionAction(){
         iDownload.playNextAudio();
