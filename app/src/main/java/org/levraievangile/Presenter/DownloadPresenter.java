@@ -24,6 +24,11 @@ import org.levraievangile.View.Interfaces.DownloadView;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+import static org.levraievangile.Presenter.CommonPresenter.KEY_AUDIO_SELECTED;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIOS_LIST;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_NEXT;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_PREVIOUS;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_SELECTED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED;
 
 /**
@@ -312,11 +317,20 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
 
     // Activate audio player and play
     public void playLVEAudioPlayer(Context context, Audio audio, int position){
+        // Save audio selected
+        CommonPresenter.saveDataInSharePreferences(context, KEY_AUDIO_SELECTED, audio.toString());
         if(iDownload != null){
             if(CommonPresenter.isMobileConnected(context)){
                 loadAudioMediaPlayer = new LoadAudioMediaPlayer();
                 loadAudioMediaPlayer.initLoadAudioMediaPlayer(audio, position, iDownload);
                 loadAudioMediaPlayer.execute();
+                // Save for notification data
+                CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_SELECTED, ""+position);
+                ArrayList<Audio> mList = CommonPresenter.getAllAudiosByKey(context, KEY_NOTIF_AUDIOS_LIST);
+                int previousPosition = CommonPresenter.getNotifPlayerPreviousValue(position, mList.size());
+                CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_PREVIOUS, ""+previousPosition);
+                int nextPosition = CommonPresenter.getNotifPlayerNextValue(position, mList.size());
+                CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_NEXT, ""+nextPosition);
             }
             else{
                 String title = context.getResources().getString(R.string.no_connection);
@@ -342,10 +356,13 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
     public void downloadAudioStarted() {}
 
     @Override
-    public void downloadAudioFinished(ArrayList<DownloadFile> downloadFiles) {
+    public void downloadAudioFinished(Context context, ArrayList<DownloadFile> downloadFiles) {
         iDownloadAudioView.loadDownloadAudioData(downloadFiles, 1);
         iDownloadAudioView.progressBarVisibility(View.GONE);
         iDownload.storageDownloadFilesList(0, downloadFiles);
+        //--
+        ArrayList<Audio> audiosList = CommonPresenter.getAudiosListByDownloadFilesList(downloadFiles);
+        CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_AUDIOS_LIST, audiosList.toString());
     }
 
     @Override

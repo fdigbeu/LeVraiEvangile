@@ -1,7 +1,6 @@
 package org.levraievangile.View.Interfaces;
 
 import org.levraievangile.Model.Audio;
-import org.levraievangile.Model.Audio;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,6 @@ public class AudioView {
         public void scrollAudioDataToPosition(int positionScroll);
         public void instanciateIAudioRecycler(AudioView.IAudioRecycler iAudioRecycler);
         public void progressBarVisibility(int visibility);
-        public void launchNotificationAudio();
         public void closeActivity();
         public void modifyHeaderInfos(String typeLibelle);
         public void askPermissionToSaveFile();

@@ -60,6 +60,7 @@ import org.json.JSONObject;
 import org.levraievangile.Model.Annee;
 import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.BonASavoir;
+import org.levraievangile.Model.DownloadFile;
 import org.levraievangile.Model.Favoris;
 import org.levraievangile.Model.JsonReturn;
 import org.levraievangile.Model.Mois;
@@ -1084,16 +1085,6 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     }
 
     /**
-     * Get Scroll Previous Ressource value
-     * @param currentValue
-     * @param totalRessouce
-     * @return
-     */
-    public static int getScrollToPreviousValue(int currentValue, int totalRessouce){
-        return currentValue+2 > totalRessouce-1 ? currentValue+2 : currentValue;
-    }
-
-    /**
      * Get Next Ressource value
      * @param currentValue
      * @param totalRessouce
@@ -1105,13 +1096,23 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     }
 
     /**
+     * Get Scroll Previous Ressource value
+     * @param currentValue
+     * @param totalRessouce
+     * @return
+     */
+    public static int getScrollToPreviousValue(int currentValue, int totalRessouce){
+        return currentValue+2 > totalRessouce-1 ? currentValue+2 : currentValue;
+    }
+
+    /**
      * Get Scroll Next Ressource value
      * @param currentValue
      * @param totalRessouce
      * @return
      */
     public static int getScrollToNextValue(int currentValue, int totalRessouce){
-        return currentValue < totalRessouce-2 ? currentValue+2 : currentValue;
+        return currentValue+5 < totalRessouce-6 ? currentValue+5 : currentValue;
     }
 
     /**
@@ -1492,6 +1493,15 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
         else{
             Toast.makeText(context, context.getResources().getString(R.string.unstable_connection), Toast.LENGTH_LONG).show();
         }
+    }
+
+    public static ArrayList<Audio> getAudiosListByDownloadFilesList(ArrayList<DownloadFile> downloadFiles){
+        ArrayList<Audio> mList = new ArrayList<>();
+        for(int i=0; i<downloadFiles.size(); i++){
+            Audio audio = new Audio(0, "", downloadFiles.get(i).getData(), downloadFiles.get(i).getTitle(), downloadFiles.get(i).getArtist(), downloadFiles.get(i).getDuration(), downloadFiles.get(i).getDate(), "", downloadFiles.get(i).getShortcode(), downloadFiles.get(i).getMipmap());
+            mList.add(audio);
+        }
+        return mList;
     }
 
 

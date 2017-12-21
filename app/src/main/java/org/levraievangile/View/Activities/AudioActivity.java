@@ -384,13 +384,6 @@ public class AudioActivity extends AppCompatActivity implements AudioView.IAudio
     }
 
     @Override
-    public void launchNotificationAudio(){
-        Intent serviceIntent = new Intent(AudioActivity.this, PlayerAudioService.class);
-        serviceIntent.setAction(NotificationView.ACTION.STARTFOREGROUND_ACTION);
-        startService(serviceIntent);
-    }
-
-    @Override
     public void progressBarVisibility(int visibility) {
         progressBar.setVisibility(visibility);
     }
@@ -407,7 +400,9 @@ public class AudioActivity extends AppCompatActivity implements AudioView.IAudio
 
     @Override
     public void playNotificationAudio() {
-        audioPresenter.notificationPlayAudio();
+        Intent serviceIntent = new Intent(AudioActivity.this, PlayerAudioService.class);
+        serviceIntent.setAction(NotificationView.ACTION.STARTFOREGROUND_ACTION);
+        startService(serviceIntent);
     }
 
     @Override

@@ -45,7 +45,7 @@ public class LoadDownloadAudio extends AsyncTask<Void, Void, ArrayList<DownloadF
     @Override
     protected void onPostExecute(ArrayList<DownloadFile> downloadFiles) {
         super.onPostExecute(downloadFiles);
-        iLoadDownload.downloadAudioFinished(downloadFiles);
+        iLoadDownload.downloadAudioFinished(context, downloadFiles);
     }
 
     private ArrayList<DownloadFile> audiosFiles(Context context) {

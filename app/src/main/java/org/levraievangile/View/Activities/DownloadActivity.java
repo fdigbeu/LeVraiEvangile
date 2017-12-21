@@ -468,14 +468,6 @@ public class DownloadActivity extends AppCompatActivity implements DownloadView.
     }
 
     @Override
-    public void launchNotificationAudio(){
-        isAudioSelected = false;
-        Intent serviceIntent = new Intent(DownloadActivity.this, PlayerAudioService.class);
-        serviceIntent.setAction(NotificationView.ACTION.STARTFOREGROUND_ACTION);
-        startService(serviceIntent);
-    }
-
-    @Override
     public void textMediaPlayInfoLoading() {
         audio_player_titre.setText(getResources().getString(R.string.lb_audio_player_title));
         audio_player_soustitre.setText(getResources().getString(R.string.lb_audio_player_date_auteur));
@@ -494,11 +486,16 @@ public class DownloadActivity extends AppCompatActivity implements DownloadView.
 
     @Override
     public void playNotificationAudio() {
-
+        isAudioSelected = false;
+        Intent serviceIntent = new Intent(DownloadActivity.this, PlayerAudioService.class);
+        serviceIntent.setAction(NotificationView.ACTION.STARTFOREGROUND_ACTION);
+        startService(serviceIntent);
     }
 
     @Override
-    public void stopNotificationAudio() {
-
+    public void stopNotificationAudio(){
+        Intent serviceIntent = new Intent(DownloadActivity.this, PlayerAudioService.class);
+        serviceIntent.setAction(NotificationView.ACTION.STOPFOREGROUND_ACTION);
+        startService(serviceIntent);
     }
 }

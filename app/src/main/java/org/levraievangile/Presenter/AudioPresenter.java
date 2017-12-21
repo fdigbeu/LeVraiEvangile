@@ -97,11 +97,6 @@ public class AudioPresenter implements AudioView.IStreamAudio {
         }
     }
 
-    // Play notification audio
-    public void notificationPlayAudio(){
-        iAudio.launchNotificationAudio();
-    }
-
 
     /**
      * Scroll audio data items to positon

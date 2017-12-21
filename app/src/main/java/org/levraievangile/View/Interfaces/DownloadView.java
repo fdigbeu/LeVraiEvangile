@@ -1,5 +1,6 @@
 package org.levraievangile.View.Interfaces;
 
+import android.content.Context;
 import android.media.MediaPlayer;
 import android.view.View;
 
@@ -30,7 +31,6 @@ public class DownloadView {
         public void loadAudioPlayerAndPlay(final Audio audio);
         public void stopOtherMediaPlayerSound(Audio audio);
         public void progressBarAudioPlayerVisibility(int visibility);
-        public void launchNotificationAudio();
         public void textMediaPlayInfoLoading();
         public void playNextAudio();
         public void playPreviousAudio();
@@ -90,7 +90,7 @@ public class DownloadView {
 
     public interface ILoadDownload{
         public void downloadAudioStarted();
-        public void downloadAudioFinished(ArrayList<DownloadFile> downloadFiles);
+        public void downloadAudioFinished(Context context, ArrayList<DownloadFile> downloadFiles);
         public void downloadAudioFailure();
         public void downloadVideoStarted();
         public void downloadVideoFinished(ArrayList<DownloadFile> downloadFiles);

@@ -34,6 +34,7 @@ public class DownloadAudioFragment extends Fragment implements DownloadView.IDow
     // Ref widgets
     private RecyclerView downloadRecyclerView;
     private ProgressBar downloadProgressBar;
+    private DownloadRecyclerAdapter adapterAudio;
     // Presenter
     private DownloadPresenter downloadPresenter;
 
@@ -67,18 +68,19 @@ public class DownloadAudioFragment extends Fragment implements DownloadView.IDow
         GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), numberColumns);
         downloadRecyclerView.setLayoutManager(gridLayout);
         downloadRecyclerView.setHasFixedSize(true);
-        DownloadRecyclerAdapter adapter = new DownloadRecyclerAdapter(downloads, this, iDownload);
-        downloadRecyclerView.setAdapter(adapter);
-    }
-
-    @Override
-    public void progressBarVisibility(int visibility) {
-        downloadProgressBar.setVisibility(visibility);
+        adapterAudio = new DownloadRecyclerAdapter(downloads, this, iDownload);
+        downloadRecyclerView.setAdapter(adapterAudio);
     }
 
     @Override
     public void scrollAudioDataToPosition(int positionScroll) {
         downloadRecyclerView.scrollToPosition(positionScroll);
+        Log.i("TAG_POSITION", "scrollAudioDataToPosition() = "+positionScroll);
+    }
+
+    @Override
+    public void progressBarVisibility(int visibility) {
+        downloadProgressBar.setVisibility(visibility);
     }
 
     @Override
