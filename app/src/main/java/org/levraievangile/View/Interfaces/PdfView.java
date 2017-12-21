@@ -24,6 +24,7 @@ public class PdfView {
         public void askPermissionToSaveFile();
         public void modifyHeaderInfos(String typeLibelle);
         public void closeActivity();
+        public void modifyBarHeader(String title, String subTitle);
     }
 
     // Presenter interface
@@ -33,6 +34,9 @@ public class PdfView {
     public interface IApiRessource {
         @GET("webservice/ressources/pdf/{TYPE}/")
         Call<List<Pdf>> getAllPdfs(@Path(value = "TYPE") String keyWord);
+
+        @GET("webservice/ressources/pdf/rechercher/motclef/{KEY_WORD}/")
+        Call<List<Pdf>> getAllSearchPdfs(@Path(value = "KEY_WORD") String keyWord);
     }
 
 }

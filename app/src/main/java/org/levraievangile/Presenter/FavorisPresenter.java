@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import org.levraievangile.Model.Audio;
 import org.levraievangile.Model.DAOFavoris;
@@ -169,6 +170,7 @@ public class FavorisPresenter {
 
     // Manage audio player button
     public void retrieveUserAction(View view){
+        Audio audioSelected = CommonPresenter.getAudioSelected(view.getContext());
         try {
             switch (view.getId()){
                 // Play next audio
@@ -185,6 +187,18 @@ public class FavorisPresenter {
                 case R.id.fab_player_volume:
                     CommonPresenter.getApplicationVolume(view.getContext());
                     break;
+
+                case R.id.fab_player_download:
+                    downloadThisAudio(view.getContext());
+                    break;
+
+                case R.id.fab_player_share_app:
+                    CommonPresenter.shareAudio(view.getContext(), audioSelected);
+                    break;
+
+                case R.id.fab_player_favorite:
+                    Toast.makeText(view.getContext(), view.getContext().getResources().getString(R.string.audio_already_add_to_favorite), Toast.LENGTH_SHORT).show();
+                    break;
             }
         }
         catch (Exception ex){}
@@ -193,6 +207,23 @@ public class FavorisPresenter {
     // When the audio is finished
     public void retrieveOnCompletionAction(){
         iFravoris.playNextAudio();
+    }
+
+    // Download audio
+    private void downloadThisAudio(Context context){
+        Audio audioSelected = CommonPresenter.getAudioSelected(context);
+        if(audioSelected != null){
+            if(CommonPresenter.isStorageDownloadFileAccepted(context)){
+                String url = audioSelected.getUrlacces()+audioSelected.getSrc();
+                String filename = audioSelected.getSrc();
+                String description = "LVE-APP-DOWNLOADER ("+audioSelected.getDuree()+" | "+audioSelected.getAuteur()+")";
+                CommonPresenter.getFileByDownloadManager(context, url, filename, description, "audio");
+                Toast.makeText(context, context.getResources().getString(R.string.lb_downloading), Toast.LENGTH_SHORT).show();
+            }
+            else{
+                iFravoris.askPermissionToSaveFile();
+            }
+        }
     }
 
     /**
@@ -228,6 +259,16 @@ public class FavorisPresenter {
             mediaPlayer.stop();
         }
         iFravoris.audioPlayerVisibility(View.GONE);
+    }
+
+    /**
+     * Scroll audio data items to positon
+     * @param position
+     */
+    public void srcollAudioDataItemsToPosition(int position){
+        if(iPlaceholder != null) {
+            iPlaceholder.scrollAudioDataToPosition(position);
+        }
     }
 
     /**

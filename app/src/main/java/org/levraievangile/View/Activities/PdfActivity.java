@@ -131,4 +131,10 @@ public class PdfActivity extends AppCompatActivity implements PdfView.IPdf{
     public void closeActivity() {
         this.finish();
     }
+
+    @Override
+    public void modifyBarHeader(String title, String subTitle) {
+        getSupportActionBar().setTitle(title);
+        getSupportActionBar().setSubtitle(subTitle);
+    }
 }

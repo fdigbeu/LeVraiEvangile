@@ -1,14 +1,19 @@
 package org.levraievangile.View.Activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,6 +35,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 
@@ -53,6 +59,7 @@ import static org.levraievangile.Presenter.CommonPresenter.KEY_VALUE_VIDEO_PLAY_
 import static org.levraievangile.Presenter.CommonPresenter.KEY_VALUE_VIDEO_PLAY_PREVIOUS;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_VIDEO_PLAYER_RETURN_DATA;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_VIDEO_PLAYER_SEND_DATA;
+import static org.levraievangile.Presenter.CommonPresenter.VALUE_PERMISSION_TO_SAVE_FILE;
 import static org.levraievangile.Presenter.CommonPresenter.VALUE_VIDEO_SELECTED_REQUEST_CODE;
 
 public class FavorisActivity extends AppCompatActivity implements FavorisView.IFravoris {
@@ -211,6 +218,27 @@ public class FavorisActivity extends AppCompatActivity implements FavorisView.IF
                 favorisPresenter.retrieveUserAction(view);
             }
         });
+        // User clicks on download button
+        fab_player_download.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                favorisPresenter.retrieveUserAction(view);
+            }
+        });
+        // User clicks on share button
+        fab_player_share_app.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                favorisPresenter.retrieveUserAction(view);
+            }
+        });
+        // User clicks on add to favorite button
+        fab_player_favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                favorisPresenter.retrieveUserAction(view);
+            }
+        });
     }
 
     /**
@@ -278,8 +306,13 @@ public class FavorisActivity extends AppCompatActivity implements FavorisView.IF
             GridLayoutManager gridLayout = new GridLayoutManager(getActivity(), numberColumns);
             favorisRecyclerView.setLayoutManager(gridLayout);
             favorisRecyclerView.setHasFixedSize(true);
-            FavorisRecyclerAdapter adapter = new FavorisRecyclerAdapter(favorites, iFravoris);
+            FavorisRecyclerAdapter adapter = new FavorisRecyclerAdapter(favorites, this, iFravoris);
             favorisRecyclerView.setAdapter(adapter);
+        }
+
+        @Override
+        public void scrollAudioDataToPosition(int positionScroll) {
+            favorisRecyclerView.scrollToPosition(positionScroll);
         }
 
         @Override
@@ -419,6 +452,29 @@ public class FavorisActivity extends AppCompatActivity implements FavorisView.IF
     // Instanciate Iplaceholder from FavorisActivity
     public void instanciateIPlaceholder(FavorisView.IPlaceholder iPlaceholder) {
         this.iPlaceholder = iPlaceholder;
+    }
+
+    @Override
+    public void askPermissionToSaveFile() {
+        int permissionCheck = ContextCompat.checkSelfPermission(FavorisActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if(permissionCheck != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(FavorisActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, VALUE_PERMISSION_TO_SAVE_FILE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case VALUE_PERMISSION_TO_SAVE_FILE:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    // Ceate folders
+                    CommonPresenter.createFolder();
+                }
+                else {
+                    Toast.makeText(FavorisActivity.this, getResources().getString(R.string.lb_storage_file_require), Toast.LENGTH_LONG).show();
+                }
+                break;
+        }
     }
 
     ///////////////////////////////////////////////// PLAYER AUDIO ////////////////////////////////////////////////////

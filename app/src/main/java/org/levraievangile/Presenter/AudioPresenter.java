@@ -26,6 +26,7 @@ import retrofit2.Response;
 
 import static org.levraievangile.Presenter.CommonPresenter.KEY_ALL_AUDIOS_LIST;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_AUDIO_SELECTED;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_FORM_SEARCH_WORD;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIOS_LIST;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_NEXT;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_PREVIOUS;
@@ -56,7 +57,7 @@ public class AudioPresenter implements AudioView.IStreamAudio {
         iAudio.askPermissionToSaveFile();
         iAudio.progressBarVisibility(View.VISIBLE);
         //--
-        if(intent != null) {
+        if(intent != null && intent.getStringExtra(KEY_FORM_SEARCH_WORD) == null) {
             try {
                 //Get list audio by short-code
                 final String shortCode = intent.getStringExtra(KEY_SHORT_CODE);
@@ -93,7 +94,25 @@ public class AudioPresenter implements AudioView.IStreamAudio {
             catch (Exception ex){}
         }
         else{
-            iAudio.closeActivity();
+            // If it's to search
+            final String keyWord = intent.getStringExtra(KEY_FORM_SEARCH_WORD);
+            Call<List<Audio>> callAudios = ApiClient.getApiClientLeVraiEvangile().create(AudioView.IApiRessource.class).getAllSearchAudios(keyWord);
+            callAudios.enqueue(new Callback<List<Audio>>() {
+                @Override
+                public void onResponse(Call<List<Audio>> call, Response<List<Audio>> response) {
+                    ArrayList<Audio> audios = (ArrayList<Audio>) response.body();
+                    CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_AUDIOS_LIST, audios.toString());
+                    iAudio.loadAudioData(audios, 1);
+                    iAudio.progressBarVisibility(View.GONE);
+                    iAudio.modifyBarHeader("Recherche d'audios", "TOTAL : "+audios.size()+" | MOT CLÉ : "+keyWord);
+                }
+
+                @Override
+                public void onFailure(Call<List<Audio>> call, Throwable t) {
+                    iAudio.progressBarVisibility(View.GONE);
+                    iAudio.modifyBarHeader("Recherche d'audios", "Aucun audio trouvé | MOT CLÉ : "+keyWord);
+                }
+            });
         }
     }
 
@@ -241,7 +260,6 @@ public class AudioPresenter implements AudioView.IStreamAudio {
 
                 case R.id.fab_player_share_app:
                     CommonPresenter.shareAudio(view.getContext(), audioSelected);
-
                     break;
 
                 case R.id.fab_player_favorite:

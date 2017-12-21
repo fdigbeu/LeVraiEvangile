@@ -56,8 +56,9 @@ public class FavorisRecyclerAdapter extends RecyclerView.Adapter<FavorisRecycler
         favorisVideoPresenter.retrieveAndSetIFavorisRecyclerReference(this);
     }
 
-    public FavorisRecyclerAdapter(ArrayList<Favoris> favorisItems, FavorisView.IFravoris iFravoris) {
+    public FavorisRecyclerAdapter(ArrayList<Favoris> favorisItems, FavorisView.IPlaceholder iPlaceholder, FavorisView.IFravoris iFravoris) {
         this.favorisItems = favorisItems;
+        this.iPlaceholder = iPlaceholder;
         this.iFravoris = iFravoris;
         mViewHolder = new Hashtable<>();
         // Instanciate Ref IFavorisRecycler in FavorisActivity
@@ -128,12 +129,20 @@ public class FavorisRecyclerAdapter extends RecyclerView.Adapter<FavorisRecycler
 
     @Override
     public void playNextAudio() {
-
+        // Scroll recyclerView
+        FavorisPresenter favorisPresenter = new FavorisPresenter(iPlaceholder);
+        favorisPresenter.srcollAudioDataItemsToPosition(CommonPresenter.getScrollToNextValue(nextAudioProsition, favorisItems.size()));
+        //--
+        mViewHolder.get(nextAudioProsition).container.performClick();
     }
 
     @Override
     public void playPreviousAudio() {
-
+        // Scroll recyclerView
+        FavorisPresenter favorisPresenter = new FavorisPresenter(iPlaceholder);
+        favorisPresenter.srcollAudioDataItemsToPosition(CommonPresenter.getScrollToPreviousValue(previousAudioPosition, favorisItems.size()));
+        //--
+        mViewHolder.get(previousAudioPosition).container.performClick();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{

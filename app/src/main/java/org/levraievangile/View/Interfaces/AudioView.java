@@ -24,6 +24,7 @@ public class AudioView {
         public void closeActivity();
         public void modifyHeaderInfos(String typeLibelle);
         public void askPermissionToSaveFile();
+        public void modifyBarHeader(String title, String subTitle);
         // Audio player
         public void audioPlayerVisibility(int visibility);
         public void textMediaPlayInfoLoading();
@@ -56,6 +57,9 @@ public class AudioView {
     public interface IApiRessource {
         @GET("webservice/audios/{TYPE}/")
         Call<List<Audio>> getAllAudios(@Path(value = "TYPE") String keyWord);
+
+        @GET("webservice/audios/rechercher/motclef/{KEY_WORD}/")
+        Call<List<Audio>> getAllSearchAudios(@Path(value = "KEY_WORD") String keyWord);
     }
 
 }

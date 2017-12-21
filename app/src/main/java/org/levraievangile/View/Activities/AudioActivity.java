@@ -39,8 +39,6 @@ import org.levraievangile.View.Services.PlayerAudioService;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID;
-import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED;
 import static org.levraievangile.Presenter.CommonPresenter.VALUE_PERMISSION_TO_SAVE_FILE;
 
 public class AudioActivity extends AppCompatActivity implements AudioView.IAudio{
@@ -442,6 +440,12 @@ public class AudioActivity extends AppCompatActivity implements AudioView.IAudio
         if(permissionCheck != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(AudioActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, VALUE_PERMISSION_TO_SAVE_FILE);
         }
+    }
+
+    @Override
+    public void modifyBarHeader(String title, String subTitle) {
+        getSupportActionBar().setTitle(title);
+        getSupportActionBar().setSubtitle(subTitle);
     }
 
 

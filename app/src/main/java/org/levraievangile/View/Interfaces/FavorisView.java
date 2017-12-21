@@ -26,6 +26,7 @@ public class FavorisView {
         public void instanciateIFavorisRecycler(FavorisView.IFavorisRecycler iFavorisRecycler);
         public MediaPlayer getInstanceMediaPlayer();
         public void notifyThatAudioIsSelected();
+        public void askPermissionToSaveFile();
         public void playNextAudio();
         public void playPreviousAudio();
         public void playNotificationAudio();
@@ -42,6 +43,7 @@ public class FavorisView {
         public void progressBarVisibility(int visibility);
         public void launchActivity(String value);
         public void launchVideoToPlay(Video video, int position);
+        public void scrollAudioDataToPosition(int positionScroll);
         public void scrollVideoDataToPosition(int positionScroll);
         public void instanciateIFavorisRecycler(FavorisView.IFavorisRecycler iFavorisRecycler);
     }

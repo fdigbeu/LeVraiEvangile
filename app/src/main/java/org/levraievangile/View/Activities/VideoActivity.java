@@ -176,6 +176,12 @@ public class VideoActivity extends AppCompatActivity implements IVideo {
     }
 
     @Override
+    public void modifyBarHeader(String title, String subTitle) {
+        getSupportActionBar().setTitle(title);
+        getSupportActionBar().setSubtitle(subTitle);
+    }
+
+    @Override
     public void onBackPressed() {
         super.onBackPressed();
     }

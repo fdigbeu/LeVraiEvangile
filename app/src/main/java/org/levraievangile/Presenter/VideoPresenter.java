@@ -21,6 +21,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static org.levraievangile.Presenter.CommonPresenter.KEY_ALL_VIDEOS_LIST;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_FORM_SEARCH_WORD;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_SHORT_CODE;
 
 /**
@@ -44,7 +45,7 @@ public class VideoPresenter {
         iVideo.askPermissionToSaveFile();
         iVideo.progressBarVisibility(View.VISIBLE);
         //--
-        if(intent != null) {
+        if(intent != null && intent.getStringExtra(KEY_FORM_SEARCH_WORD) == null) {
             try {
                 //Get list video by short-code
                 final String shortCode = intent.getStringExtra(KEY_SHORT_CODE);
@@ -80,7 +81,25 @@ public class VideoPresenter {
             catch (Exception ex){}
         }
         else{
-            iVideo.closeActivity();
+            // If it's to search
+            final String keyWord = intent.getStringExtra(KEY_FORM_SEARCH_WORD);
+            Call<List<Video>> callVideos = ApiClient.getApiClientLeVraiEvangile().create(VideoView.IApiRessource.class).getAllSearchVideos(keyWord);
+            callVideos.enqueue(new Callback<List<Video>>() {
+                @Override
+                public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
+                    ArrayList<Video> videos = (ArrayList<Video>) response.body();
+                    iVideo.loadVideoData(videos, 1);
+                    iVideo.progressBarVisibility(View.GONE);
+                    //--
+                    iVideo.modifyBarHeader("Recherche de vidéos", "TOTAL : "+videos.size()+" | MOT CLÉ : "+keyWord);
+                }
+
+                @Override
+                public void onFailure(Call<List<Video>> call, Throwable t) {
+                    iVideo.progressBarVisibility(View.GONE);
+                    iVideo.modifyBarHeader("Recherche de vidéos", "Aucune vidéo trouvée | MOT CLÉ : "+keyWord);
+                }
+            });
         }
     }
 

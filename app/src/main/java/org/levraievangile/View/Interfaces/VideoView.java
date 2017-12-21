@@ -25,6 +25,7 @@ public class VideoView {
         public void askPermissionToSaveFile();
         public void modifyHeaderInfos(String typeLibelle);
         public void closeActivity();
+        public void modifyBarHeader(String title, String subTitle);
     }
 
     // Presenter interface
@@ -39,6 +40,9 @@ public class VideoView {
     public interface IApiRessource {
         @GET("webservice/videos/{TYPE}/")
         Call<List<Video>> getAllVideos(@Path(value = "TYPE") String keyWord);
+
+        @GET("webservice/videos/rechercher/motclef/{KEY_WORD}/")
+        Call<List<Video>> getAllSearchVideos(@Path(value = "KEY_WORD") String keyWord);
     }
 
 }

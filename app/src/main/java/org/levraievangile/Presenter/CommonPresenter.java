@@ -69,6 +69,9 @@ import org.levraievangile.Model.SendContactForm;
 import org.levraievangile.Model.Setting;
 import org.levraievangile.Model.Video;
 import org.levraievangile.R;
+import org.levraievangile.View.Activities.AudioActivity;
+import org.levraievangile.View.Activities.PdfActivity;
+import org.levraievangile.View.Activities.VideoActivity;
 import org.levraievangile.View.Interfaces.CommonView;
 
 import java.io.File;
@@ -125,6 +128,9 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     // Notify if new data must be reload
     public static final String KEY_RELOAD_NEW_DATA_NEWS_YEAR = "KEY_RELOAD_NEW_DATA_NEWS_YEAR";
     public static final String KEY_RELOAD_NEW_DATA_GOOD_TO_KNOW = "KEY_RELOAD_NEW_DATA_GOOD_TO_KNOW";
+
+    // Manage key search word
+    public static final String KEY_FORM_SEARCH_WORD = "KEY_FORM_SEARCH_WORD";
 
     // Manage settings
     public static final String KEY_SETTING_CONFIRM_BEFORE_QUIT_APP = "KEY_SETTING_CONFIRM_BEFORE_QUIT_APP";
@@ -1179,11 +1185,25 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
                 }
                 //--
                 if(isMobileConnected(context)){
+                    Intent intent = null;
                     searchKeyWord = edittextSearch.getText().toString().trim();
-                    /*Intent intent = new Intent(context, SearchResultActivity.class);
-                    intent.putExtra(KEY_SEARCH_FORM_TYPE_RESSOURCE, searchTypeRessource);
-                    intent.putExtra(KEY_SEARCH_FORM_KEY_WORD, searchKeyWord);
-                    context.startActivity(intent);*/
+                    switch (searchTypeRessource){
+                        case "audio":
+                            intent = new Intent(context, AudioActivity.class);
+                            break;
+                        case "video":
+                            intent = new Intent(context, VideoActivity.class);
+                            break;
+                        case "pdf":
+                            intent = new Intent(context, PdfActivity.class);
+                            break;
+                    }
+                    //--
+                    if(intent != null) {
+                        intent.putExtra(KEY_FORM_SEARCH_WORD, searchKeyWord);
+                        context.startActivity(intent);
+                        ((Activity)context).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    }
                 }
                 else{
                     Toast.makeText(context, context.getResources().getString(R.string.no_connection), Toast.LENGTH_LONG).show();
