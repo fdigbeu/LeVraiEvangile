@@ -1,6 +1,8 @@
 package org.levraievangile.View.Adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.levraievangile.Model.Audio;
+import org.levraievangile.Model.DAOFavoris;
 import org.levraievangile.Model.Favoris;
 import org.levraievangile.Model.Video;
 import org.levraievangile.Presenter.CommonPresenter;
@@ -15,6 +18,7 @@ import org.levraievangile.Presenter.FavorisPresenter;
 import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.FavorisView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -152,6 +156,7 @@ public class FavorisRecyclerAdapter extends RecyclerView.Adapter<FavorisRecycler
         ImageView itemImage;
         TextView itemTitle;
         TextView itemSubTitle;
+        ImageView itemToDelete;
         public MyViewHolder(View itemView) {
             super(itemView);
 
@@ -159,6 +164,7 @@ public class FavorisRecyclerAdapter extends RecyclerView.Adapter<FavorisRecycler
             itemImage = itemView.findViewById(R.id.item_image);
             itemTitle = itemView.findViewById(R.id.item_title);
             itemSubTitle = itemView.findViewById(R.id.item_subtitle);
+            itemToDelete = itemView.findViewById(R.id.item_delete);
 
             // Event
             container.setOnClickListener(new View.OnClickListener() {
@@ -198,16 +204,54 @@ public class FavorisRecyclerAdapter extends RecyclerView.Adapter<FavorisRecycler
                     addFocusToItemSelection(view);
                 }
             });
+
+
+            itemToDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int positionSelected = positionItem;
+                    removeSelectedItem(view.getContext());
+                }
+            });
+        }
+
+        /**
+         * Remove selected item
+         * @param context
+         */
+        private void removeSelectedItem(Context context){
+            try {
+                notifyItemRemoved(positionItem);
+                notifyItemRangeChanged(positionItem, favorisItems.size());
+                DAOFavoris daoFavoris = new DAOFavoris(context);
+                daoFavoris.deleteDataBy(favorisItems.get(positionItem).getId());
+                favorisItems.remove(positionItem);
+            }
+            catch (Exception ex){}
+            //--
+            unSelectedAllItem();
         }
     }
 
-    //--
+    /**
+     * Add focus to Selected Item
+     * @param view
+     */
     private void addFocusToItemSelection(View view){
+        // UnSelected All items
+        unSelectedAllItem();
+        // Change Item selected color
+        view.setBackgroundResource(R.color.colorAccentOpacity35);
+    }
+
+    /**
+     * UnSelected All items
+     */
+    private void unSelectedAllItem(){
         for (int i=favorisItems.size()-1; i>=0; i--){
             if(mViewHolder.containsKey(i)){
                 mViewHolder.get(i).container.setBackgroundResource(R.drawable.submenu_item_hover);
             }
         }
-        view.setBackgroundResource(R.color.colorAccentOpacity35);
     }
 }

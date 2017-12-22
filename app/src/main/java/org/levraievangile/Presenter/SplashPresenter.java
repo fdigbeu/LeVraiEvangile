@@ -25,6 +25,13 @@ public class SplashPresenter {
         iSplash.initialize();
         iSplash.events();
         iSplash.launchHomeActivity();
+        // Initialize the settings
+        CommonPresenter.initializeAppSetting(context);
+        // Initialise notification data
+        CommonPresenter.initializeNotificationTimeLapsed(context);
+        // Start Download Service receiver
+        Intent downloadIntent = new Intent(context, DownloadReceiver.class);
+        context.startService(downloadIntent);
         // Verify if alarm is running
         Intent alarm = new Intent(context, AlarmTimeReceiver.class);
         boolean alarmRunning = (PendingIntent.getBroadcast(context, 0, alarm, PendingIntent.FLAG_NO_CREATE) != null);
@@ -41,13 +48,6 @@ public class SplashPresenter {
                 iSplash.startAlarmService();
             }
         }
-        // Initialize the settings
-        CommonPresenter.initializeAppSetting(context);
-        // Initialise notification data
-        CommonPresenter.initializeNotificationTimeLapsed(context);
-        // Start Download Service receiver
-        Intent downloadIntent = new Intent(context, DownloadReceiver.class);
-        context.startService(downloadIntent);
     }
 
     public void cancelCountDownTimer(CountDownTimer countDownTimer){

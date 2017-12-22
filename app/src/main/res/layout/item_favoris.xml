@@ -54,14 +54,15 @@
 
         </LinearLayout>
 
-        <CheckBox
-            android:id="@+id/item_checkBox"
+        <ImageView
+            android:id="@+id/item_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="@dimen/size_5_dp"
-            android:visibility="gone"
-            android:clickable="false" />
+            android:layout_gravity="top"
+            android:background="@android:color/transparent"
+            android:src="@drawable/btn_form_close"
+            android:clickable="true"
+            android:contentDescription="@string/image_description" />
 
     </LinearLayout>
 

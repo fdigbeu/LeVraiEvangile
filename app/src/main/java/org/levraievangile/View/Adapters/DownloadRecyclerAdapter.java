@@ -1,9 +1,24 @@
 package org.levraievangile.View.Adapters;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.CountDownTimer;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +30,7 @@ import org.levraievangile.Presenter.DownloadPresenter;
 import org.levraievangile.R;
 import org.levraievangile.View.Interfaces.DownloadView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -95,21 +111,31 @@ public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecycl
      */
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        holder.positionItem = position;
-        mViewHolder.put(position, holder);
-        holder.container.setBackgroundResource(positionSelected == position ? R.color.colorAccentOpacity35 : R.drawable.submenu_item_hover);
-        if(downloadItems.get(position).getBitmap() == null){
-            holder.itemImage.setImageResource(CommonPresenter.getMipmapByTypeShortcode(downloadItems.get(position).getShortcode()));
+        try {
+            holder.positionItem = position;
+            mViewHolder.put(position, holder);
+            holder.container.setBackgroundResource(positionSelected == position ? R.color.colorAccentOpacity35 : R.drawable.submenu_item_hover);
+            if(downloadItems.get(position).getBitmap() == null){
+                holder.itemImage.setImageResource(CommonPresenter.getMipmapByTypeShortcode(downloadItems.get(position).getShortcode()));
+            }
+            else if(downloadItems.get(position).getBitmap() != null){
+                holder.itemImage.setImageBitmap(downloadItems.get(position).getBitmap());
+            }
+            else{}
+            holder.itemTitle.setText(downloadItems.get(position).getTitle());
+            String dateFormat = CommonPresenter.changeFormatDate(downloadItems.get(position).getDate());
+            String durationFormat = CommonPresenter.changeFormatDuration(downloadItems.get(position).getDuration());
+            String auteur = downloadItems.get(position).getArtist().replace("null", "<unknown>");
+            String content = (dateFormat.equalsIgnoreCase("01/18/1970") ? "" : dateFormat+" | ")+((durationFormat != null && !downloadItems.get(position).getData().endsWith(".pdf")) ? durationFormat : "")+(auteur != null && !auteur.isEmpty() ? " | "+auteur : "");
+            holder.itemSubTitle.setText(content.replace("|  |", "|"));
         }
-        else if(downloadItems.get(position).getBitmap() != null){
-            holder.itemImage.setImageBitmap(downloadItems.get(position).getBitmap());
+        catch (Exception ex){
+            holder.itemTitle.setText(downloadItems.get(position).getTitle());
+            String dateFormat = CommonPresenter.changeFormatDate(downloadItems.get(position).getDate());
+            String durationFormat = CommonPresenter.changeFormatDuration(downloadItems.get(position).getDuration());
+            String auteur = "<unknown>";
+            holder.itemSubTitle.setText((dateFormat.equalsIgnoreCase("01/18/1970") ? "" : dateFormat+" | ")+(durationFormat != null ? durationFormat : "")+(auteur != null && !auteur.isEmpty() ? " | "+auteur : ""));
         }
-        else{}
-        holder.itemTitle.setText(downloadItems.get(position).getTitle());
-        String dateFormat = CommonPresenter.changeFormatDate(downloadItems.get(position).getDate());
-        String durationFormat = CommonPresenter.changeFormatDuration(downloadItems.get(position).getDuration());
-        String auteur = downloadItems.get(position).getArtist().replace("null", "");
-        holder.itemSubTitle.setText((dateFormat.equalsIgnoreCase("01/18/1970") ? "" : dateFormat+" | ")+(durationFormat != null ? durationFormat : "")+(auteur != null && !auteur.isEmpty() ? " | "+auteur : ""));
     }
 
     @Override
@@ -167,6 +193,7 @@ public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecycl
         ImageView itemImage;
         TextView itemTitle;
         TextView itemSubTitle;
+        ImageView itemToDelete;
         public MyViewHolder(View itemView) {
             super(itemView);
 
@@ -174,6 +201,7 @@ public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecycl
             itemImage = itemView.findViewById(R.id.item_image);
             itemTitle = itemView.findViewById(R.id.item_title);
             itemSubTitle = itemView.findViewById(R.id.item_subtitle);
+            itemToDelete = itemView.findViewById(R.id.item_delete);
 
             // Event
             container.setOnClickListener(new View.OnClickListener() {
@@ -209,16 +237,106 @@ public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecycl
                     addFocusToItemSelection(view);
                 }
             });
+
+            itemToDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    positionSelected = positionItem;
+                    DownloadFile downloadFile = downloadItems.get(positionSelected);
+                    String type = null;
+                    if(iDownloadVideoView != null){type = "video";}
+                    else if(iDownloadPdfView != null){type = "pdf";}
+                    else if(iDownloadAudioView != null){type = "audio";}
+                    else{}
+                    //--
+                    if(type != null) {
+                        deleteFile(view.getContext(), new File(downloadFile.getData()), positionSelected, type);
+                    }
+                }
+                // Clear selected after 500 ms
+                CountDownTimer countDownTimer = new CountDownTimer(500, 500) {
+                    public void onTick(long millisUntilFinished) {}
+                    public void onFinish() {
+                        unSelectedAllItem();
+                    }
+                }.start();
+            });
         }
     }
 
-    //--
+
+    /**
+     * Delete selected file
+     * @param context
+     * @param file
+     * @param position
+     * @param type
+     */
+    private void deleteFile(final Context context, final File file, final int position, final String type){
+        // Remove file from Android
+        if(file != null && file.exists()){
+            if(file.delete()){
+                downloadItems.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, downloadItems.size());
+            }
+        }
+        // Remove file from MediaStore Database
+        if(type.equalsIgnoreCase("video")) {
+            String[] projection = {MediaStore.Video.Media._ID};
+            String selection = MediaStore.Video.Media.DATA + " = ?";
+            String[] selectionArgs = new String[]{
+                    file.getAbsolutePath()
+            };
+            Uri queryUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+            ContentResolver contentResolver = context.getContentResolver();
+            Cursor c = contentResolver.query(queryUri, projection, selection, selectionArgs, null);
+            if (c.moveToFirst()) {
+                long id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Video.Media._ID));
+                Uri deleteUri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id);
+                contentResolver.delete(deleteUri, null, null);
+            } else {
+            }
+            c.close();
+        }
+        else if(type.equalsIgnoreCase("audio")) {
+            String[] projection = {MediaStore.Audio.Media._ID};
+            String selection = MediaStore.Audio.Media.DATA + " = ?";
+            String[] selectionArgs = new String[]{
+                    file.getAbsolutePath()
+            };
+            Uri queryUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+            ContentResolver contentResolver = context.getContentResolver();
+            Cursor c = contentResolver.query(queryUri, projection, selection, selectionArgs, null);
+            if (c.moveToFirst()) {
+                long id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
+                Uri deleteUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
+                contentResolver.delete(deleteUri, null, null);
+            } else {
+            }
+            c.close();
+        }
+        else{}
+    }
+
+
+    /**
+     * Add focus to Selected Item
+     * @param view
+     */
     private void addFocusToItemSelection(View view){
+        // UnSelected All items
+        unSelectedAllItem();
+        // Change Item selected color
+        view.setBackgroundResource(R.color.colorAccentOpacity35);
+    }
+
+    // UnSelected All items
+    private void unSelectedAllItem(){
         for (int i=downloadItems.size()-1; i>=0; i--){
             if(mViewHolder.containsKey(i)){
                 mViewHolder.get(i).container.setBackgroundResource(R.drawable.submenu_item_hover);
             }
         }
-        view.setBackgroundResource(R.color.colorAccentOpacity35);
     }
 }
