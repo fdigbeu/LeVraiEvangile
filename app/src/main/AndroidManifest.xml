@@ -25,7 +25,7 @@
         <!-- Provider to allow android 7 to read file : Create Xml file in xml/provider_paths.xml -->
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="${applicationId}.provider"
+            android:authorities="org.levraievangile.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
