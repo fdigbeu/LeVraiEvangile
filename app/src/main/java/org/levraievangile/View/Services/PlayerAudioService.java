@@ -24,7 +24,7 @@ import org.levraievangile.View.Interfaces.NotificationView;
 import java.util.List;
 
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIOS_LIST;
-import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_SRC;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_NEXT;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_PREVIOUS;
@@ -50,7 +50,7 @@ public class PlayerAudioService extends Service implements MediaPlayer.OnPrepare
             if (intent.getAction().equals(NotificationView.ACTION.STARTFOREGROUND_ACTION)) {
                 audios = CommonPresenter.getAllAudiosByKey(getApplicationContext(), KEY_NOTIF_AUDIOS_LIST);
                 positionSelected = Integer.parseInt(CommonPresenter.getDataFromSharePreferences(getApplicationContext(), KEY_NOTIF_PLAYER_SELECTED));
-                CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, ""+audios.get(positionSelected).getId());
+                CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_SRC, ""+audios.get(positionSelected).getSrc());
                 //--
                 showNotification();
                 // Play Media player
@@ -77,7 +77,7 @@ public class PlayerAudioService extends Service implements MediaPlayer.OnPrepare
             else if (intent.getAction().equals(NotificationView.ACTION.PREVIOUS_ACTION)) {
                 positionSelected = Integer.parseInt(CommonPresenter.getDataFromSharePreferences(getApplicationContext(), KEY_NOTIF_PLAYER_PLAY_PREVIOUS));
                 //--
-                CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, ""+audios.get(positionSelected).getId());
+                CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_SRC, ""+audios.get(positionSelected).getSrc());
                 //--
                 CommonPresenter.saveNotificationParameters(getApplicationContext(), positionSelected, audios.size());
                 // Play Media player
@@ -86,7 +86,7 @@ public class PlayerAudioService extends Service implements MediaPlayer.OnPrepare
             else if (intent.getAction().equals(NotificationView.ACTION.NEXT_ACTION)) {
                 positionSelected = Integer.parseInt(CommonPresenter.getDataFromSharePreferences(getApplicationContext(), KEY_NOTIF_PLAYER_PLAY_NEXT));
                 //--
-                CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, ""+audios.get(positionSelected).getId());
+                CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_SRC, ""+audios.get(positionSelected).getSrc());
                 //--
                 CommonPresenter.saveNotificationParameters(getApplicationContext(), positionSelected, audios.size());
                 // Play Media player
@@ -104,7 +104,7 @@ public class PlayerAudioService extends Service implements MediaPlayer.OnPrepare
                 // Close Media player
                 if(mediaPlayer != null && mediaPlayer.isPlaying()){
                     CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED, ""+mediaPlayer.getCurrentPosition());
-                    CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, ""+audios.get(positionSelected).getId());
+                    CommonPresenter.saveDataInSharePreferences(getApplicationContext(), KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_SRC, ""+audios.get(positionSelected).getSrc());
                     mediaPlayer.stop();
                 }
                 //--

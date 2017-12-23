@@ -39,6 +39,8 @@ import org.levraievangile.View.Services.PlayerAudioService;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_SRC;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED;
 import static org.levraievangile.Presenter.CommonPresenter.VALUE_PERMISSION_TO_SAVE_FILE;
 
 public class AudioActivity extends AppCompatActivity implements AudioView.IAudio{
@@ -345,6 +347,17 @@ public class AudioActivity extends AppCompatActivity implements AudioView.IAudio
     private Runnable updateSeekBarTime = new Runnable() {
         public void run() {
             try {
+                // Retrieve time to continue
+                String timeElapse = CommonPresenter.getDataFromSharePreferences(AudioActivity.this, KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED);
+                if(timeElapse != null && !timeElapse.equalsIgnoreCase("0")){
+                    String audioSrc = CommonPresenter.getDataFromSharePreferences(AudioActivity.this, KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_SRC);
+                    if(audioSrc != null && !audioSrc.isEmpty()) {
+                        mediaPlayer.seekTo(Integer.parseInt(timeElapse));
+                        CommonPresenter.saveDataInSharePreferences(AudioActivity.this, KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED, "0");
+                        CommonPresenter.saveDataInSharePreferences(AudioActivity.this, KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_SRC, "");
+                    }
+                }
+                //--
                 finalTime = mediaPlayer.getDuration();
                 timeElapsed = mediaPlayer.getCurrentPosition();
                 audio_player_seekbar.setProgress((int) timeElapsed);

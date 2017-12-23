@@ -114,7 +114,7 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     // Manage audioId and time elapse between player audio and notif audio
     public static final String KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED = "KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED";
     public static final String KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED = "KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED";
-    public static final String KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID = "KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID";
+    public static final String KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_SRC = "KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_SRC";
 
     // Manage when new videos or audios has been posted
     public static final String KEY_NOTIF_NEW_VIDEOS_ARE_POSTED_TO_DAY = "KEY_NOTIF_NEW_VIDEOS_ARE_POSTED_TO_DAY";
@@ -1367,7 +1367,7 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     public static void initializeNotificationTimeLapsed(Context context){
         saveDataInSharePreferences(context, KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED, "0");
         saveDataInSharePreferences(context, KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED, "0");
-        saveDataInSharePreferences(context, KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_ID, "0");
+        saveDataInSharePreferences(context, KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_SRC, "");
     }
 
     // Save setting data object
