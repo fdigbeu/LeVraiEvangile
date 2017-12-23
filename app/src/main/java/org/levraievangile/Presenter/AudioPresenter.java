@@ -60,6 +60,7 @@ public class AudioPresenter implements AudioView.IStreamAudio {
         iAudio.events();
         iAudio.askPermissionToSaveFile();
         iAudio.progressBarVisibility(View.VISIBLE);
+        iAudio.recyclerViewVisibility(View.GONE);
         //--
         if(intent != null && intent.getStringExtra(KEY_FORM_SEARCH_WORD) == null) {
             try {
@@ -81,6 +82,8 @@ public class AudioPresenter implements AudioView.IStreamAudio {
                             }
                             iAudio.loadAudioData(audios, 1);
                             iAudio.progressBarVisibility(View.GONE);
+                            iAudio.recyclerViewVisibility(View.VISIBLE);
+                            iAudio.stopRefreshing(true);
                         }
 
                         @Override
@@ -89,6 +92,8 @@ public class AudioPresenter implements AudioView.IStreamAudio {
                             ArrayList<Audio> audios = CommonPresenter.getAllAudiosByKey(context, key);
                             iAudio.loadAudioData(audios, 1);
                             iAudio.progressBarVisibility(View.GONE);
+                            iAudio.recyclerViewVisibility(View.VISIBLE);
+                            iAudio.stopRefreshing(true);
                         }
                     });
                 }
@@ -97,6 +102,8 @@ public class AudioPresenter implements AudioView.IStreamAudio {
                     ArrayList<Audio> audios = CommonPresenter.getAllAudiosByKey(context, key);
                     iAudio.loadAudioData(audios, 1);
                     iAudio.progressBarVisibility(View.GONE);
+                    iAudio.recyclerViewVisibility(View.VISIBLE);
+                    iAudio.stopRefreshing(true);
                     //--
                     if(audios.size()==0){
                         // Display no connection message
@@ -117,16 +124,30 @@ public class AudioPresenter implements AudioView.IStreamAudio {
                     CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_AUDIOS_LIST, audios.toString());
                     iAudio.loadAudioData(audios, 1);
                     iAudio.progressBarVisibility(View.GONE);
+                    iAudio.recyclerViewVisibility(View.VISIBLE);
+                    iAudio.stopRefreshing(true);
                     iAudio.modifyBarHeader("Recherche d'audios", "TOTAL : "+audios.size()+" | MOT CLÉ : "+keyWord);
                 }
 
                 @Override
                 public void onFailure(Call<List<Audio>> call, Throwable t) {
                     iAudio.progressBarVisibility(View.GONE);
+                    iAudio.recyclerViewVisibility(View.VISIBLE);
+                    iAudio.stopRefreshing(true);
                     iAudio.modifyBarHeader("Recherche d'audios", "Aucun audio trouvé | MOT CLÉ : "+keyWord);
                 }
             });
         }
+    }
+
+    // Reload audio data
+    public void reLoadAudioData(Context context, Intent intent){
+        iAudio.stopNotificationAudio();
+        MediaPlayer mediaPlayer = iAudio.getInstanceMediaPlayer();
+        closeAudioMediaPlayer(mediaPlayer);
+        stopMediaPlayer(mediaPlayer);
+        loadAudioData(context, intent);
+        iAudio.progressBarVisibility(View.GONE);
     }
 
 

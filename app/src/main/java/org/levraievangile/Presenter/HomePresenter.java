@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.CountDownTimer;
 import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.MenuItem;
@@ -92,6 +93,19 @@ public class HomePresenter {
                 context.startService(mIntent);
             }
         }
+    }
+
+    // Reload home page
+    public void reLoadHomeData(){
+        iHome.onReloadHomePage();
+        int currentPage = iHome.retrieveCurrentViewPage();
+        iHome.initializeCurrentViewPage(currentPage);
+        iHome.slideViewPager(currentPage >= 3 ? 0 : currentPage, currentPage);
+    }
+
+    // Cancel countDowntimer
+    public void cancelCountDownTimer(CountDownTimer countDownTimer){
+        CommonPresenter.cancelCountDownTimer(countDownTimer);
     }
 
     // Launch activity

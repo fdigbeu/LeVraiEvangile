@@ -46,6 +46,7 @@ public class VideoPresenter {
         iVideo.events();
         iVideo.askPermissionToSaveFile();
         iVideo.progressBarVisibility(View.VISIBLE);
+        iVideo.recyclerViewVisibility(View.GONE);
         //--
         if(intent != null && intent.getStringExtra(KEY_FORM_SEARCH_WORD) == null) {
             try {
@@ -66,6 +67,8 @@ public class VideoPresenter {
                             }
                             iVideo.loadVideoData(videos, 1);
                             iVideo.progressBarVisibility(View.GONE);
+                            iVideo.recyclerViewVisibility(View.VISIBLE);
+                            iVideo.stopRefreshing(true);
                         }
 
                         @Override
@@ -74,6 +77,8 @@ public class VideoPresenter {
                             ArrayList<Video> videos = CommonPresenter.getAllVideosByKey(context, key);
                             iVideo.loadVideoData(videos, 1);
                             iVideo.progressBarVisibility(View.GONE);
+                            iVideo.recyclerViewVisibility(View.VISIBLE);
+                            iVideo.stopRefreshing(true);
                         }
                     });
                 }
@@ -82,6 +87,7 @@ public class VideoPresenter {
                     ArrayList<Video> videos = CommonPresenter.getAllVideosByKey(context, key);
                     iVideo.loadVideoData(videos, 1);
                     iVideo.progressBarVisibility(View.GONE);
+                    iVideo.recyclerViewVisibility(View.VISIBLE);
                     //--
                     if(videos.size()==0){
                         // Display no connection message
@@ -101,6 +107,8 @@ public class VideoPresenter {
                     ArrayList<Video> videos = (ArrayList<Video>) response.body();
                     iVideo.loadVideoData(videos, 1);
                     iVideo.progressBarVisibility(View.GONE);
+                    iVideo.recyclerViewVisibility(View.VISIBLE);
+                    iVideo.stopRefreshing(true);
                     //--
                     iVideo.modifyBarHeader("Recherche de vidéos", "TOTAL : "+videos.size()+" | MOT CLÉ : "+keyWord);
                 }
@@ -108,10 +116,18 @@ public class VideoPresenter {
                 @Override
                 public void onFailure(Call<List<Video>> call, Throwable t) {
                     iVideo.progressBarVisibility(View.GONE);
+                    iVideo.recyclerViewVisibility(View.VISIBLE);
+                    iVideo.stopRefreshing(true);
                     iVideo.modifyBarHeader("Recherche de vidéos", "Aucune vidéo trouvée | MOT CLÉ : "+keyWord);
                 }
             });
         }
+    }
+
+    // Reload video data
+    public void reLoadVideoData(Context context, Intent intent){
+        loadVideoData(context, intent);
+        iVideo.progressBarVisibility(View.GONE);
     }
 
     // Manage menu Item

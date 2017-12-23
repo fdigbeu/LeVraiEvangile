@@ -7,11 +7,19 @@
     android:background="@color/colorLayout"
     tools:context="org.levraievangile.View.Activities.AudioActivity">
 
-    <android.support.v7.widget.RecyclerView
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_audio"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        android:id="@+id/audioRecyclerView"/>
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:id="@+id/audioRecyclerView"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <ProgressBar
         style="?android:attr/progressBarStyle"

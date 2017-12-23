@@ -41,6 +41,7 @@ public class PdfPresenter {
         iPdf.events();
         iPdf.askPermissionToSaveFile();
         iPdf.progressBarVisibility(View.VISIBLE);
+        iPdf.recyclerViewVisibility(View.GONE);
         //--
         if(intent != null && intent.getStringExtra(KEY_FORM_SEARCH_WORD) == null) {
             try {
@@ -61,6 +62,8 @@ public class PdfPresenter {
                             }
                             iPdf.loadPdfData(pdfs, 1);
                             iPdf.progressBarVisibility(View.GONE);
+                            iPdf.recyclerViewVisibility(View.VISIBLE);
+                            iPdf.stopRefreshing(true);
                         }
 
                         @Override
@@ -68,6 +71,8 @@ public class PdfPresenter {
                             ArrayList<Pdf> pdfs = CommonPresenter.getAllPdfSavedBy(context, shortCode);
                             iPdf.loadPdfData(pdfs, 1);
                             iPdf.progressBarVisibility(View.GONE);
+                            iPdf.recyclerViewVisibility(View.VISIBLE);
+                            iPdf.stopRefreshing(true);
                         }
                     });
                 }
@@ -75,6 +80,8 @@ public class PdfPresenter {
                     ArrayList<Pdf> pdfs = CommonPresenter.getAllPdfSavedBy(context, shortCode);
                     iPdf.loadPdfData(pdfs, 1);
                     iPdf.progressBarVisibility(View.GONE);
+                    iPdf.recyclerViewVisibility(View.VISIBLE);
+                    iPdf.stopRefreshing(true);
                     //--
                     if(pdfs.size()==0){
                         // Display no connection message
@@ -94,18 +101,27 @@ public class PdfPresenter {
                     ArrayList<Pdf> pdfs = (ArrayList<Pdf>) response.body();
                     iPdf.loadPdfData(pdfs, 1);
                     iPdf.progressBarVisibility(View.GONE);
+                    iPdf.recyclerViewVisibility(View.VISIBLE);
+                    iPdf.stopRefreshing(true);
                     iPdf.modifyBarHeader("Recherche de pdf", "TOTAL : "+pdfs.size()+" | MOT CLÉ : "+keyWord);
                 }
 
                 @Override
                 public void onFailure(Call<List<Pdf>> call, Throwable t) {
                     iPdf.progressBarVisibility(View.GONE);
+                    iPdf.recyclerViewVisibility(View.VISIBLE);
+                    iPdf.stopRefreshing(true);
                     iPdf.modifyBarHeader("Recherche de pdf", "Aucun pdf trouvé | MOT CLÉ : "+keyWord);
                 }
             });
         }
     }
 
+    // Reload pdf data
+    public void reloadPdfData(Context context, Intent intent){
+        loadPdfData(context, intent);
+        iPdf.progressBarVisibility(View.GONE);
+    }
 
 
     // Manage menu Item

@@ -23,8 +23,10 @@ public class NewsView {
         public void loadNewsData(ArrayList<Actualite> news, int numberColumns);
         public void launchActivity(String value);
         public void progressBarVisibility(int visibility);
+        public void recyclerViewVisibility(int visibility);
         public void modifyHeaderInfos(String typeLibelle);
         public void closeActivity();
+        public void stopRefreshing(boolean refreshing);
     }
 
     // Presenter interface

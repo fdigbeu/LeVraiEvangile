@@ -55,6 +55,7 @@ public class NewsPresenter {
     public void loadNewsMonthData(final Context context, Intent intent){
 
         iNews.progressBarVisibility(View.VISIBLE);
+        iNews.recyclerViewVisibility(View.GONE);
         //--
         if(intent != null) {
             try {
@@ -70,18 +71,24 @@ public class NewsPresenter {
                             final String keyShortCode = KEY_ALL_NEWS_MONTH_LIST + "-" + yearValue;
                             CommonPresenter.saveDataInSharePreferences(context, keyShortCode, months.toString());
                             iNews.loadNewsMonth(months, Integer.parseInt(yearValue));
+                            iNews.recyclerViewVisibility(View.VISIBLE);
+                            iNews.stopRefreshing(true);
                         }
 
                         @Override
                         public void onFailure(Call<List<Mois>> call, Throwable t) {
                             ArrayList<Mois> months = CommonPresenter.getAllNewsMonthSavedBy(context, yearValue);
                             iNews.loadNewsMonth(months, Integer.parseInt(yearValue));
+                            iNews.recyclerViewVisibility(View.VISIBLE);
+                            iNews.stopRefreshing(true);
                         }
                     });
                 }
                 else{
                     ArrayList<Mois> months = CommonPresenter.getAllNewsMonthSavedBy(context, yearValue);
                     iNews.loadNewsMonth(months, Integer.parseInt(yearValue));
+                    iNews.recyclerViewVisibility(View.VISIBLE);
+                    iNews.stopRefreshing(true);
                     //--
                     if(months.size()==0){
                         CommonPresenter.showNoConnectionMessage(context, true);
@@ -95,6 +102,11 @@ public class NewsPresenter {
         }
     }
 
+    // Reload news data
+    public void reLoadNewsData(Context context, Intent intent){
+        loadNewsData(context, intent);
+        iNews.progressBarVisibility(View.GONE);
+    }
 
 
     // Manage menu Item

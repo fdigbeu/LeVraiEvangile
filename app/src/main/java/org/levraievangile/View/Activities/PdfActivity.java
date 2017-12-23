@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -32,6 +33,7 @@ public class PdfActivity extends AppCompatActivity implements PdfView.IPdf{
     // Ref widgets
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipe_refresh_pdf;
     // Presenter
     private PdfPresenter pdfPresenter;
 
@@ -65,6 +67,7 @@ public class PdfActivity extends AppCompatActivity implements PdfView.IPdf{
     public void initialize() {
         recyclerView = findViewById(R.id.pdfRecyclerView);
         progressBar = findViewById(R.id.pdfProgressBar);
+        swipe_refresh_pdf = findViewById(R.id.swipe_refresh_pdf);
 
         // Display Home Back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -72,7 +75,17 @@ public class PdfActivity extends AppCompatActivity implements PdfView.IPdf{
 
     @Override
     public void events() {
+        swipe_refresh_pdf.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                pdfPresenter.reloadPdfData(PdfActivity.this, getIntent());
+            }
+        });
+    }
 
+    @Override
+    public void stopRefreshing(boolean refreshing){
+        swipe_refresh_pdf.setRefreshing(!refreshing);
     }
 
     @Override
@@ -125,6 +138,11 @@ public class PdfActivity extends AppCompatActivity implements PdfView.IPdf{
     @Override
     public void progressBarVisibility(int visibility) {
         progressBar.setVisibility(visibility);
+    }
+
+    @Override
+    public void recyclerViewVisibility(int visibility) {
+        recyclerView.setVisibility(visibility);
     }
 
     @Override

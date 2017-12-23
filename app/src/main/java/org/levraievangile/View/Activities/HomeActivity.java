@@ -3,10 +3,12 @@ package org.levraievangile.View.Activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -48,12 +50,15 @@ import static org.levraievangile.Presenter.CommonPresenter.KEY_SHORT_CODE;
 import static org.levraievangile.Presenter.CommonPresenter.VALUE_PERMISSION_TO_SAVE_FILE;
 
 public class HomeActivity extends AppCompatActivity implements HomeView.IHome {
-
+    // Ref CountDownTimer
+    private CountDownTimer countDownTimer;
     // Ref widgets
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private Toolbar toolbar;
     private TabLayout tabLayout;
+    private SwipeRefreshLayout swipe_refresh_home;
+    private int currentViewPage;
     // Ref presenter
     private HomePresenter homePresenter;
 
@@ -113,6 +118,8 @@ public class HomeActivity extends AppCompatActivity implements HomeView.IHome {
         setSupportActionBar(toolbar);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
+        swipe_refresh_home = findViewById(R.id.swipe_refresh_home);
+
         mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
@@ -121,10 +128,22 @@ public class HomeActivity extends AppCompatActivity implements HomeView.IHome {
 
     @Override
     public void events() {
+        // User refresh page
+        swipe_refresh_home.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                homePresenter.reLoadHomeData();
+            }
+        });
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        mViewPager.setCurrentItem(currentViewPage);
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
     }
 
+    @Override
+    public void stopRefreshing(boolean refreshing){
+        swipe_refresh_home.setRefreshing(!refreshing);
+    }
 
     @Override
     public void askPermissionToSaveFile() {
@@ -315,11 +334,42 @@ public class HomeActivity extends AppCompatActivity implements HomeView.IHome {
 
     @Override
     public void closeActivity(){
+        homePresenter.cancelCountDownTimer(countDownTimer);
         this.finish();
     }
 
     @Override
     public void onBackPressed() {
         homePresenter.retrieveBackPressedAction(HomeActivity.this, this);
+    }
+
+    @Override
+    public int retrieveCurrentViewPage() {
+        return mViewPager.getCurrentItem();
+    }
+
+    @Override
+    public void initializeCurrentViewPage(int currentPage) {
+        currentViewPage = currentPage;
+    }
+
+    @Override
+    public void onReloadHomePage(){
+        mViewPager.setVisibility(View.GONE);
+        tabLayout.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void slideViewPager(final int startPosition, final int endPosition){
+        mViewPager.setCurrentItem(startPosition);
+        countDownTimer = new CountDownTimer(1500, 500) {
+            public void onTick(long millisUntilFinished) {}
+            public void onFinish() {
+                mViewPager.setCurrentItem(endPosition);
+                stopRefreshing(true);
+                mViewPager.setVisibility(View.VISIBLE);
+                tabLayout.setVisibility(View.VISIBLE);
+            }
+        }.start();
     }
 }

@@ -29,6 +29,11 @@ public class HomeView {
         public void launchDownloadActivity();
         public void launchFavorisActivity();
         public void closeActivity();
+        public void stopRefreshing(boolean refreshing);
+        public int retrieveCurrentViewPage();
+        public void initializeCurrentViewPage(int currentPage);
+        public void onReloadHomePage();
+        public void slideViewPager(int startPosition, int endPosition);
     }
 
     public interface IPlaceholder{

@@ -1,6 +1,7 @@
 package org.levraievangile.View.Activities;
 
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -29,6 +30,7 @@ public class NewsActivity extends AppCompatActivity implements NewsView.INews {
     private RecyclerView monthRecyclerView;
     private LinearLayoutManager monthLayoutManager;
     private RecyclerView newsRecyclerView;
+    private SwipeRefreshLayout swipe_refresh_news;
     // Presenter
     private NewsPresenter newsPresenter;
 
@@ -63,6 +65,7 @@ public class NewsActivity extends AppCompatActivity implements NewsView.INews {
         monthRecyclerView = findViewById(R.id.monthRecyclerView);
         newsRecyclerView = findViewById(R.id.newsRecyclerView);
         progressBar = findViewById(R.id.newsProgressBar);
+        swipe_refresh_news = findViewById(R.id.swipe_refresh_news);
 
         // Display Home Back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -70,7 +73,18 @@ public class NewsActivity extends AppCompatActivity implements NewsView.INews {
 
     @Override
     public void events() {
+        swipe_refresh_news.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                newsPresenter.reLoadNewsData(NewsActivity.this, getIntent());
+            }
+        });
+    }
 
+
+    @Override
+    public void stopRefreshing(boolean refreshing){
+        swipe_refresh_news.setRefreshing(!refreshing);
     }
 
     @Override
@@ -108,6 +122,12 @@ public class NewsActivity extends AppCompatActivity implements NewsView.INews {
     @Override
     public void progressBarVisibility(int visibility) {
         progressBar.setVisibility(visibility);
+    }
+
+    @Override
+    public void recyclerViewVisibility(int visibility) {
+        monthRecyclerView.setVisibility(visibility);
+        newsRecyclerView.setVisibility(visibility);
     }
 
     @Override

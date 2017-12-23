@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -40,6 +42,7 @@ public class VideoActivity extends AppCompatActivity implements IVideo {
     // Ref widgets
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipe_refresh_video;
     // Ref IVideoRecycler
     private VideoView.IVideoRecycler iVideoRecycler;
     // Presenter
@@ -75,13 +78,22 @@ public class VideoActivity extends AppCompatActivity implements IVideo {
     public void initialize() {
         recyclerView = findViewById(R.id.videoRecyclerView);
         progressBar = findViewById(R.id.videoProgressBar);
+
+        swipe_refresh_video = findViewById(R.id.swipe_refresh_video);
+
         // Display Home Back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
     public void events() {
-
+        // User refresh page
+        swipe_refresh_video.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                videoPresenter.reLoadVideoData(VideoActivity.this, getIntent());
+            }
+        });
     }
 
     @Override
@@ -97,6 +109,11 @@ public class VideoActivity extends AppCompatActivity implements IVideo {
     @Override
     public void scrollVideoDataToPosition(int positionScroll) {
         recyclerView.scrollToPosition(positionScroll);
+    }
+
+    @Override
+    public void stopRefreshing(boolean refreshing){
+        swipe_refresh_video.setRefreshing(!refreshing);
     }
 
     @Override
@@ -168,6 +185,11 @@ public class VideoActivity extends AppCompatActivity implements IVideo {
     @Override
     public void progressBarVisibility(int visibility) {
         progressBar.setVisibility(visibility);
+    }
+
+    @Override
+    public void recyclerViewVisibility(int visibility) {
+        recyclerView.setVisibility(visibility);
     }
 
     @Override

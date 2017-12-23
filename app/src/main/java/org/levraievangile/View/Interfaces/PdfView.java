@@ -21,10 +21,12 @@ public class PdfView {
         public void loadPdfData(ArrayList<Pdf> pdfs, int numberColumns);
         public void launchActivity(String value);
         public void progressBarVisibility(int visibility);
+        public void recyclerViewVisibility(int visibility);
         public void askPermissionToSaveFile();
         public void modifyHeaderInfos(String typeLibelle);
         public void closeActivity();
         public void modifyBarHeader(String title, String subTitle);
+        public void stopRefreshing(boolean refreshing);
     }
 
     // Presenter interface

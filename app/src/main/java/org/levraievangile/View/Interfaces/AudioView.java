@@ -1,5 +1,7 @@
 package org.levraievangile.View.Interfaces;
 
+import android.media.MediaPlayer;
+
 import org.levraievangile.Model.Audio;
 
 import java.util.ArrayList;
@@ -21,10 +23,12 @@ public class AudioView {
         public void scrollAudioDataToPosition(int positionScroll);
         public void instanciateIAudioRecycler(AudioView.IAudioRecycler iAudioRecycler);
         public void progressBarVisibility(int visibility);
+        public void recyclerViewVisibility(int visibility);
         public void closeActivity();
         public void modifyHeaderInfos(String typeLibelle);
         public void askPermissionToSaveFile();
         public void modifyBarHeader(String title, String subTitle);
+        public void stopRefreshing(boolean refreshing);
         // Audio player
         public void audioPlayerVisibility(int visibility);
         public void textMediaPlayInfoLoading();
@@ -36,6 +40,7 @@ public class AudioView {
         public void playPreviousAudio();
         public void playNotificationAudio();
         public void stopNotificationAudio();
+        public MediaPlayer getInstanceMediaPlayer();
     }
 
     // Presenter interface

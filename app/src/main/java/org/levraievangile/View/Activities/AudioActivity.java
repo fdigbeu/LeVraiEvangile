@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -49,6 +50,7 @@ public class AudioActivity extends AppCompatActivity implements AudioView.IAudio
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
     private View audioPlayerLayout;
+    private SwipeRefreshLayout swipe_refresh_audio;
     // Ref interface
     private AudioView.IAudioRecycler iAudioRecycler;
 
@@ -100,6 +102,8 @@ public class AudioActivity extends AppCompatActivity implements AudioView.IAudio
         progressBar = findViewById(R.id.audioProgressBar);
         audioPlayerLayout =  findViewById(R.id.audioPlayerLayout);
 
+        swipe_refresh_audio = findViewById(R.id.swipe_refresh_audio);
+
         // Display Home Back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -124,6 +128,13 @@ public class AudioActivity extends AppCompatActivity implements AudioView.IAudio
 
     @Override
     public void events() {
+        // User refresh page
+        swipe_refresh_audio.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                audioPresenter.reLoadAudioData(AudioActivity.this, getIntent());
+            }
+        });
         // User click on play button
         audio_player_play.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -187,6 +198,11 @@ public class AudioActivity extends AppCompatActivity implements AudioView.IAudio
                 audioPresenter.retrieveUserAction(view);
             }
         });
+    }
+
+    @Override
+    public void stopRefreshing(boolean refreshing){
+        swipe_refresh_audio.setRefreshing(!refreshing);
     }
 
     @Override
@@ -381,7 +397,12 @@ public class AudioActivity extends AppCompatActivity implements AudioView.IAudio
     public void progressBarVisibility(int visibility) {
         progressBar.setVisibility(visibility);
     }
-    
+
+    @Override
+    public void recyclerViewVisibility(int visibility) {
+        recyclerView.setVisibility(visibility);
+    }
+
     @Override
     public void playNextAudio() {
         audioPresenter.playNextAudioInPlayer(iAudioRecycler);
@@ -404,6 +425,11 @@ public class AudioActivity extends AppCompatActivity implements AudioView.IAudio
         Intent serviceIntent = new Intent(AudioActivity.this, PlayerAudioService.class);
         serviceIntent.setAction(NotificationView.ACTION.STOPFOREGROUND_ACTION);
         startService(serviceIntent);
+    }
+
+    @Override
+    public MediaPlayer getInstanceMediaPlayer() {
+        return mediaPlayer;
     }
 
 
