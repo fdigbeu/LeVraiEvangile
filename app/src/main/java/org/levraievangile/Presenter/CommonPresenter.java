@@ -120,6 +120,9 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     public static final String KEY_NOTIF_NEW_VIDEOS_ARE_POSTED_TO_DAY = "KEY_NOTIF_NEW_VIDEOS_ARE_POSTED_TO_DAY";
     public static final String KEY_NOTIF_NEW_AUDIOS_ARE_POSTED_TO_DAY = "KEY_NOTIF_NEW_AUDIOS_ARE_POSTED_TO_DAY";
 
+    // Manage user admin status
+    public static final String KEY_IS_USER_LEVEL_ADMIN = "KEY_IS_USER_LEVEL_ADMIN";
+
     // Manage notification audio
     public static final String KEY_NOTIF_AUDIOS_LIST = "KEY_NOTIF_AUDIOS_LIST";
     public static final String KEY_NOTIF_PLAYER_SELECTED = "KEY_NOTIF_PLAYER_SELECTED";
@@ -150,6 +153,9 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     public static final String[] KEY_SETTINGS = {KEY_SETTING_CONFIRM_BEFORE_QUIT_APP,
             KEY_SETTING_AUDIO_NOTIFICATION, KEY_SETTING_VIDEO_NOTIFICATION, KEY_SETTING_CONCATENATE_AUDIO_READING,
             KEY_SETTING_CONCATENATE_VIDEO_READING, KEY_SETTING_WIFI_EXCLUSIF};
+
+    // User value to be admin
+    public static final String VALUE_USER_EMAIL_TO_BE_ADMIN = "evangile2vie@gmail.com";
 
     public static final int VALUE_PERMISSION_TO_SAVE_FILE = 103;
 
@@ -1257,9 +1263,21 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
                     }
                     //--
                     if(intent != null) {
-                        intent.putExtra(KEY_FORM_SEARCH_WORD, searchKeyWord);
-                        context.startActivity(intent);
-                        ((Activity)context).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        if(searchKeyWord.equalsIgnoreCase(VALUE_USER_EMAIL_TO_BE_ADMIN)){
+                            String userLevel = getDataFromSharePreferences(context, KEY_IS_USER_LEVEL_ADMIN);
+                            if(userLevel != null && userLevel.equalsIgnoreCase("NO")) {
+                                saveDataInSharePreferences(context, KEY_IS_USER_LEVEL_ADMIN, "YES");
+                                Toast.makeText(context, context.getResources().getString(R.string.lb_you_are_admin), Toast.LENGTH_LONG).show();
+                            }
+                            else{
+                                Toast.makeText(context, context.getResources().getString(R.string.lb_you_are_already_admin), Toast.LENGTH_LONG).show();
+                            }
+                        }
+                        else{
+                            intent.putExtra(KEY_FORM_SEARCH_WORD, searchKeyWord);
+                            context.startActivity(intent);
+                            ((Activity)context).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        }
                     }
                 }
                 else{
@@ -1301,6 +1319,17 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     public static String getPdfPath(){
         File SDCardRoot = Environment.getExternalStorageDirectory();
         return Environment.getExternalStoragePublicDirectory(SDCardRoot + "/" + FOLDER_NAME[3] + "/").getAbsolutePath();
+    }
+
+    /**
+     * Initialize user admin level
+     * @param context
+     */
+    public static void initializeUserAdminLevel(Context context) {
+        String userLevel = getDataFromSharePreferences(context, KEY_IS_USER_LEVEL_ADMIN);
+        if (userLevel == null || userLevel.isEmpty()) {
+            saveDataInSharePreferences(context, KEY_IS_USER_LEVEL_ADMIN, "NO");
+        }
     }
 
     // Initialize setting

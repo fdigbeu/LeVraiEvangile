@@ -25,6 +25,8 @@ public class SplashPresenter {
         iSplash.initialize();
         iSplash.events();
         iSplash.launchHomeActivity();
+        // Initialize user admin level
+        CommonPresenter.initializeUserAdminLevel(context);
         // Initialize the settings
         CommonPresenter.initializeAppSetting(context);
         // Initialise notification data

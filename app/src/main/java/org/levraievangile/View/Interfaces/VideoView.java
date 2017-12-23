@@ -39,7 +39,7 @@ public class VideoView {
 
     public interface IApiRessource {
         @GET("webservice/videos/{TYPE}/")
-        Call<List<Video>> getAllVideos(@Path(value = "TYPE") String keyWord);
+        Call<List<Video>> getAllVideos(@Path(value = "TYPE", encoded = true) String keyWord);
 
         @GET("webservice/videos/rechercher/motclef/{KEY_WORD}/")
         Call<List<Video>> getAllSearchVideos(@Path(value = "KEY_WORD") String keyWord);

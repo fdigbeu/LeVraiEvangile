@@ -56,7 +56,7 @@ public class AudioView {
 
     public interface IApiRessource {
         @GET("webservice/audios/{TYPE}/")
-        Call<List<Audio>> getAllAudios(@Path(value = "TYPE") String keyWord);
+        Call<List<Audio>> getAllAudios(@Path(value = "TYPE", encoded = true) String keyWord);
 
         @GET("webservice/audios/rechercher/motclef/{KEY_WORD}/")
         Call<List<Audio>> getAllSearchAudios(@Path(value = "KEY_WORD") String keyWord);

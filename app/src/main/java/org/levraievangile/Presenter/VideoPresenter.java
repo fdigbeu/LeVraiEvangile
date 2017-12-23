@@ -23,6 +23,7 @@ import retrofit2.Response;
 
 import static org.levraievangile.Presenter.CommonPresenter.KEY_ALL_VIDEOS_LIST;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_FORM_SEARCH_WORD;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_IS_USER_LEVEL_ADMIN;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_SHORT_CODE;
 
 /**
@@ -48,17 +49,21 @@ public class VideoPresenter {
         //--
         if(intent != null && intent.getStringExtra(KEY_FORM_SEARCH_WORD) == null) {
             try {
+                String userLevel = CommonPresenter.getDataFromSharePreferences(context, KEY_IS_USER_LEVEL_ADMIN);
+                String shortCodeLevel = userLevel.equalsIgnoreCase("YES") ? "/acces-admin" : "";
                 //Get list video by short-code
                 final String shortCode = intent.getStringExtra(KEY_SHORT_CODE);
                 iVideo.modifyHeaderInfos(CommonPresenter.getLibelleByTypeShortcode(shortCode));
                 if(CommonPresenter.isMobileConnected(context)) {
-                    Call<List<Video>> callVideos = ApiClient.getApiClientLeVraiEvangile().create(VideoView.IApiRessource.class).getAllVideos(shortCode);
+                    Call<List<Video>> callVideos = ApiClient.getApiClientLeVraiEvangile().create(VideoView.IApiRessource.class).getAllVideos(shortCode+shortCodeLevel);
                     callVideos.enqueue(new Callback<List<Video>>() {
                         @Override
                         public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
                             ArrayList<Video> videos = (ArrayList<Video>) response.body();
                             final String keyShortCode = KEY_ALL_VIDEOS_LIST + "-" + shortCode;
-                            CommonPresenter.saveDataInSharePreferences(context, keyShortCode, videos.toString());
+                            if(videos != null) {
+                                CommonPresenter.saveDataInSharePreferences(context, keyShortCode, videos.toString());
+                            }
                             iVideo.loadVideoData(videos, 1);
                             iVideo.progressBarVisibility(View.GONE);
                         }

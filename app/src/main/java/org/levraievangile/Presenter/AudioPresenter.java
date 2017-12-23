@@ -28,6 +28,7 @@ import retrofit2.Response;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_ALL_AUDIOS_LIST;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_AUDIO_SELECTED;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_FORM_SEARCH_WORD;
+import static org.levraievangile.Presenter.CommonPresenter.KEY_IS_USER_LEVEL_ADMIN;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_AUDIOS_LIST;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_NEXT;
 import static org.levraievangile.Presenter.CommonPresenter.KEY_NOTIF_PLAYER_PLAY_PREVIOUS;
@@ -62,18 +63,22 @@ public class AudioPresenter implements AudioView.IStreamAudio {
         //--
         if(intent != null && intent.getStringExtra(KEY_FORM_SEARCH_WORD) == null) {
             try {
+                String userLevel = CommonPresenter.getDataFromSharePreferences(context, KEY_IS_USER_LEVEL_ADMIN);
+                String shortCodeLevel = userLevel.equalsIgnoreCase("YES") ? "/acces-admin" : "";
                 //Get list audio by short-code
                 final String shortCode = intent.getStringExtra(KEY_SHORT_CODE);
                 iAudio.modifyHeaderInfos(CommonPresenter.getLibelleByTypeShortcode(shortCode));
                 if(CommonPresenter.isMobileConnected(context)) {
-                    Call<List<Audio>> callAudios = ApiClient.getApiClientLeVraiEvangile().create(AudioView.IApiRessource.class).getAllAudios(shortCode);
+                    Call<List<Audio>> callAudios = ApiClient.getApiClientLeVraiEvangile().create(AudioView.IApiRessource.class).getAllAudios(shortCode+shortCodeLevel);
                     callAudios.enqueue(new Callback<List<Audio>>() {
                         @Override
                         public void onResponse(Call<List<Audio>> call, Response<List<Audio>> response) {
                             ArrayList<Audio> audios = (ArrayList<Audio>) response.body();
                             final String keyShortCode = KEY_ALL_AUDIOS_LIST + "-" + shortCode;
-                            CommonPresenter.saveDataInSharePreferences(context, keyShortCode, audios.toString());
-                            CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_AUDIOS_LIST, audios.toString());
+                            if(audios != null) {
+                                CommonPresenter.saveDataInSharePreferences(context, keyShortCode, audios.toString());
+                                CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_AUDIOS_LIST, audios.toString());
+                            }
                             iAudio.loadAudioData(audios, 1);
                             iAudio.progressBarVisibility(View.GONE);
                         }
