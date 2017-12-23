@@ -254,8 +254,15 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
     public void retrieveUserAction(int pagePosition, ImageButton playButton, boolean isAudioSelected){
         MediaPlayer mediaPlayer = iDownload.getInstanceMediaPlayer();
         switch (pagePosition){
-            // AUDIOS
+            // PDFS
             case 0:
+                if(mediaPlayer != null && mediaPlayer.isPlaying()){
+                    playButton.performClick();
+                }
+                audioPlayerVisibility(View.GONE);
+                break;
+            // AUDIOS
+            case 1:
                 if(mediaPlayer != null && !mediaPlayer.isPlaying()){
                     if(isAudioSelected){
                         playButton.performClick();
@@ -267,13 +274,6 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
                 }
                 break;
             // VIDEOS
-            case 1:
-                if(mediaPlayer != null && mediaPlayer.isPlaying()){
-                    playButton.performClick();
-                }
-                audioPlayerVisibility(View.GONE);
-                break;
-            // PDFS
             case 2:
                 if(mediaPlayer != null && mediaPlayer.isPlaying()){
                     playButton.performClick();
@@ -356,13 +356,23 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
     }
 
     @Override
+    public void downloadPdfFinished(ArrayList<DownloadFile> downloadFiles) {
+        iDownloadPdfView.loadDownloadPdfData(downloadFiles, 1);
+        iDownloadPdfView.progressBarVisibility(View.GONE);
+        iDownload.storageDownloadFilesList(0, downloadFiles);
+    }
+
+    @Override
+    public void downloadPdfFailure() {}
+
+    @Override
     public void downloadAudioStarted() {}
 
     @Override
     public void downloadAudioFinished(Context context, ArrayList<DownloadFile> downloadFiles) {
         iDownloadAudioView.loadDownloadAudioData(downloadFiles, 1);
         iDownloadAudioView.progressBarVisibility(View.GONE);
-        iDownload.storageDownloadFilesList(0, downloadFiles);
+        iDownload.storageDownloadFilesList(1, downloadFiles);
         //--
         ArrayList<Audio> audiosList = CommonPresenter.getAudiosListByDownloadFilesList(downloadFiles);
         CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_AUDIOS_LIST, audiosList.toString());
@@ -378,21 +388,11 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
     public void downloadVideoFinished(ArrayList<DownloadFile> downloadFiles) {
         iDownloadVideoView.loadDownloadVideoData(downloadFiles, 1);
         iDownloadVideoView.progressBarVisibility(View.GONE);
-        iDownload.storageDownloadFilesList(1, downloadFiles);
-    }
-
-    @Override
-    public void downloadVideoFailure() {}
-
-    @Override
-    public void downloadPdfFinished(ArrayList<DownloadFile> downloadFiles) {
-        iDownloadPdfView.loadDownloadPdfData(downloadFiles, 1);
-        iDownloadPdfView.progressBarVisibility(View.GONE);
         iDownload.storageDownloadFilesList(2, downloadFiles);
     }
 
     @Override
-    public void downloadPdfFailure() {}
+    public void downloadVideoFailure() {}
 
     public void cancelAsyntask(){
         if(loadDownloadAudio != null) loadDownloadAudio.cancel(true);

@@ -69,8 +69,15 @@ public class FavorisPresenter {
         try {
             // Load Audio files
             switch (positionFrag){
-                // AUDIOS
+                // PDF
                 case 0:
+                    DAOFavoris daoPdfFavoris = new DAOFavoris(context);
+                    ArrayList<Favoris> pdfList = daoPdfFavoris.getAllData("pdf");
+                    iPlaceholder.loadFavorisPdfData(pdfList, 1);
+                    iPlaceholder.progressBarVisibility(View.GONE);
+                    break;
+                // AUDIOS
+                case 1:
                     DAOFavoris daoAudioFavoris = new DAOFavoris(context);
                     ArrayList<Favoris> audioList = daoAudioFavoris.getAllData("audio");
                     iPlaceholder.loadFavorisAudioData(audioList, 1);
@@ -80,17 +87,10 @@ public class FavorisPresenter {
                     CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_AUDIOS_LIST, audios.toString());
                     break;
                 // VIDEOS
-                case 1:
+                case 2:
                     DAOFavoris daoVideoFavoris = new DAOFavoris(context);
                     ArrayList<Favoris> videoList = daoVideoFavoris.getAllData("video");
                     iPlaceholder.loadFavorisVideoData(videoList, 1);
-                    iPlaceholder.progressBarVisibility(View.GONE);
-                    break;
-                // PDF
-                case 2:
-                    DAOFavoris daoPdfFavoris = new DAOFavoris(context);
-                    ArrayList<Favoris> pdfList = daoPdfFavoris.getAllData("pdf");
-                    iPlaceholder.loadFavorisPdfData(pdfList, 1);
                     iPlaceholder.progressBarVisibility(View.GONE);
                     break;
 
@@ -325,8 +325,15 @@ public class FavorisPresenter {
     public void retrieveUserAction(int pagePosition, ImageButton playButton, boolean isAudioSelected){
         MediaPlayer mediaPlayer = iFravoris.getInstanceMediaPlayer();
         switch (pagePosition){
-            // AUDIOS
+            // PDFS
             case 0:
+                if(mediaPlayer != null && mediaPlayer.isPlaying()){
+                    playButton.performClick();
+                }
+                iFravoris.audioPlayerVisibility(View.GONE);
+                break;
+            // AUDIOS
+            case 1:
                 if(mediaPlayer != null && !mediaPlayer.isPlaying()){
                     if(isAudioSelected){
                         playButton.performClick();
@@ -338,13 +345,6 @@ public class FavorisPresenter {
                 }
                 break;
             // VIDEOS
-            case 1:
-                if(mediaPlayer != null && mediaPlayer.isPlaying()){
-                    playButton.performClick();
-                }
-                iFravoris.audioPlayerVisibility(View.GONE);
-                break;
-            // PDFS
             case 2:
                 if(mediaPlayer != null && mediaPlayer.isPlaying()){
                     playButton.performClick();

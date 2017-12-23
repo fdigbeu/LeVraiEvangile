@@ -37,19 +37,19 @@
                 android:id="@+id/tabItem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tab_text_audio" />
+                android:text="@string/tab_text_pdf" />
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabItem2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tab_text_video" />
+                android:text="@string/tab_text_audio" />
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabItem3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tab_text_pdf" />
+                android:text="@string/tab_text_video" />
 
         </android.support.design.widget.TabLayout>
 

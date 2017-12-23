@@ -121,15 +121,15 @@ public class DownloadActivity extends AppCompatActivity implements DownloadView.
 
         // Toolbar contents
         titleDownload = new ArrayList<>();
+        titleDownload.add(getResources().getString(R.string.tab_text_pdf));
         titleDownload.add(getResources().getString(R.string.tab_text_audio));
         titleDownload.add(getResources().getString(R.string.tab_text_video));
-        titleDownload.add(getResources().getString(R.string.tab_text_pdf));
 
         // ViewPager contents
         fragDownloads = new ArrayList<>();
+        fragDownloads.add(Fragment.instantiate(this, DownloadPdfFragment.class.getName()));
         fragDownloads.add(Fragment.instantiate(this, DownloadAudioFragment.class.getName()));
         fragDownloads.add(Fragment.instantiate(this, DownloadVideoFragment.class.getName()));
-        fragDownloads.add(Fragment.instantiate(this, DownloadPdfFragment.class.getName()));
         this.pagerAdapter  = new DownloadPagerAdapter(super.getSupportFragmentManager(), fragDownloads, titleDownload);
 
         // Set up the ViewPager with the sections adapter.
@@ -275,11 +275,20 @@ public class DownloadActivity extends AppCompatActivity implements DownloadView.
     public void storageDownloadFilesList(int key,  ArrayList<DownloadFile> downloadFilesList) {
         this.downloadFilesList.put(key, downloadFilesList);
     }
+    // Get Storage download pdf files
+    @Override
+    public ArrayList<DownloadFile> getStorageDownloadFilesPdfData(){
+        try {
+            return downloadFilesList.get(0);
+        }
+        catch (Exception ex){}
+        return null;
+    }
     // Get Storage download audios files
     @Override
     public ArrayList<DownloadFile> getStorageDownloadFilesAudioData(){
         try {
-            return downloadFilesList.get(0);
+            return downloadFilesList.get(1);
         }
         catch (Exception ex){}
         return null;
@@ -287,15 +296,6 @@ public class DownloadActivity extends AppCompatActivity implements DownloadView.
     // Get Storage download videos files
     @Override
     public ArrayList<DownloadFile> getStorageDownloadFilesVideoData(){
-        try {
-            return downloadFilesList.get(1);
-        }
-        catch (Exception ex){}
-        return null;
-    }
-    // Get Storage download pdf files
-    @Override
-    public ArrayList<DownloadFile> getStorageDownloadFilesPdfData(){
         try {
             return downloadFilesList.get(2);
         }
