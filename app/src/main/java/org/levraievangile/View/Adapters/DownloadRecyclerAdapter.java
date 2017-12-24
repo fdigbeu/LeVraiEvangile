@@ -148,11 +148,14 @@ public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecycl
      */
     @Override
     public void playNextVideo() {
-        // Scroll recyclerView
-        DownloadPresenter downloadPresenter = new DownloadPresenter(iDownloadVideoView);
-        downloadPresenter.srcollVideoDataItemsToPosition(CommonPresenter.getScrollToNextValue(nextVideoProsition, downloadItems.size()));
-        //--
-        mViewHolder.get(nextVideoProsition).container.performClick();
+        try {
+            // Scroll recyclerView
+            DownloadPresenter downloadPresenter = new DownloadPresenter(iDownloadVideoView);
+            downloadPresenter.srcollVideoDataItemsToPosition(CommonPresenter.getScrollToNextValue(nextVideoProsition, downloadItems.size()));
+            //--
+            mViewHolder.get(nextVideoProsition).container.performClick();
+        }
+        catch (Exception ex){}
     }
 
     /**
@@ -160,29 +163,38 @@ public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecycl
      */
     @Override
     public void playPreviousVideo() {
-        // Scroll recyclerView
-        DownloadPresenter downloadPresenter = new DownloadPresenter(iDownloadVideoView);
-        downloadPresenter.srcollVideoDataItemsToPosition(CommonPresenter.getScrollToPreviousValue(previousVideoPosition, downloadItems.size()));
-        //--
-        mViewHolder.get(previousVideoPosition).container.performClick();
+        try {
+            // Scroll recyclerView
+            DownloadPresenter downloadPresenter = new DownloadPresenter(iDownloadVideoView);
+            downloadPresenter.srcollVideoDataItemsToPosition(CommonPresenter.getScrollToPreviousValue(previousVideoPosition, downloadItems.size()));
+            //--
+            mViewHolder.get(previousVideoPosition).container.performClick();
+        }
+        catch (Exception ex){}
     }
 
     @Override
     public void playNextAudio() {
-        // Scroll recyclerView
-        DownloadPresenter downloadPresenter = new DownloadPresenter(iDownloadAudioView);
-        downloadPresenter.srcollAudioDataItemsToPosition(CommonPresenter.getScrollToNextValue(nextAudioProsition, downloadItems.size()));
-        //--
-        mViewHolder.get(nextAudioProsition).container.performClick();
+        try {
+            // Scroll recyclerView
+            DownloadPresenter downloadPresenter = new DownloadPresenter(iDownloadAudioView);
+            downloadPresenter.srcollAudioDataItemsToPosition(CommonPresenter.getScrollToNextValue(nextAudioProsition, downloadItems.size()));
+            //--
+            mViewHolder.get(nextAudioProsition).container.performClick();
+        }
+        catch (Exception ex){}
     }
 
     @Override
     public void playPreviousAudio() {
-        // Scroll recyclerView
-        DownloadPresenter downloadPresenter = new DownloadPresenter(iDownloadAudioView);
-        downloadPresenter.srcollAudioDataItemsToPosition(CommonPresenter.getScrollToPreviousValue(previousAudioPosition, downloadItems.size()));
-        //--
-        mViewHolder.get(previousAudioPosition).container.performClick();
+        try {
+            // Scroll recyclerView
+            DownloadPresenter downloadPresenter = new DownloadPresenter(iDownloadAudioView);
+            downloadPresenter.srcollAudioDataItemsToPosition(CommonPresenter.getScrollToPreviousValue(previousAudioPosition, downloadItems.size()));
+            //--
+            mViewHolder.get(previousAudioPosition).container.performClick();
+        }
+        catch (Exception ex){}
     }
 
 
@@ -252,14 +264,14 @@ public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecycl
                     if(type != null) {
                         deleteFile(view.getContext(), new File(downloadFile.getData()), positionSelected, type);
                     }
+                    // Clear selected after 500 ms
+                    CountDownTimer countDownTimer = new CountDownTimer(500, 500) {
+                        public void onTick(long millisUntilFinished) {}
+                        public void onFinish() {
+                            unSelectedAllItem();
+                        }
+                    }.start();
                 }
-                // Clear selected after 500 ms
-                CountDownTimer countDownTimer = new CountDownTimer(500, 500) {
-                    public void onTick(long millisUntilFinished) {}
-                    public void onFinish() {
-                        unSelectedAllItem();
-                    }
-                }.start();
             });
         }
     }
@@ -273,50 +285,54 @@ public class DownloadRecyclerAdapter extends RecyclerView.Adapter<DownloadRecycl
      * @param type
      */
     private void deleteFile(final Context context, final File file, final int position, final String type){
-        // Remove file from Android
-        if(file != null && file.exists()){
-            if(file.delete()){
-                downloadItems.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, downloadItems.size());
+        new Thread(new Runnable() {
+            public void run() {
+                // Remove file from Android
+                if(file != null && file.exists()){
+                    if(file.delete()){
+                        notifyItemRemoved(position);
+                        notifyItemRangeChanged(position, downloadItems.size());
+                        downloadItems.remove(position);
+                    }
+                }
+                // Remove file from MediaStore Database
+                if(type.equalsIgnoreCase("video")) {
+                    String[] projection = {MediaStore.Video.Media._ID};
+                    String selection = MediaStore.Video.Media.DATA + " = ?";
+                    String[] selectionArgs = new String[]{
+                            file.getAbsolutePath()
+                    };
+                    Uri queryUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                    ContentResolver contentResolver = context.getContentResolver();
+                    Cursor c = contentResolver.query(queryUri, projection, selection, selectionArgs, null);
+                    if (c.moveToFirst()) {
+                        long id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Video.Media._ID));
+                        Uri deleteUri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id);
+                        contentResolver.delete(deleteUri, null, null);
+                    } else {
+                    }
+                    c.close();
+                }
+                else if(type.equalsIgnoreCase("audio")) {
+                    String[] projection = {MediaStore.Audio.Media._ID};
+                    String selection = MediaStore.Audio.Media.DATA + " = ?";
+                    String[] selectionArgs = new String[]{
+                            file.getAbsolutePath()
+                    };
+                    Uri queryUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                    ContentResolver contentResolver = context.getContentResolver();
+                    Cursor c = contentResolver.query(queryUri, projection, selection, selectionArgs, null);
+                    if (c.moveToFirst()) {
+                        long id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
+                        Uri deleteUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
+                        contentResolver.delete(deleteUri, null, null);
+                    } else {
+                    }
+                    c.close();
+                }
+                else{}
             }
-        }
-        // Remove file from MediaStore Database
-        if(type.equalsIgnoreCase("video")) {
-            String[] projection = {MediaStore.Video.Media._ID};
-            String selection = MediaStore.Video.Media.DATA + " = ?";
-            String[] selectionArgs = new String[]{
-                    file.getAbsolutePath()
-            };
-            Uri queryUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-            ContentResolver contentResolver = context.getContentResolver();
-            Cursor c = contentResolver.query(queryUri, projection, selection, selectionArgs, null);
-            if (c.moveToFirst()) {
-                long id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Video.Media._ID));
-                Uri deleteUri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id);
-                contentResolver.delete(deleteUri, null, null);
-            } else {
-            }
-            c.close();
-        }
-        else if(type.equalsIgnoreCase("audio")) {
-            String[] projection = {MediaStore.Audio.Media._ID};
-            String selection = MediaStore.Audio.Media.DATA + " = ?";
-            String[] selectionArgs = new String[]{
-                    file.getAbsolutePath()
-            };
-            Uri queryUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-            ContentResolver contentResolver = context.getContentResolver();
-            Cursor c = contentResolver.query(queryUri, projection, selection, selectionArgs, null);
-            if (c.moveToFirst()) {
-                long id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Audio.Media._ID));
-                Uri deleteUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
-                contentResolver.delete(deleteUri, null, null);
-            } else {
-            }
-            c.close();
-        }
-        else{}
+        }).start();
     }
 
 

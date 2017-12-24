@@ -1,6 +1,7 @@
 package org.levraievangile.View.Adapters;
 
 import android.content.Context;
+import android.os.CountDownTimer;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -115,38 +116,50 @@ public class FavorisRecyclerAdapter extends RecyclerView.Adapter<FavorisRecycler
 
     @Override
     public void playNextVideo() {
-        // Scroll recyclerView
-        FavorisPresenter favorisPresenter = new FavorisPresenter(iPlaceholder);
-        favorisPresenter.srcollVideoDataItemsToPosition(CommonPresenter.getScrollToNextValue(nextVideoProsition, favorisItems.size()));
-        //--
-        mViewHolder.get(nextVideoProsition).container.performClick();
+        try {
+            // Scroll recyclerView
+            FavorisPresenter favorisPresenter = new FavorisPresenter(iPlaceholder);
+            favorisPresenter.srcollVideoDataItemsToPosition(CommonPresenter.getScrollToNextValue(nextVideoProsition, favorisItems.size()));
+            //--
+            mViewHolder.get(nextVideoProsition).container.performClick();
+        }
+        catch (Exception ex){}
     }
 
     @Override
     public void playPreviousVideo() {
-        // Scroll recyclerView
-        FavorisPresenter favorisPresenter = new FavorisPresenter(iPlaceholder);
-        favorisPresenter.srcollVideoDataItemsToPosition(CommonPresenter.getScrollToPreviousValue(previousVideoPosition, favorisItems.size()));
-        //--
-        mViewHolder.get(previousVideoPosition).container.performClick();
+        try {
+            // Scroll recyclerView
+            FavorisPresenter favorisPresenter = new FavorisPresenter(iPlaceholder);
+            favorisPresenter.srcollVideoDataItemsToPosition(CommonPresenter.getScrollToPreviousValue(previousVideoPosition, favorisItems.size()));
+            //--
+            mViewHolder.get(previousVideoPosition).container.performClick();
+        }
+        catch (Exception ex){}
     }
 
     @Override
     public void playNextAudio() {
-        // Scroll recyclerView
-        FavorisPresenter favorisPresenter = new FavorisPresenter(iPlaceholder);
-        favorisPresenter.srcollAudioDataItemsToPosition(CommonPresenter.getScrollToNextValue(nextAudioProsition, favorisItems.size()));
-        //--
-        mViewHolder.get(nextAudioProsition).container.performClick();
+        try {
+            // Scroll recyclerView
+            FavorisPresenter favorisPresenter = new FavorisPresenter(iPlaceholder);
+            favorisPresenter.srcollAudioDataItemsToPosition(CommonPresenter.getScrollToNextValue(nextAudioProsition, favorisItems.size()));
+            //--
+            mViewHolder.get(nextAudioProsition).container.performClick();
+        }
+        catch (Exception ex){}
     }
 
     @Override
     public void playPreviousAudio() {
-        // Scroll recyclerView
-        FavorisPresenter favorisPresenter = new FavorisPresenter(iPlaceholder);
-        favorisPresenter.srcollAudioDataItemsToPosition(CommonPresenter.getScrollToPreviousValue(previousAudioPosition, favorisItems.size()));
-        //--
-        mViewHolder.get(previousAudioPosition).container.performClick();
+        try {
+            // Scroll recyclerView
+            FavorisPresenter favorisPresenter = new FavorisPresenter(iPlaceholder);
+            favorisPresenter.srcollAudioDataItemsToPosition(CommonPresenter.getScrollToPreviousValue(previousAudioPosition, favorisItems.size()));
+            //--
+            mViewHolder.get(previousAudioPosition).container.performClick();
+        }
+        catch (Exception ex){}
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
@@ -229,7 +242,13 @@ public class FavorisRecyclerAdapter extends RecyclerView.Adapter<FavorisRecycler
             }
             catch (Exception ex){}
             //--
-            unSelectedAllItem();
+            // Clear selected after 500 ms
+            CountDownTimer countDownTimer = new CountDownTimer(500, 500) {
+                public void onTick(long millisUntilFinished) {}
+                public void onFinish() {
+                    unSelectedAllItem();
+                }
+            }.start();
         }
     }
 

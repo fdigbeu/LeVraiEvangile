@@ -804,6 +804,34 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     }
 
     /**
+     * Remove all data in share preferences
+     * @param context
+     */
+    public static void removeAllDataFromSharePreferences(Context context){
+        try {
+            SharedPreferences sharedPreferences = context.getSharedPreferences("SHARED_PREFERENCES", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear();
+        }
+        catch (Exception ex){}
+    }
+
+    /**
+     * Remove data by its key in share preferences
+     * @param context
+     * @param key
+     */
+    public static void removeDataFromSharePreferences(Context context, String key){
+        try {
+            SharedPreferences sharedPreferences = context.getSharedPreferences("SHARED_PREFERENCES", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove(key);
+            editor.commit(); // <=> editor.apply();
+        }
+        catch (Exception ex){}
+    }
+
+    /**
      * Save data in share preferences
      * @param context
      * @param key
