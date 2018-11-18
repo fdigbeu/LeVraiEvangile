@@ -78,10 +78,10 @@ public class WebPresenter implements ILoadWebPage {
 
                     Favoris favoris = new Favoris(pdfSelected.getId(), "pdf", pdfSelected.getMipmap(), pdfSelected.getUrlacces(), pdfSelected.getSrc(), pdfSelected.getTitre(), pdfSelected.getAuteur(), "00:00:00", pdfSelected.getDate(), pdfSelected.getType_libelle(), pdfSelected.getType_shortcode(), pdfSelected.getId());
                     daoFavoris.insertData(favoris);
-                    Toast.makeText(view.getContext(), view.getContext().getResources().getString(R.string.pdf_add_to_favorite), Toast.LENGTH_SHORT).show();
+                    CommonPresenter.showMessageSnackBar(view, view.getContext().getResources().getString(R.string.pdf_add_to_favorite));
                 }
                 else{
-                    Toast.makeText(view.getContext(), view.getContext().getResources().getString(R.string.pdf_already_add_to_favorite), Toast.LENGTH_SHORT).show();
+                    CommonPresenter.showMessageSnackBar(view, view.getContext().getResources().getString(R.string.pdf_already_add_to_favorite));
                 }
                 break;
 
@@ -101,7 +101,8 @@ public class WebPresenter implements ILoadWebPage {
                 String auteur = pdf.getAuteur();
                 String description = "LVE-APP-DOWNLOADER ("+pdf.getType_libelle()+(auteur != null ? " | "+auteur : "")+")";
                 CommonPresenter.getFileByDownloadManager(context, url, filename, description, "pdf");
-                Toast.makeText(context, context.getResources().getString(R.string.lb_downloading), Toast.LENGTH_SHORT).show();
+                View view = CommonPresenter.getViewInTermsOfContext(context);
+                CommonPresenter.showMessageSnackBar(view, view.getContext().getResources().getString(R.string.lb_downloading));
                 Log.i("TAG_DOWNLOAD_FILE", "URL = "+url);
             }
             else{

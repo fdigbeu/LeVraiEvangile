@@ -316,10 +316,10 @@ public class AudioPresenter implements AudioView.IStreamAudio {
                     if(!daoFavoris.isFavorisExists(audioSelected.getSrc(), "audio")){
                         Favoris favoris = new Favoris(audioSelected.getId(), "audio", audioSelected.getMipmap(), audioSelected.getUrlacces(), audioSelected.getSrc(), audioSelected.getTitre(), audioSelected.getAuteur(), audioSelected.getDuree(), audioSelected.getDate(), audioSelected.getType_libelle(), audioSelected.getType_shortcode(), audioSelected.getId());
                         daoFavoris.insertData(favoris);
-                        Toast.makeText(view.getContext(), view.getContext().getResources().getString(R.string.audio_add_to_favorite), Toast.LENGTH_SHORT).show();
+                        CommonPresenter.showMessageSnackBar(view, view.getContext().getResources().getString(R.string.audio_add_to_favorite));
                     }
                     else{
-                        Toast.makeText(view.getContext(), view.getContext().getResources().getString(R.string.audio_already_add_to_favorite), Toast.LENGTH_SHORT).show();
+                        CommonPresenter.showMessageSnackBar(view, view.getContext().getResources().getString(R.string.audio_already_add_to_favorite));
                     }
                     break;
             }
@@ -345,7 +345,8 @@ public class AudioPresenter implements AudioView.IStreamAudio {
                 String filename = audioSelected.getSrc();
                 String description = "LVE-APP-DOWNLOADER ("+audioSelected.getDuree()+" | "+audioSelected.getAuteur()+")";
                 CommonPresenter.getFileByDownloadManager(context, url, filename, description, "audio");
-                Toast.makeText(context, context.getResources().getString(R.string.lb_downloading), Toast.LENGTH_SHORT).show();
+                View view = CommonPresenter.getViewInTermsOfContext(context);
+                CommonPresenter.showMessageSnackBar(view, context.getResources().getString(R.string.lb_downloading));
             }
             else{
                 iAudio.askPermissionToSaveFile();

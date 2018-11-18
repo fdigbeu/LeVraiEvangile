@@ -174,7 +174,8 @@ public class HomePresenter {
         }
         else{
             iPlaceholder.progressBarVisibility(View.GONE);
-            Toast.makeText(context, context.getResources().getString(R.string.no_connection), Toast.LENGTH_LONG).show();
+            View mView = CommonPresenter.getViewInTermsOfContext(context);
+            CommonPresenter.showMessageSnackBar(mView, context.getResources().getString(R.string.no_connection));
         }
         //--
         loadFragmentData(context, positionFrag);

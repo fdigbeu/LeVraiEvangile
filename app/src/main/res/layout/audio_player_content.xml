@@ -7,6 +7,7 @@
     android:layout_margin="@dimen/size_3_dp"
     android:padding="@dimen/size_3_dp"
     android:id="@+id/audioPlayerLayout"
+    android:keepScreenOn="true"
     android:clickable="true"
     android:visibility="gone"
     android:background="@color/colorPrimary">

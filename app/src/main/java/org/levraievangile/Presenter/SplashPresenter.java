@@ -25,6 +25,8 @@ public class SplashPresenter {
         iSplash.initialize();
         iSplash.events();
         iSplash.launchHomeActivity();
+        // Remove share preferences data from app
+        CommonPresenter.removeSomeSharePreferencesFromApp(context);
         // Initialize user admin level
         CommonPresenter.initializeUserAdminLevel(context);
         // Initialize the settings

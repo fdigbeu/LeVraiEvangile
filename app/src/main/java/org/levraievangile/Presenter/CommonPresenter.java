@@ -27,6 +27,7 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -111,6 +112,9 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     public static final String KEY_VALUE_VIDEO_PLAY_PREVIOUS = "KEY_VALUE_VIDEO_PLAY_PREVIOUS";
     public static final int VALUE_VIDEO_SELECTED_REQUEST_CODE = 11;
 
+    // Verify if notification is playing
+    public static final String KEY_NOTIFICATION_IS_PLAYING = "KEY_NOTIFICATION_IS_PLAYING";
+
     // Manage audioId and time elapse between player audio and notif audio
     public static final String KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED = "KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED";
     public static final String KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED = "KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED";
@@ -136,6 +140,12 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     // Manage key search word
     public static final String KEY_FORM_SEARCH_WORD = "KEY_FORM_SEARCH_WORD";
 
+    // Manage to load new notif audio or video
+    public static final String KEY_SHOW_NEW_AUDIO_NOTIF_PLAYER = "KEY_SHOW_NEW_AUDIO_NOTIF_PLAYER";
+    public static final String KEY_SHOW_NEW_VIDEO_NOTIF_PLAYER = "KEY_SHOW_NEW_VIDEO_NOTIF_PLAYER";
+
+    public static final String KEY_DOWNLOAD_FILES_LIST = "KEY_DOWNLOAD_FILES_LIST";
+
     // Manage settings
     public static final String KEY_SETTING_CONFIRM_BEFORE_QUIT_APP = "KEY_SETTING_CONFIRM_BEFORE_QUIT_APP";
     public static final String KEY_SETTING_AUDIO_NOTIFICATION = "KEY_SETTING_AUDIO_NOTIFICATION";
@@ -143,12 +153,6 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
     public static final String KEY_SETTING_CONCATENATE_AUDIO_READING = "KEY_SETTING_CONCATENATE_AUDIO_READING";
     public static final String KEY_SETTING_CONCATENATE_VIDEO_READING = "KEY_SETTING_CONCATENATE_VIDEO_READING";
     public static final String KEY_SETTING_WIFI_EXCLUSIF = "KEY_SETTING_WIFI_EXCLUSIF";
-
-    // Manage to load new notif audio or video
-    public static final String KEY_SHOW_NEW_AUDIO_NOTIF_PLAYER = "KEY_SHOW_NEW_AUDIO_NOTIF_PLAYER";
-    public static final String KEY_SHOW_NEW_VIDEO_NOTIF_PLAYER = "KEY_SHOW_NEW_VIDEO_NOTIF_PLAYER";
-
-    public static final String KEY_DOWNLOAD_FILES_LIST = "KEY_DOWNLOAD_FILES_LIST";
 
     public static final String[] KEY_SETTINGS = {KEY_SETTING_CONFIRM_BEFORE_QUIT_APP,
             KEY_SETTING_AUDIO_NOTIFICATION, KEY_SETTING_VIDEO_NOTIFICATION, KEY_SETTING_CONCATENATE_AUDIO_READING,
@@ -236,6 +240,25 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
         liste.add(new Pdf(R.mipmap.sm_pdf,"Bon à savoir", "bon-a-savoir"));
         liste.add(new Pdf(R.mipmap.sm_pdf,"Sainte Bible", "sainte-bible"));
         return liste;
+    }
+
+    /**
+     * Get shortcode list
+     * @return
+     */
+    public static ArrayList<String> getShortCodesList(){
+        ArrayList<String> shortCodeList = new ArrayList<>();
+        ArrayList<Video> videosListe = listeSousMenuVideo();
+        ArrayList<Pdf> pdfListe = listeSousMenuPdf();
+        //--
+        for (int i=0; i<videosListe.size(); i++){
+            shortCodeList.add(videosListe.get(i).getType_shortcode());
+        }
+        for (int i=0; i<pdfListe.size(); i++){
+            shortCodeList.add(pdfListe.get(i).getType_shortcode());
+        }
+        //--
+        return shortCodeList;
     }
 
     /**
@@ -1360,6 +1383,69 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
         }
     }
 
+    // Remove share preferences data from app
+    public static void removeSomeSharePreferencesFromApp(Context context){
+        try {
+            removeDataFromSharePreferences(context, KEY_ALL_NEWS_YEARS_LIST);
+            removeDataFromSharePreferences(context, KEY_ALL_GOOD_TO_KNOW_LIST);
+            removeDataFromSharePreferences(context, KEY_SHORT_CODE);
+            removeDataFromSharePreferences(context, KEY_ALL_VIDEOS_LIST);
+            removeDataFromSharePreferences(context, KEY_ALL_AUDIOS_LIST);
+            removeDataFromSharePreferences(context, KEY_ALL_PDFS_LIST);
+            removeDataFromSharePreferences(context, KEY_ALL_NEWS_MONTH_LIST);
+            removeDataFromSharePreferences(context, KEY_AUDIO_SELECTED);
+            removeDataFromSharePreferences(context, KEY_VIDEO_SELECTED);
+            removeDataFromSharePreferences(context, KEY_PDF_SELECTED);
+            removeDataFromSharePreferences(context, KEY_URL_NEWS_SELECTED);
+            removeDataFromSharePreferences(context, KEY_VIDEO_PLAYER_SEND_DATA);
+            removeDataFromSharePreferences(context, KEY_VIDEO_PLAYER_RETURN_DATA);
+            removeDataFromSharePreferences(context, KEY_VALUE_POSITION_VIDEO_SELECTED);
+            removeDataFromSharePreferences(context, KEY_VALUE_VIDEO_PLAY_NEXT);
+            removeDataFromSharePreferences(context, KEY_VALUE_VIDEO_PLAY_PREVIOUS);
+            removeDataFromSharePreferences(context, KEY_FORM_SEARCH_WORD);
+            removeDataFromSharePreferences(context, KEY_DOWNLOAD_FILES_LIST);
+            removeDataFromSharePreferences(context, KEY_RELOAD_NEW_DATA_NEWS_YEAR);
+            removeDataFromSharePreferences(context, KEY_RELOAD_NEW_DATA_GOOD_TO_KNOW);
+            //--
+            ArrayList<String> shortCodesList = getShortCodesList();
+            for (int i=0; i<shortCodesList.size(); i++){
+                String shortCode = shortCodesList.get(i);
+                String keyAudioShortCode = KEY_ALL_AUDIOS_LIST + "-" + shortCode;
+                removeDataFromSharePreferences(context, keyAudioShortCode);
+                String keyVideoShortCode = KEY_ALL_VIDEOS_LIST + "-" + shortCode;
+                removeDataFromSharePreferences(context, keyVideoShortCode);
+                String keyPdfShortCode = KEY_ALL_PDFS_LIST + "-" + shortCode;
+                removeDataFromSharePreferences(context, keyPdfShortCode);
+            }
+            //--
+            for(int yearValue=2009; yearValue<= 2050; yearValue++){
+                String keyNewsShortCode = KEY_ALL_NEWS_MONTH_LIST + "-" + yearValue;
+                removeDataFromSharePreferences(context, keyNewsShortCode);
+            }
+            //--
+            String notifIsPlaying = getDataFromSharePreferences(context, KEY_NOTIFICATION_IS_PLAYING);
+            if(notifIsPlaying != null && notifIsPlaying.equalsIgnoreCase("NO")) {
+                removeDataFromSharePreferences(context, KEY_NOTIFICATION_IS_PLAYING);
+                removeDataFromSharePreferences(context, KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED);
+                removeDataFromSharePreferences(context, KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_TIME_ELAPSED);
+                removeDataFromSharePreferences(context, KEY_NOTIF_AUDIO_TO_PLAYER_AUDIO_SRC);
+                removeDataFromSharePreferences(context, KEY_NOTIF_NEW_VIDEOS_ARE_POSTED_TO_DAY);
+                removeDataFromSharePreferences(context, KEY_NOTIF_NEW_AUDIOS_ARE_POSTED_TO_DAY);
+                removeDataFromSharePreferences(context, KEY_NOTIF_AUDIOS_LIST);
+                removeDataFromSharePreferences(context, KEY_NOTIF_PLAYER_SELECTED);
+                removeDataFromSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_NEXT);
+                removeDataFromSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_PREVIOUS);
+                removeDataFromSharePreferences(context, KEY_SHOW_NEW_AUDIO_NOTIF_PLAYER);
+                removeDataFromSharePreferences(context, KEY_SHOW_NEW_VIDEO_NOTIF_PLAYER);
+                Log.i("TAG_SHARE_PREFERENCES", "NOTIF SHARE_PREFERENCES KIES HAVE BEEN REMOVED");
+            }
+            Log.i("TAG_SHARE_PREFERENCES", "SHARE_PREFERENCES KIES HAVE BEEN REMOVED");
+        }
+        catch (Exception ex){
+            Toast.makeText(context, context.getResources().getString(R.string.lb_remove_sharepreferences_error), Toast.LENGTH_LONG).show();
+        }
+    }
+
     // Initialize setting
     public static void initializeAppSetting(Context context){
         String dataSetting = getDataFromSharePreferences(context, KEY_SETTING_CONFIRM_BEFORE_QUIT_APP);
@@ -1789,5 +1875,47 @@ public class CommonPresenter implements CommonView.ICommonPresenter{
             return albumArtBitMap;
         }
         return null;
+    }
+
+    /**
+     * Method to display snackbar message
+     * @param view
+     * @param message
+     */
+    public static void showMessageSnackBar(View view, String message){
+        try {
+            if(view != null && message != null){
+                Snackbar.make(view, message, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        }
+        catch (Exception ex){}
+    }
+
+    /**
+     * Method to get view in terms of the context
+     * @param context
+     * @return
+     */
+    public static View getViewInTermsOfContext(Context context){
+        try {
+            View rootView = ((Activity)context).getWindow().getDecorView().findViewById( android.R.id.content);
+            return rootView;
+        }
+        catch (Exception ex){}
+        return null;
+    }
+
+    /**
+     * Play video from url
+     * @param context
+     * @param url
+     */
+    public static void playVideoFromUrl(Context context, String url) {
+        Uri intentUri = Uri.parse(url);
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setDataAndType(intentUri, "video/mp4");
+        context.startActivity(intent);
     }
 }

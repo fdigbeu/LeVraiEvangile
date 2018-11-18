@@ -54,10 +54,12 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
     private TextView title_video;
     private View fab_player_layout, fab_player_layout_orientation;
     private ImageButton btn_video_nav_left, btn_video_nav_right;
+    // Ref intent
+    private Intent intent;
     // Ref fab button
     private FloatingActionButton fab_player_download, fab_player_share_app;
     private FloatingActionButton fab_player_favorite, fab_player_screen_orientation;
-    private FloatingActionButton fab_player_volume, fab_player_down;
+    private FloatingActionButton fab_player_volume, fab_player_down, fab_device_player;
 
     private CountDownTimer downTimer;
     private boolean widgetsIsOpened;
@@ -71,8 +73,9 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_video_player);
         // Load video player data
+        intent = this.getIntent();
         playerPresenter = new VideoPlayerPresenter(this);
-        playerPresenter.loadVideoPlayerData(VideoPlayerActivity.this, this.getIntent());
+        playerPresenter.loadVideoPlayerData(VideoPlayerActivity.this, intent);
     }
 
     @Override
@@ -97,6 +100,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
         fab_player_share_app = findViewById(R.id.fab_player_share_app);
         fab_player_favorite = findViewById(R.id.fab_player_favorite);
         fab_player_screen_orientation = findViewById(R.id.fab_player_screen_orientation);
+        fab_device_player = findViewById(R.id.fab_device_player);
         fab_player_volume = findViewById(R.id.fab_player_volume);
         fab_player_down = findViewById(R.id.fab_player_down);
     }
@@ -129,6 +133,13 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
             @Override
             public void onClick(View view) {
                 playerPresenter.retrieveUserAction(view);
+            }
+        });
+        // Fab device player
+        fab_device_player.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playerPresenter.playVideoWithLoacalPlayer(VideoPlayerActivity.this, intent);
             }
         });
         // Fab volume video
@@ -207,6 +218,11 @@ public class VideoPlayerActivity extends AppCompatActivity implements VideoPlaye
     @Override
     public void fabVisibility(int visibility) {
         fab_player_layout.setVisibility(visibility);
+        fab_player_layout_orientation.setVisibility(visibility);
+    }
+
+    @Override
+    public void fabTopVisibility(int visibility) {
         fab_player_layout_orientation.setVisibility(visibility);
     }
 

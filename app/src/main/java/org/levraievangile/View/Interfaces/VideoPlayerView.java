@@ -16,6 +16,7 @@ public class VideoPlayerView {
         public void events();
         public void displayPlayer(Video ressource, int largeurScreen, int hauteurScreen);
         public void fabVisibility(int visibility);
+        public void fabTopVisibility(int visibility);
         public void headerVisibility(int visibility);
         public void progressBarVisibility(int visibility);
         public void btnNavigationVisibility(int visibility);

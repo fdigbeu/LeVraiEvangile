@@ -38,6 +38,8 @@ import static org.levraievangile.Presenter.CommonPresenter.saveDataInSharePrefer
 public class VideoPlayerPresenter {
     // Ref interface
     private VideoPlayerView.IVideoPlayer iVideoPlayer;
+    // Ref CountDownTimer
+    private CountDownTimer countDownTimer;
 
     // Ref video
     private Video videoSelected;
@@ -84,6 +86,26 @@ public class VideoPlayerPresenter {
                 // Save video selected data
                 saveDataInSharePreferences(context, KEY_VIDEO_SELECTED, videoSelected.toString());
             }
+            // Show Top buttom during 2 secondes
+            try {
+                iVideoPlayer.fabTopVisibility(View.VISIBLE);
+                countDownTimer = new CountDownTimer(2000, 500) {
+                    @Override
+                    public void onTick(long l) {}
+
+                    @Override
+                    public void onFinish() {
+                        if(countDownTimer != null){
+                            try {
+                                iVideoPlayer.fabTopVisibility(View.GONE);
+                                countDownTimer.cancel();
+                            }
+                            catch (Exception ex){}
+                        }
+                    }
+                }.start();
+            }
+            catch (Exception ex){}
         }
         else{
             iVideoPlayer.closeActivity();
@@ -108,6 +130,21 @@ public class VideoPlayerPresenter {
         if(mSetting.getChoice()) {
             iVideoPlayer.playNextVideo();
         }
+    }
+
+    // Play video with local player
+    public void playVideoWithLoacalPlayer(Context context, Intent intent){
+        try {
+            if(intent != null && iVideoPlayer != null){
+                videoSelected = (Video) intent.getSerializableExtra(KEY_VIDEO_PLAYER_SEND_DATA);
+                if(videoSelected != null){
+                    String urlVideo = videoSelected.getUrlacces()+videoSelected.getSrc();
+                    CommonPresenter.playVideoFromUrl(context, urlVideo);
+                    iVideoPlayer.closeActivity();
+                }
+            }
+        }
+        catch (Exception ex){}
     }
 
     // Manage all video player button
@@ -147,10 +184,10 @@ public class VideoPlayerPresenter {
 
                         Favoris favoris = new Favoris(videoSelected.getId(), "video", videoSelected.getMipmap(), videoSelected.getUrlacces(), videoSelected.getSrc(), videoSelected.getTitre(), videoSelected.getAuteur(), videoSelected.getDuree(), videoSelected.getDate(), videoSelected.getType_libelle(), videoSelected.getType_shortcode(), videoSelected.getId());
                         daoFavoris.insertData(favoris);
-                        Toast.makeText(view.getContext(), view.getContext().getResources().getString(R.string.video_add_to_favorite), Toast.LENGTH_SHORT).show();
+                        CommonPresenter.showMessageSnackBar(view, view.getContext().getResources().getString(R.string.video_add_to_favorite));
                     }
                     else{
-                        Toast.makeText(view.getContext(), view.getContext().getResources().getString(R.string.video_already_add_to_favorite), Toast.LENGTH_SHORT).show();
+                        CommonPresenter.showMessageSnackBar(view, view.getContext().getResources().getString(R.string.video_already_add_to_favorite));
                     }
                     break;
 
@@ -217,7 +254,8 @@ public class VideoPlayerPresenter {
                 String filename = videoSelected.getSrc();
                 String description = "LVE-APP-DOWNLOADER ("+videoSelected.getDuree()+" | "+videoSelected.getAuteur()+")";
                 CommonPresenter.getFileByDownloadManager(context, url, filename, description, "video");
-                Toast.makeText(context, context.getResources().getString(R.string.lb_downloading), Toast.LENGTH_SHORT).show();
+                View view = CommonPresenter.getViewInTermsOfContext(context);
+                CommonPresenter.showMessageSnackBar(view, context.getResources().getString(R.string.lb_downloading));
                 Log.i("TAG_DOWNLOAD_FILE", "URL = "+url);
             }
             else{

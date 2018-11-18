@@ -50,6 +50,8 @@
     <string name="lb_you_are_admin">Vous êtes maintenant admin</string>
     <string name="lb_you_are_already_admin">Vous êtes déjà admin</string>
 
+    <string name="lb_remove_sharepreferences_error">Erreur survenue pendant le nettoyage des SharePreferences</string>
+
     <string name="lb_notif_new_audio">Nouvel audio en ligne</string>
     <string name="lb_notif_new_video">Nouvelle vidéo en ligne</string>
 
