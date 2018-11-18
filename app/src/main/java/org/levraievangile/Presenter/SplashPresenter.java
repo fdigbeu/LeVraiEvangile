@@ -22,39 +22,45 @@ public class SplashPresenter {
     }
 
     public void loadSplashData(Context context){
-        iSplash.initialize();
-        iSplash.events();
-        iSplash.launchHomeActivity();
-        // Remove share preferences data from app
-        CommonPresenter.removeSomeSharePreferencesFromApp(context);
-        // Initialize user admin level
-        CommonPresenter.initializeUserAdminLevel(context);
-        // Initialize the settings
-        CommonPresenter.initializeAppSetting(context);
-        // Initialise notification data
-        CommonPresenter.initializeNotificationTimeLapsed(context);
-        // Start Download Service receiver
-        Intent downloadIntent = new Intent(context, DownloadReceiver.class);
-        context.startService(downloadIntent);
-        // Verify if alarm is running
-        Intent alarm = new Intent(context, AlarmTimeReceiver.class);
-        boolean alarmRunning = (PendingIntent.getBroadcast(context, 0, alarm, PendingIntent.FLAG_NO_CREATE) != null);
-        //--
-        Setting mAudioSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_AUDIO_NOTIFICATION);
-        Setting mVideoSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_VIDEO_NOTIFICATION);
-        if(!mAudioSetting.getChoice() && !mVideoSetting.getChoice()){
-            if(alarmRunning) {
-                iSplash.stopAlarmService();
+        try {
+            iSplash.initialize();
+            iSplash.events();
+            iSplash.launchHomeActivity();
+            // Remove share preferences data from app
+            CommonPresenter.removeSomeSharePreferencesFromApp(context);
+            // Initialize user admin level
+            CommonPresenter.initializeUserAdminLevel(context);
+            // Initialize the settings
+            CommonPresenter.initializeAppSetting(context);
+            // Initialise notification data
+            CommonPresenter.initializeNotificationTimeLapsed(context);
+            // Start Download Service receiver
+            Intent downloadIntent = new Intent(context, DownloadReceiver.class);
+            context.startService(downloadIntent);
+            // Verify if alarm is running
+            Intent alarm = new Intent(context, AlarmTimeReceiver.class);
+            boolean alarmRunning = (PendingIntent.getBroadcast(context, 0, alarm, PendingIntent.FLAG_NO_CREATE) != null);
+            //--
+            Setting mAudioSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_AUDIO_NOTIFICATION);
+            Setting mVideoSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_VIDEO_NOTIFICATION);
+            if(!mAudioSetting.getChoice() && !mVideoSetting.getChoice()){
+                if(alarmRunning) {
+                    iSplash.stopAlarmService();
+                }
+            }
+            else{
+                if(!alarmRunning){
+                    iSplash.startAlarmService();
+                }
             }
         }
-        else{
-            if(!alarmRunning){
-                iSplash.startAlarmService();
-            }
-        }
+        catch (Exception ex){}
     }
 
     public void cancelCountDownTimer(CountDownTimer countDownTimer){
-        CommonPresenter.cancelCountDownTimer(countDownTimer);
+        try {
+            CommonPresenter.cancelCountDownTimer(countDownTimer);
+        }
+        catch (Exception ex){}
     }
 }

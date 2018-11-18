@@ -36,15 +36,21 @@ public class NewsPresenter {
 
     // Load news data
     public void loadNewsData(Context context, Intent intent){
-        iNews.initialize();
-        iNews.events();
-        //--
-        loadNewsMonthData(context, intent);
+        try {
+            iNews.initialize();
+            iNews.events();
+            //--
+            loadNewsMonthData(context, intent);
+        }
+        catch (Exception ex){}
     }
 
     // Launch activity
     public void launchActivity(String value){
-        iNews.launchActivity(value);
+        try {
+            iNews.launchActivity(value);
+        }
+        catch (Exception ex){}
     }
 
     /**
@@ -53,69 +59,77 @@ public class NewsPresenter {
      * @param intent
      */
     public void loadNewsMonthData(final Context context, Intent intent){
+        try {
+            iNews.progressBarVisibility(View.VISIBLE);
+            iNews.recyclerViewVisibility(View.GONE);
+            //--
+            if(intent != null) {
+                try {
+                    //Get list month news by short-code
+                    final String yearValue = intent.getStringExtra(KEY_SHORT_CODE);
+                    iNews.modifyHeaderInfos(yearValue);
+                    if(CommonPresenter.isMobileConnected(context)) {
+                        Call<List<Mois>> callMonth = ApiClient.getApiClientLeVraiEvangile().create(NewsView.IApiRessource.class).getAllNewsMonth(yearValue);
+                        callMonth.enqueue(new Callback<List<Mois>>() {
+                            @Override
+                            public void onResponse(Call<List<Mois>> call, Response<List<Mois>> response) {
+                                ArrayList<Mois> months = (ArrayList<Mois>) response.body();
+                                final String keyShortCode = KEY_ALL_NEWS_MONTH_LIST + "-" + yearValue;
+                                CommonPresenter.saveDataInSharePreferences(context, keyShortCode, months.toString());
+                                iNews.loadNewsMonth(months, Integer.parseInt(yearValue));
+                                iNews.recyclerViewVisibility(View.VISIBLE);
+                                iNews.stopRefreshing(true);
+                            }
 
-        iNews.progressBarVisibility(View.VISIBLE);
-        iNews.recyclerViewVisibility(View.GONE);
-        //--
-        if(intent != null) {
-            try {
-                //Get list month news by short-code
-                final String yearValue = intent.getStringExtra(KEY_SHORT_CODE);
-                iNews.modifyHeaderInfos(yearValue);
-                if(CommonPresenter.isMobileConnected(context)) {
-                    Call<List<Mois>> callMonth = ApiClient.getApiClientLeVraiEvangile().create(NewsView.IApiRessource.class).getAllNewsMonth(yearValue);
-                    callMonth.enqueue(new Callback<List<Mois>>() {
-                        @Override
-                        public void onResponse(Call<List<Mois>> call, Response<List<Mois>> response) {
-                            ArrayList<Mois> months = (ArrayList<Mois>) response.body();
-                            final String keyShortCode = KEY_ALL_NEWS_MONTH_LIST + "-" + yearValue;
-                            CommonPresenter.saveDataInSharePreferences(context, keyShortCode, months.toString());
-                            iNews.loadNewsMonth(months, Integer.parseInt(yearValue));
-                            iNews.recyclerViewVisibility(View.VISIBLE);
-                            iNews.stopRefreshing(true);
+                            @Override
+                            public void onFailure(Call<List<Mois>> call, Throwable t) {
+                                ArrayList<Mois> months = CommonPresenter.getAllNewsMonthSavedBy(context, yearValue);
+                                iNews.loadNewsMonth(months, Integer.parseInt(yearValue));
+                                iNews.recyclerViewVisibility(View.VISIBLE);
+                                iNews.stopRefreshing(true);
+                            }
+                        });
+                    }
+                    else{
+                        ArrayList<Mois> months = CommonPresenter.getAllNewsMonthSavedBy(context, yearValue);
+                        iNews.loadNewsMonth(months, Integer.parseInt(yearValue));
+                        iNews.recyclerViewVisibility(View.VISIBLE);
+                        iNews.stopRefreshing(true);
+                        //--
+                        if(months.size()==0){
+                            CommonPresenter.showNoConnectionMessage(context, true);
                         }
-
-                        @Override
-                        public void onFailure(Call<List<Mois>> call, Throwable t) {
-                            ArrayList<Mois> months = CommonPresenter.getAllNewsMonthSavedBy(context, yearValue);
-                            iNews.loadNewsMonth(months, Integer.parseInt(yearValue));
-                            iNews.recyclerViewVisibility(View.VISIBLE);
-                            iNews.stopRefreshing(true);
-                        }
-                    });
-                }
-                else{
-                    ArrayList<Mois> months = CommonPresenter.getAllNewsMonthSavedBy(context, yearValue);
-                    iNews.loadNewsMonth(months, Integer.parseInt(yearValue));
-                    iNews.recyclerViewVisibility(View.VISIBLE);
-                    iNews.stopRefreshing(true);
-                    //--
-                    if(months.size()==0){
-                        CommonPresenter.showNoConnectionMessage(context, true);
                     }
                 }
+                catch (Exception ex){}
             }
-            catch (Exception ex){}
+            else{
+                iNews.closeActivity();
+            }
         }
-        else{
-            iNews.closeActivity();
-        }
+        catch (Exception ex){}
     }
 
     // Reload news data
     public void reLoadNewsData(Context context, Intent intent){
-        loadNewsData(context, intent);
-        iNews.progressBarVisibility(View.GONE);
+        try {
+            loadNewsData(context, intent);
+            iNews.progressBarVisibility(View.GONE);
+        }
+        catch (Exception ex){}
     }
 
 
     // Manage menu Item
     public void retrieveUserAction(MenuItem item){
-        switch (item.getItemId()){
-            case android.R.id.home:
-                iNews.closeActivity();
-                break;
+        try {
+            switch (item.getItemId()){
+                case android.R.id.home:
+                    iNews.closeActivity();
+                    break;
+            }
         }
+        catch (Exception ex){}
     }
 
     /**
@@ -123,7 +137,10 @@ public class NewsPresenter {
      * @param position
      */
     public void monthRecyclerScrollTo(int position){
-        iNews.monthRecyclerScrollTo(position+1);
+        try {
+            iNews.monthRecyclerScrollTo(position+1);
+        }
+        catch (Exception ex){}
     }
 
     /**
@@ -132,24 +149,27 @@ public class NewsPresenter {
      * @param selectedYear
      */
     public void loadNewsSelectedMonthData(int selectedMonth, int selectedYear){
-        iNews.progressBarVisibility(View.VISIBLE);
-        String monthAndYear = selectedYear+"/mois/"+(selectedMonth > 9 ? selectedMonth : "0"+selectedMonth);
-        Log.i("TAG_MONTH_SELECTED", monthAndYear);
-        Call<List<Actualite>> callNews = ApiClient.getApiClientLeVraiEvangile().create(NewsView.IApiRessource.class).getAllNews(monthAndYear);
-        callNews.enqueue(new Callback<List<Actualite>>() {
-            @Override
-            public void onResponse(Call<List<Actualite>> call, Response<List<Actualite>> response) {
-                ArrayList<Actualite> newsSelected = (ArrayList<Actualite>)response.body();
-                iNews.loadNewsData(newsSelected, 1);
-                iNews.progressBarVisibility(View.GONE);
-                Log.i("TAG_RESPONSE_DATA", response.toString());
-            }
+        try {
+            iNews.progressBarVisibility(View.VISIBLE);
+            String monthAndYear = selectedYear+"/mois/"+(selectedMonth > 9 ? selectedMonth : "0"+selectedMonth);
+            Log.i("TAG_MONTH_SELECTED", monthAndYear);
+            Call<List<Actualite>> callNews = ApiClient.getApiClientLeVraiEvangile().create(NewsView.IApiRessource.class).getAllNews(monthAndYear);
+            callNews.enqueue(new Callback<List<Actualite>>() {
+                @Override
+                public void onResponse(Call<List<Actualite>> call, Response<List<Actualite>> response) {
+                    ArrayList<Actualite> newsSelected = (ArrayList<Actualite>)response.body();
+                    iNews.loadNewsData(newsSelected, 1);
+                    iNews.progressBarVisibility(View.GONE);
+                    Log.i("TAG_RESPONSE_DATA", response.toString());
+                }
 
-            @Override
-            public void onFailure(Call<List<Actualite>> call, Throwable t) {
-                iNews.progressBarVisibility(View.GONE);
-                Log.i("TAG_RESPONSE_ERROR", t.toString());
-            }
-        });
+                @Override
+                public void onFailure(Call<List<Actualite>> call, Throwable t) {
+                    iNews.progressBarVisibility(View.GONE);
+                    Log.i("TAG_RESPONSE_ERROR", t.toString());
+                }
+            });
+        }
+        catch (Exception ex){}
     }
 }

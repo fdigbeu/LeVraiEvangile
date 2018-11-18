@@ -84,83 +84,107 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
 
     // Load download data
     public void loadDownloadData(Context context){
-        iDownload.initialize();
-        iDownload.events();
+        try {
+            iDownload.initialize();
+            iDownload.events();
+        }
+        catch (Exception ex){}
     }
 
     // Load download audio data
     public void loadDownloadAudioFragData(View view){
-        iDownloadAudioView.initialize(view);
-        iDownloadAudioView.events();
+        try {
+            iDownloadAudioView.initialize(view);
+            iDownloadAudioView.events();
+        }
+        catch (Exception ex){}
     }
 
     // Load download video data
     public void loadDownloadVideoFragData(View view){
-        iDownloadVideoView.initialize(view);
-        iDownloadVideoView.events();
+        try {
+            iDownloadVideoView.initialize(view);
+            iDownloadVideoView.events();
+        }
+        catch (Exception ex){}
     }
 
     // Load download pdf data
     public void loadDownloadPdfFragData(View view){
-        iDownloadPdfView.initialize(view);
-        iDownloadPdfView.events();
+        try {
+            iDownloadPdfView.initialize(view);
+            iDownloadPdfView.events();
+        }
+        catch (Exception ex){}
     }
 
     // If downloadAudio Fragment Attach Success
     public void downloadAudioFragmentAttachSuccess(Context context){
-        if(iDownload != null && iDownloadAudioView != null){
-            ArrayList<DownloadFile> downloadFiles = iDownload.getStorageDownloadFilesAudioData();
-            if(downloadFiles==null){
-                LoadDownloadAudio loadDownloadAudio = new LoadDownloadAudio();
-                loadDownloadAudio.initializeData(context, this);
-                loadDownloadAudio.execute();
-                iDownloadAudioView.progressBarVisibility(View.VISIBLE);
-            }
-            else {
-                iDownloadAudioView.loadDownloadAudioData(downloadFiles, 1);
+        try {
+            if(iDownload != null && iDownloadAudioView != null){
+                ArrayList<DownloadFile> downloadFiles = iDownload.getStorageDownloadFilesAudioData();
+                if(downloadFiles==null){
+                    LoadDownloadAudio loadDownloadAudio = new LoadDownloadAudio();
+                    loadDownloadAudio.initializeData(context, this);
+                    loadDownloadAudio.execute();
+                    iDownloadAudioView.progressBarVisibility(View.VISIBLE);
+                }
+                else {
+                    iDownloadAudioView.loadDownloadAudioData(downloadFiles, 1);
+                }
             }
         }
+        catch (Exception ex){}
     }
 
     // If downloadVideo Fragment Attach Success
     public void downloadVideoFragmentAttachSuccess(Context context){
-        if(iDownload != null && iDownloadVideoView != null){
-            ArrayList<DownloadFile> downloadFiles = iDownload.getStorageDownloadFilesVideoData();
-            if(downloadFiles==null){
-                LoadDownloadVideo loadDownloadVideo = new LoadDownloadVideo();
-                loadDownloadVideo.initializeData(context, this);
-                loadDownloadVideo.execute();
-                iDownloadVideoView.progressBarVisibility(View.VISIBLE);
-            }
-            else {
-                iDownloadVideoView.loadDownloadVideoData(downloadFiles, 1);
+        try {
+            if(iDownload != null && iDownloadVideoView != null){
+                ArrayList<DownloadFile> downloadFiles = iDownload.getStorageDownloadFilesVideoData();
+                if(downloadFiles==null){
+                    LoadDownloadVideo loadDownloadVideo = new LoadDownloadVideo();
+                    loadDownloadVideo.initializeData(context, this);
+                    loadDownloadVideo.execute();
+                    iDownloadVideoView.progressBarVisibility(View.VISIBLE);
+                }
+                else {
+                    iDownloadVideoView.loadDownloadVideoData(downloadFiles, 1);
+                }
             }
         }
+        catch (Exception ex){}
     }
 
     // If downloadPdf Fragment Attach Success
     public void downloadPdfFragmentAttachSuccess(Context context){
-        if(iDownload != null && iDownloadPdfView != null){
-            ArrayList<DownloadFile> downloadFiles = iDownload.getStorageDownloadFilesPdfData();
-            if(downloadFiles==null){
-                LoadDownloadPdf loadDownloadPdf = new LoadDownloadPdf();
-                loadDownloadPdf.initializeData(context, this);
-                loadDownloadPdf.execute();
-                iDownloadPdfView.progressBarVisibility(View.VISIBLE);
-            }
-            else {
-                iDownloadPdfView.loadDownloadPdfData(downloadFiles, 1);
+        try {
+            if(iDownload != null && iDownloadPdfView != null){
+                ArrayList<DownloadFile> downloadFiles = iDownload.getStorageDownloadFilesPdfData();
+                if(downloadFiles==null){
+                    LoadDownloadPdf loadDownloadPdf = new LoadDownloadPdf();
+                    loadDownloadPdf.initializeData(context, this);
+                    loadDownloadPdf.execute();
+                    iDownloadPdfView.progressBarVisibility(View.VISIBLE);
+                }
+                else {
+                    iDownloadPdfView.loadDownloadPdfData(downloadFiles, 1);
+                }
             }
         }
+        catch (Exception ex){}
     }
 
     // Manage menu Item
     public void retrieveUserAction(MenuItem item){
-        switch (item.getItemId()){
-            case android.R.id.home:
-                iDownload.closeActivity();
-                break;
+        try {
+            switch (item.getItemId()){
+                case android.R.id.home:
+                    iDownload.closeActivity();
+                    break;
+            }
         }
+        catch (Exception ex){}
     }
 
     /**
@@ -168,9 +192,12 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
      * @param iDownloadAudioRecycler
      */
     public void playNextAudioInPlayer(DownloadView.IDownloadAudioRecycler iDownloadAudioRecycler){
-        if(iDownloadAudioRecycler != null){
-            iDownloadAudioRecycler.playNextAudio();
+        try {
+            if(iDownloadAudioRecycler != null){
+                iDownloadAudioRecycler.playNextAudio();
+            }
         }
+        catch (Exception ex){}
     }
 
     /**
@@ -178,28 +205,37 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
      * @param iDownloadAudioRecycler
      */
     public void playPreviousAudioInPlayer(DownloadView.IDownloadAudioRecycler iDownloadAudioRecycler){
-        if(iDownloadAudioRecycler != null){
-            iDownloadAudioRecycler.playPreviousAudio();
+        try {
+            if(iDownloadAudioRecycler != null){
+                iDownloadAudioRecycler.playPreviousAudio();
+            }
         }
+        catch (Exception ex){}
     }
 
     // Play audio notification
     private void playAudioNotification(Context context, MediaPlayer mediaPlayer){
-        CommonPresenter.saveDataInSharePreferences(context, KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED, ""+mediaPlayer.getCurrentPosition());
-        closeAudioMediaPlayer(mediaPlayer);
-        iDownload.playNotificationAudio();
+        try {
+            CommonPresenter.saveDataInSharePreferences(context, KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED, ""+mediaPlayer.getCurrentPosition());
+            closeAudioMediaPlayer(mediaPlayer);
+            iDownload.playNotificationAudio();
+        }
+        catch (Exception ex){}
     }
 
     // When user clicks to play/Pause
     public void retrievePlayPauseAction(MediaPlayer mediaPlayer, ImageButton imageButton){
-        if(mediaPlayer.isPlaying()){
-            mediaPlayer.pause();
-            imageButton.setBackgroundResource(R.drawable.btn_media_player_play);
+        try {
+            if(mediaPlayer.isPlaying()){
+                mediaPlayer.pause();
+                imageButton.setBackgroundResource(R.drawable.btn_media_player_play);
+            }
+            else{
+                mediaPlayer.start();
+                imageButton.setBackgroundResource(R.drawable.btn_media_player_pause);
+            }
         }
-        else{
-            mediaPlayer.start();
-            imageButton.setBackgroundResource(R.drawable.btn_media_player_pause);
-        }
+        catch (Exception ex){}
     }
 
     // Manage audio player button
@@ -221,10 +257,13 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
 
     // Close media player
     private void closeAudioMediaPlayer(MediaPlayer mediaPlayer){
-        if(mediaPlayer.isPlaying()){
-            mediaPlayer.stop();
+        try {
+            if(mediaPlayer.isPlaying()){
+                mediaPlayer.stop();
+            }
+            iDownload.audioPlayerVisibility(View.GONE);
         }
-        iDownload.audioPlayerVisibility(View.GONE);
+        catch (Exception ex){}
     }
 
     // Manage audio player button
@@ -252,43 +291,49 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
 
     // Retrieve position page
     public void retrieveUserAction(int pagePosition, ImageButton playButton, boolean isAudioSelected){
-        MediaPlayer mediaPlayer = iDownload.getInstanceMediaPlayer();
-        switch (pagePosition){
-            // PDFS
-            case 0:
-                if(mediaPlayer != null && mediaPlayer.isPlaying()){
-                    playButton.performClick();
-                }
-                audioPlayerVisibility(View.GONE);
-                break;
-            // AUDIOS
-            case 1:
-                if(mediaPlayer != null && !mediaPlayer.isPlaying()){
-                    if(isAudioSelected){
+        try {
+            MediaPlayer mediaPlayer = iDownload.getInstanceMediaPlayer();
+            switch (pagePosition){
+                // PDFS
+                case 0:
+                    if(mediaPlayer != null && mediaPlayer.isPlaying()){
                         playButton.performClick();
-                        audioPlayerVisibility(View.VISIBLE);
                     }
-                }
-                else{
                     audioPlayerVisibility(View.GONE);
-                }
-                break;
-            // VIDEOS
-            case 2:
-                if(mediaPlayer != null && mediaPlayer.isPlaying()){
-                    playButton.performClick();
-                }
-                audioPlayerVisibility(View.GONE);
-                break;
+                    break;
+                // AUDIOS
+                case 1:
+                    if(mediaPlayer != null && !mediaPlayer.isPlaying()){
+                        if(isAudioSelected){
+                            playButton.performClick();
+                            audioPlayerVisibility(View.VISIBLE);
+                        }
+                    }
+                    else{
+                        audioPlayerVisibility(View.GONE);
+                    }
+                    break;
+                // VIDEOS
+                case 2:
+                    if(mediaPlayer != null && mediaPlayer.isPlaying()){
+                        playButton.performClick();
+                    }
+                    audioPlayerVisibility(View.GONE);
+                    break;
+            }
         }
+        catch (Exception ex){}
     }
 
     // When the audio is finished
     public void retrieveOnCompletionAction(Context context){
-        Setting mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, KEY_SETTING_CONCATENATE_AUDIO_READING);
-        if(mSetting.getChoice()) {
-            iDownload.playNextAudio();
+        try {
+            Setting mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, KEY_SETTING_CONCATENATE_AUDIO_READING);
+            if(mSetting.getChoice()) {
+                iDownload.playNextAudio();
+            }
         }
+        catch (Exception ex){}
     }
 
     /**
@@ -296,9 +341,12 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
      * @param enable
      */
     public void activateAllWidgets(boolean enable){
-        iDownload.activateAudioPlayerWidgets(enable);
-        // Stop Notification
-        iDownload.stopNotificationAudio();
+        try {
+            iDownload.activateAudioPlayerWidgets(enable);
+            // Stop Notification
+            iDownload.stopNotificationAudio();
+        }
+        catch (Exception ex){}
     }
 
 
@@ -307,7 +355,10 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
      * @param audio
      */
     public void stopAllOtherMediaSound(Audio audio){
-        iDownload.stopOtherMediaPlayerSound(audio);
+        try {
+            iDownload.stopOtherMediaPlayerSound(audio);
+        }
+        catch (Exception ex){}
     }
 
     /**
@@ -315,25 +366,45 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
      * @param mediaPlayer
      */
     public void stopMediaPlayer(MediaPlayer mediaPlayer){
-        CommonPresenter.stopMediaPlayer(mediaPlayer);
+        try {
+            CommonPresenter.stopMediaPlayer(mediaPlayer);
+        }
+        catch (Exception ex){}
     }
 
     // Activate audio player and play
     public void playLVEAudioPlayer(Context context, Audio audio, int position){
-        // Save audio selected
-        CommonPresenter.saveDataInSharePreferences(context, KEY_AUDIO_SELECTED, audio.toString());
-        if(iDownload != null){
+        try {
+            // Save audio selected
+            CommonPresenter.saveDataInSharePreferences(context, KEY_AUDIO_SELECTED, audio.toString());
+            if(iDownload != null){
+                if(CommonPresenter.isMobileConnected(context)){
+                    loadAudioMediaPlayer = new LoadAudioMediaPlayer();
+                    loadAudioMediaPlayer.initLoadAudioMediaPlayer(audio, position, iDownload);
+                    loadAudioMediaPlayer.execute();
+                    // Save for notification data
+                    CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_SELECTED, ""+position);
+                    ArrayList<Audio> mList = CommonPresenter.getAllAudiosByKey(context, KEY_NOTIF_AUDIOS_LIST);
+                    int previousPosition = CommonPresenter.getNotifPlayerPreviousValue(position, mList.size());
+                    CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_PREVIOUS, ""+previousPosition);
+                    int nextPosition = CommonPresenter.getNotifPlayerNextValue(position, mList.size());
+                    CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_NEXT, ""+nextPosition);
+                }
+                else{
+                    String title = context.getResources().getString(R.string.no_connection);
+                    String message = context.getResources().getString(R.string.detail_no_connection);
+                    CommonPresenter.showMessage(context, title.toUpperCase(), message, false);
+                }
+            }
+        }
+        catch (Exception ex){}
+    }
+
+    // Manage AUDIO : Selected From DownloadRecyclerAdapter
+    public void retrieveAudioSelected(Context context, Audio audio, int position){
+        try {
             if(CommonPresenter.isMobileConnected(context)){
-                loadAudioMediaPlayer = new LoadAudioMediaPlayer();
-                loadAudioMediaPlayer.initLoadAudioMediaPlayer(audio, position, iDownload);
-                loadAudioMediaPlayer.execute();
-                // Save for notification data
-                CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_SELECTED, ""+position);
-                ArrayList<Audio> mList = CommonPresenter.getAllAudiosByKey(context, KEY_NOTIF_AUDIOS_LIST);
-                int previousPosition = CommonPresenter.getNotifPlayerPreviousValue(position, mList.size());
-                CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_PREVIOUS, ""+previousPosition);
-                int nextPosition = CommonPresenter.getNotifPlayerNextValue(position, mList.size());
-                CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_NEXT, ""+nextPosition);
+                iDownload.onAudioSelected(audio, position);
             }
             else{
                 String title = context.getResources().getString(R.string.no_connection);
@@ -341,25 +412,17 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
                 CommonPresenter.showMessage(context, title.toUpperCase(), message, false);
             }
         }
-    }
-
-    // Manage AUDIO : Selected From DownloadRecyclerAdapter
-    public void retrieveAudioSelected(Context context, Audio audio, int position){
-        if(CommonPresenter.isMobileConnected(context)){
-            iDownload.onAudioSelected(audio, position);
-        }
-        else{
-            String title = context.getResources().getString(R.string.no_connection);
-            String message = context.getResources().getString(R.string.detail_no_connection);
-            CommonPresenter.showMessage(context, title.toUpperCase(), message, false);
-        }
+        catch (Exception ex){}
     }
 
     @Override
     public void downloadPdfFinished(ArrayList<DownloadFile> downloadFiles) {
-        iDownloadPdfView.loadDownloadPdfData(downloadFiles, 1);
-        iDownloadPdfView.progressBarVisibility(View.GONE);
-        iDownload.storageDownloadFilesList(0, downloadFiles);
+        try {
+            iDownloadPdfView.loadDownloadPdfData(downloadFiles, 1);
+            iDownloadPdfView.progressBarVisibility(View.GONE);
+            iDownload.storageDownloadFilesList(0, downloadFiles);
+        }
+        catch (Exception ex){}
     }
 
     @Override
@@ -370,12 +433,15 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
 
     @Override
     public void downloadAudioFinished(Context context, ArrayList<DownloadFile> downloadFiles) {
-        iDownloadAudioView.loadDownloadAudioData(downloadFiles, 1);
-        iDownloadAudioView.progressBarVisibility(View.GONE);
-        iDownload.storageDownloadFilesList(1, downloadFiles);
-        //--
-        ArrayList<Audio> audiosList = CommonPresenter.getAudiosListByDownloadFilesList(downloadFiles);
-        CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_AUDIOS_LIST, audiosList.toString());
+        try {
+            iDownloadAudioView.loadDownloadAudioData(downloadFiles, 1);
+            iDownloadAudioView.progressBarVisibility(View.GONE);
+            iDownload.storageDownloadFilesList(1, downloadFiles);
+            //--
+            ArrayList<Audio> audiosList = CommonPresenter.getAudiosListByDownloadFilesList(downloadFiles);
+            CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_AUDIOS_LIST, audiosList.toString());
+        }
+        catch (Exception ex){}
     }
 
     @Override
@@ -386,18 +452,24 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
 
     @Override
     public void downloadVideoFinished(ArrayList<DownloadFile> downloadFiles) {
-        iDownloadVideoView.loadDownloadVideoData(downloadFiles, 1);
-        iDownloadVideoView.progressBarVisibility(View.GONE);
-        iDownload.storageDownloadFilesList(2, downloadFiles);
+        try {
+            iDownloadVideoView.loadDownloadVideoData(downloadFiles, 1);
+            iDownloadVideoView.progressBarVisibility(View.GONE);
+            iDownload.storageDownloadFilesList(2, downloadFiles);
+        }
+        catch (Exception ex){}
     }
 
     @Override
     public void downloadVideoFailure() {}
 
     public void cancelAsyntask(){
-        if(loadDownloadAudio != null) loadDownloadAudio.cancel(true);
-        if(loadDownloadVideo != null) loadDownloadVideo.cancel(true);
-        if(loadDownloadPdf != null) loadDownloadPdf.cancel(true);
+        try {
+            if(loadDownloadAudio != null) loadDownloadAudio.cancel(true);
+            if(loadDownloadVideo != null) loadDownloadVideo.cancel(true);
+            if(loadDownloadPdf != null) loadDownloadPdf.cancel(true);
+        }
+        catch (Exception ex){}
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////
@@ -407,7 +479,10 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
      * @param position
      */
     public void srcollVideoDataItemsToPosition(int position){
-        iDownloadVideoView.scrollVideoDataToPosition(position);
+        try {
+            iDownloadVideoView.scrollVideoDataToPosition(position);
+        }
+        catch (Exception ex){}
     }
 
     /**
@@ -415,9 +490,12 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
      * @param iDownloadVideoRecycler
      */
     public void playNextVideoInPlayer(DownloadView.IDownloadVideoRecycler iDownloadVideoRecycler){
-        if(iDownloadVideoRecycler != null){
-            iDownloadVideoRecycler.playNextVideo();
+        try {
+            if(iDownloadVideoRecycler != null){
+                iDownloadVideoRecycler.playNextVideo();
+            }
         }
+        catch (Exception ex){}
     }
 
     /**
@@ -425,16 +503,22 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
      * @param iDownloadVideoRecycler
      */
     public void playPreviousVideoInPlayer(DownloadView.IDownloadVideoRecycler iDownloadVideoRecycler){
-        if(iDownloadVideoRecycler != null){
-            iDownloadVideoRecycler.playPreviousVideo();
+        try {
+            if(iDownloadVideoRecycler != null){
+                iDownloadVideoRecycler.playPreviousVideo();
+            }
         }
+        catch (Exception ex){}
     }
 
     // Set DownloadVideoFragment DownloadRecyclerAdapter Attribute
     public void retrieveAndSetIDownloadVideoRecyclerReference(DownloadView.IDownloadVideoRecycler iDownloadVideoRecycler){
-        if(iDownloadVideoView != null){
-            iDownloadVideoView.instanciateIDownloadVideoRecycler(iDownloadVideoRecycler);
+        try {
+            if(iDownloadVideoView != null){
+                iDownloadVideoView.instanciateIDownloadVideoRecycler(iDownloadVideoRecycler);
+            }
         }
+        catch (Exception ex){}
     }
 
     /**
@@ -442,7 +526,10 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
      * @param visibility
      */
     public void audioPlayerVisibility(int visibility){
-        iDownload.audioPlayerVisibility(visibility);
+        try {
+            iDownload.audioPlayerVisibility(visibility);
+        }
+        catch (Exception ex){}
     }
 
 
@@ -451,7 +538,10 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
      * @param position
      */
     public void srcollAudioDataItemsToPosition(int position){
-        iDownloadAudioView.scrollAudioDataToPosition(position);
+        try {
+            iDownloadAudioView.scrollAudioDataToPosition(position);
+        }
+        catch (Exception ex){}
     }
 
     /**
@@ -469,20 +559,26 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
 
     // Set DownloadPdfFragment DownloadRecyclerAdapter Attribute
     public void retrieveAndSetIDownloadPdfRecyclerReference(DownloadView.IDownloadPdfRecycler iDownloadPdfRecycler){
-        if(iDownloadPdfView != null){
-            iDownloadPdfView.instanciateIDownloadPdfRecycler(iDownloadPdfRecycler);
+        try {
+            if(iDownloadPdfView != null){
+                iDownloadPdfView.instanciateIDownloadPdfRecycler(iDownloadPdfRecycler);
+            }
         }
+        catch (Exception ex){}
     }
 
     // Set DownloadAudioFragment DownloadRecyclerAdapter Attribute
     public void retrieveAndSetIDownloadAudioRecyclerReference(DownloadView.IDownloadAudioRecycler iDownloadAudioRecycler){
-        if(iDownloadAudioView != null){
-            iDownloadAudioView.instanciateIDownloadAudioRecycler(iDownloadAudioRecycler);
+        try {
+            if(iDownloadAudioView != null){
+                iDownloadAudioView.instanciateIDownloadAudioRecycler(iDownloadAudioRecycler);
+            }
+            else if(iDownload != null){
+                iDownload.instanciateIDownloadAudioRecycler(iDownloadAudioRecycler);
+            }
+            else{}
         }
-        else if(iDownload != null){
-            iDownload.instanciateIDownloadAudioRecycler(iDownloadAudioRecycler);
-        }
-        else{}
+        catch (Exception ex){}
     }
 
     /**
@@ -491,6 +587,9 @@ public class DownloadPresenter implements DownloadView.ILoadDownload{
      * @param position
      */
     public void playLVEVideoPlayer(Video video, int position){
-        iDownloadVideoView.launchVideoToPlay(video, position);
+        try {
+            iDownloadVideoView.launchVideoToPlay(video, position);
+        }
+        catch (Exception ex){}
     }
 }

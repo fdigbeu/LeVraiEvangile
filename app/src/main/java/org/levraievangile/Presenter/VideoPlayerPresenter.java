@@ -51,85 +51,94 @@ public class VideoPlayerPresenter {
 
     // Load video player data
     public void loadVideoPlayerData(Context context, Intent intent){
-        iVideoPlayer.hideHeader();
-        iVideoPlayer.initialize();
-        iVideoPlayer.events();
-        //--
-        iVideoPlayer.progressBarVisibility(View.VISIBLE);
-        iVideoPlayer.headerVisibility(View.GONE);
-        iVideoPlayer.fabVisibility(View.GONE);
-        iVideoPlayer.btnNavigationVisibility(View.GONE);
-        iVideoPlayer.pauseNotificationAudio();
+        try {
+            iVideoPlayer.hideHeader();
+            iVideoPlayer.initialize();
+            iVideoPlayer.events();
+            //--
+            iVideoPlayer.progressBarVisibility(View.VISIBLE);
+            iVideoPlayer.headerVisibility(View.GONE);
+            iVideoPlayer.fabVisibility(View.GONE);
+            iVideoPlayer.btnNavigationVisibility(View.GONE);
+            iVideoPlayer.pauseNotificationAudio();
 
-        if(intent != null) {
-            boolean continueAction = false;
-            videoSelected = (Video) intent.getSerializableExtra(KEY_VIDEO_PLAYER_SEND_DATA);
-            if(videoSelected.getId()==0){
-                iVideoPlayer.hideBtnDownloadShareFavorite();
-                continueAction = true;
-            }
-            else{
-                // Verify connexion state
-                if(CommonPresenter.isMobileConnected(context)) {
+            if(intent != null) {
+                boolean continueAction = false;
+                videoSelected = (Video) intent.getSerializableExtra(KEY_VIDEO_PLAYER_SEND_DATA);
+                if(videoSelected.getId()==0){
+                    iVideoPlayer.hideBtnDownloadShareFavorite();
                     continueAction = true;
                 }
                 else{
-                    String title = context.getResources().getString(R.string.no_connection);
-                    String message = context.getResources().getString(R.string.detail_no_connection);
-                    CommonPresenter.showMessage(context, title.toUpperCase(), message, true);
-                }
-            }
-            //--
-            if(continueAction){
-                Hashtable<String, Integer> resolutionEcran = CommonPresenter.getScreenSize(context);
-                iVideoPlayer.displayPlayer(videoSelected, resolutionEcran.get("largeur"), resolutionEcran.get("hauteur"));
-                // Save video selected data
-                saveDataInSharePreferences(context, KEY_VIDEO_SELECTED, videoSelected.toString());
-            }
-            // Show Top buttom during 2 secondes
-            try {
-                iVideoPlayer.fabTopVisibility(View.VISIBLE);
-                countDownTimer = new CountDownTimer(2000, 500) {
-                    @Override
-                    public void onTick(long l) {}
-
-                    @Override
-                    public void onFinish() {
-                        if(countDownTimer != null){
-                            try {
-                                iVideoPlayer.fabTopVisibility(View.GONE);
-                                countDownTimer.cancel();
-                            }
-                            catch (Exception ex){}
-                        }
+                    // Verify connexion state
+                    if(CommonPresenter.isMobileConnected(context)) {
+                        continueAction = true;
                     }
-                }.start();
+                    else{
+                        String title = context.getResources().getString(R.string.no_connection);
+                        String message = context.getResources().getString(R.string.detail_no_connection);
+                        CommonPresenter.showMessage(context, title.toUpperCase(), message, true);
+                    }
+                }
+                //--
+                if(continueAction){
+                    Hashtable<String, Integer> resolutionEcran = CommonPresenter.getScreenSize(context);
+                    iVideoPlayer.displayPlayer(videoSelected, resolutionEcran.get("largeur"), resolutionEcran.get("hauteur"));
+                    // Save video selected data
+                    saveDataInSharePreferences(context, KEY_VIDEO_SELECTED, videoSelected.toString());
+                }
+                // Show Top buttom during 2 secondes
+                try {
+                    iVideoPlayer.fabTopVisibility(View.VISIBLE);
+                    countDownTimer = new CountDownTimer(2000, 500) {
+                        @Override
+                        public void onTick(long l) {}
+
+                        @Override
+                        public void onFinish() {
+                            if(countDownTimer != null){
+                                try {
+                                    iVideoPlayer.fabTopVisibility(View.GONE);
+                                    countDownTimer.cancel();
+                                }
+                                catch (Exception ex){}
+                            }
+                        }
+                    }.start();
+                }
+                catch (Exception ex){}
             }
-            catch (Exception ex){}
+            else{
+                iVideoPlayer.closeActivity();
+            }
         }
-        else{
-            iVideoPlayer.closeActivity();
-        }
+        catch (Exception ex){}
     }
 
     // Mange back pressed
     public void onActivityBackPressed(Context context){
-        if(iVideoPlayer.isCurrentVideoIsNotification()){
-            Intent intent = new Intent(context, HomeActivity.class);
-            context.startActivity(intent);
-            ((Activity)context).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        try {
+            if(iVideoPlayer.isCurrentVideoIsNotification()){
+                Intent intent = new Intent(context, HomeActivity.class);
+                context.startActivity(intent);
+                ((Activity)context).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            }
+            //--
+            iVideoPlayer.closeActivity();
         }
-        //--
-        iVideoPlayer.closeActivity();
+        catch (Exception ex){}
     }
 
     // When the video is finished
     public void retrieveOnCompletionAction(Context context){
-        // If user accepts automatic reading
-        Setting mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, KEY_SETTING_CONCATENATE_VIDEO_READING);
-        if(mSetting.getChoice()) {
-            iVideoPlayer.playNextVideo();
+        try {
+            // If user accepts automatic reading
+            Setting mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, KEY_SETTING_CONCATENATE_VIDEO_READING);
+            if(mSetting.getChoice()) {
+                iVideoPlayer.playNextVideo();
+            }
         }
+        catch (Exception ex){}
     }
 
     // Play video with local player
@@ -248,41 +257,56 @@ public class VideoPlayerPresenter {
 
     // Download video
     private void downloadThisVideo(Context context){
-        if(videoSelected != null){
-            if(CommonPresenter.isStorageDownloadFileAccepted(context)){
-                String url = videoSelected.getUrlacces()+videoSelected.getSrc();
-                String filename = videoSelected.getSrc();
-                String description = "LVE-APP-DOWNLOADER ("+videoSelected.getDuree()+" | "+videoSelected.getAuteur()+")";
-                CommonPresenter.getFileByDownloadManager(context, url, filename, description, "video");
-                View view = CommonPresenter.getViewInTermsOfContext(context);
-                CommonPresenter.showMessageSnackBar(view, context.getResources().getString(R.string.lb_downloading));
-                Log.i("TAG_DOWNLOAD_FILE", "URL = "+url);
-            }
-            else{
-                iVideoPlayer.askPermissionToSaveFile();
+        try {
+            if(videoSelected != null){
+                if(CommonPresenter.isStorageDownloadFileAccepted(context)){
+                    String url = videoSelected.getUrlacces()+videoSelected.getSrc();
+                    String filename = videoSelected.getSrc();
+                    String description = "LVE-APP-DOWNLOADER ("+videoSelected.getDuree()+" | "+videoSelected.getAuteur()+")";
+                    CommonPresenter.getFileByDownloadManager(context, url, filename, description, "video");
+                    View view = CommonPresenter.getViewInTermsOfContext(context);
+                    CommonPresenter.showMessageSnackBar(view, context.getResources().getString(R.string.lb_downloading));
+                    Log.i("TAG_DOWNLOAD_FILE", "URL = "+url);
+                }
+                else{
+                    iVideoPlayer.askPermissionToSaveFile();
+                }
             }
         }
+        catch (Exception ex){}
     }
 
     // Cancel count down timer
     public void cancelCountDownTimer(CountDownTimer countDownTimer){
-        CommonPresenter.cancelCountDownTimer(countDownTimer);
+        try {
+            CommonPresenter.cancelCountDownTimer(countDownTimer);
+        }
+        catch (Exception ex){}
     }
 
     // Stop video player
     public void stopVideoViewPlayer(android.widget.VideoView videoView){
-        CommonPresenter.stopVideoViewPlayer(videoView);
+        try {
+            CommonPresenter.stopVideoViewPlayer(videoView);
+        }
+        catch (Exception ex){}
     }
 
     // Manage player video visibility
     public void managePlayerVisibility(){
-        iVideoPlayer.showPlayerWidgetsOnTouch();
+        try {
+            iVideoPlayer.showPlayerWidgetsOnTouch();
+        }
+        catch (Exception ex){}
     }
 
     // Manage widgets wen user touchs screen
     public void showWidgetsOnTouchEvent(boolean isWidgetsOpened){
-        if(!isWidgetsOpened){
-            iVideoPlayer.showPlayerWidgetsOnTouch();
+        try {
+            if(!isWidgetsOpened){
+                iVideoPlayer.showPlayerWidgetsOnTouch();
+            }
         }
+        catch (Exception ex){}
     }
 }

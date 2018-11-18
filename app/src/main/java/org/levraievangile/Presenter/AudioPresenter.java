@@ -56,98 +56,104 @@ public class AudioPresenter implements AudioView.IStreamAudio {
     }
 
     public void loadAudioData(final Context context, Intent intent){
-        iAudio.initialize();
-        iAudio.events();
-        iAudio.askPermissionToSaveFile();
-        iAudio.progressBarVisibility(View.VISIBLE);
-        iAudio.recyclerViewVisibility(View.GONE);
-        //--
-        if(intent != null && intent.getStringExtra(KEY_FORM_SEARCH_WORD) == null) {
-            try {
-                String userLevel = CommonPresenter.getDataFromSharePreferences(context, KEY_IS_USER_LEVEL_ADMIN);
-                String shortCodeLevel = userLevel.equalsIgnoreCase("YES") ? "/acces-admin" : "";
-                //Get list audio by short-code
-                final String shortCode = intent.getStringExtra(KEY_SHORT_CODE);
-                iAudio.modifyHeaderInfos(CommonPresenter.getLibelleByTypeShortcode(shortCode));
-                if(CommonPresenter.isMobileConnected(context)) {
-                    Call<List<Audio>> callAudios = ApiClient.getApiClientLeVraiEvangile().create(AudioView.IApiRessource.class).getAllAudios(shortCode+shortCodeLevel);
-                    callAudios.enqueue(new Callback<List<Audio>>() {
-                        @Override
-                        public void onResponse(Call<List<Audio>> call, Response<List<Audio>> response) {
-                            ArrayList<Audio> audios = (ArrayList<Audio>) response.body();
-                            final String keyShortCode = KEY_ALL_AUDIOS_LIST + "-" + shortCode;
-                            if(audios != null) {
-                                CommonPresenter.saveDataInSharePreferences(context, keyShortCode, audios.toString());
-                                CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_AUDIOS_LIST, audios.toString());
+        try {
+            iAudio.initialize();
+            iAudio.events();
+            iAudio.askPermissionToSaveFile();
+            iAudio.progressBarVisibility(View.VISIBLE);
+            iAudio.recyclerViewVisibility(View.GONE);
+            //--
+            if(intent != null && intent.getStringExtra(KEY_FORM_SEARCH_WORD) == null) {
+                try {
+                    String userLevel = CommonPresenter.getDataFromSharePreferences(context, KEY_IS_USER_LEVEL_ADMIN);
+                    String shortCodeLevel = userLevel.equalsIgnoreCase("YES") ? "/acces-admin" : "";
+                    //Get list audio by short-code
+                    final String shortCode = intent.getStringExtra(KEY_SHORT_CODE);
+                    iAudio.modifyHeaderInfos(CommonPresenter.getLibelleByTypeShortcode(shortCode));
+                    if(CommonPresenter.isMobileConnected(context)) {
+                        Call<List<Audio>> callAudios = ApiClient.getApiClientLeVraiEvangile().create(AudioView.IApiRessource.class).getAllAudios(shortCode+shortCodeLevel);
+                        callAudios.enqueue(new Callback<List<Audio>>() {
+                            @Override
+                            public void onResponse(Call<List<Audio>> call, Response<List<Audio>> response) {
+                                ArrayList<Audio> audios = (ArrayList<Audio>) response.body();
+                                final String keyShortCode = KEY_ALL_AUDIOS_LIST + "-" + shortCode;
+                                if(audios != null) {
+                                    CommonPresenter.saveDataInSharePreferences(context, keyShortCode, audios.toString());
+                                    CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_AUDIOS_LIST, audios.toString());
+                                }
+                                iAudio.loadAudioData(audios, 1);
+                                iAudio.progressBarVisibility(View.GONE);
+                                iAudio.recyclerViewVisibility(View.VISIBLE);
+                                iAudio.stopRefreshing(true);
                             }
-                            iAudio.loadAudioData(audios, 1);
-                            iAudio.progressBarVisibility(View.GONE);
-                            iAudio.recyclerViewVisibility(View.VISIBLE);
-                            iAudio.stopRefreshing(true);
-                        }
 
-                        @Override
-                        public void onFailure(Call<List<Audio>> call, Throwable t) {
-                            String key = KEY_ALL_AUDIOS_LIST+"-"+shortCode;
-                            ArrayList<Audio> audios = CommonPresenter.getAllAudiosByKey(context, key);
-                            iAudio.loadAudioData(audios, 1);
-                            iAudio.progressBarVisibility(View.GONE);
-                            iAudio.recyclerViewVisibility(View.VISIBLE);
-                            iAudio.stopRefreshing(true);
+                            @Override
+                            public void onFailure(Call<List<Audio>> call, Throwable t) {
+                                String key = KEY_ALL_AUDIOS_LIST+"-"+shortCode;
+                                ArrayList<Audio> audios = CommonPresenter.getAllAudiosByKey(context, key);
+                                iAudio.loadAudioData(audios, 1);
+                                iAudio.progressBarVisibility(View.GONE);
+                                iAudio.recyclerViewVisibility(View.VISIBLE);
+                                iAudio.stopRefreshing(true);
+                            }
+                        });
+                    }
+                    else{
+                        String key = KEY_ALL_AUDIOS_LIST+"-"+shortCode;
+                        ArrayList<Audio> audios = CommonPresenter.getAllAudiosByKey(context, key);
+                        iAudio.loadAudioData(audios, 1);
+                        iAudio.progressBarVisibility(View.GONE);
+                        iAudio.recyclerViewVisibility(View.VISIBLE);
+                        iAudio.stopRefreshing(true);
+                        //--
+                        if(audios.size()==0){
+                            // Display no connection message
+                            CommonPresenter.showNoConnectionMessage(context, true);
                         }
-                    });
-                }
-                else{
-                    String key = KEY_ALL_AUDIOS_LIST+"-"+shortCode;
-                    ArrayList<Audio> audios = CommonPresenter.getAllAudiosByKey(context, key);
-                    iAudio.loadAudioData(audios, 1);
-                    iAudio.progressBarVisibility(View.GONE);
-                    iAudio.recyclerViewVisibility(View.VISIBLE);
-                    iAudio.stopRefreshing(true);
-                    //--
-                    if(audios.size()==0){
-                        // Display no connection message
-                        CommonPresenter.showNoConnectionMessage(context, true);
                     }
                 }
+                catch (Exception ex){}
             }
-            catch (Exception ex){}
-        }
-        else{
-            // If it's to search
-            final String keyWord = intent.getStringExtra(KEY_FORM_SEARCH_WORD);
-            Call<List<Audio>> callAudios = ApiClient.getApiClientLeVraiEvangile().create(AudioView.IApiRessource.class).getAllSearchAudios(keyWord);
-            callAudios.enqueue(new Callback<List<Audio>>() {
-                @Override
-                public void onResponse(Call<List<Audio>> call, Response<List<Audio>> response) {
-                    ArrayList<Audio> audios = (ArrayList<Audio>) response.body();
-                    CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_AUDIOS_LIST, audios.toString());
-                    iAudio.loadAudioData(audios, 1);
-                    iAudio.progressBarVisibility(View.GONE);
-                    iAudio.recyclerViewVisibility(View.VISIBLE);
-                    iAudio.stopRefreshing(true);
-                    iAudio.modifyBarHeader("Recherche d'audios", "TOTAL : "+audios.size()+" | MOT CLÉ : "+keyWord);
-                }
+            else{
+                // If it's to search
+                final String keyWord = intent.getStringExtra(KEY_FORM_SEARCH_WORD);
+                Call<List<Audio>> callAudios = ApiClient.getApiClientLeVraiEvangile().create(AudioView.IApiRessource.class).getAllSearchAudios(keyWord);
+                callAudios.enqueue(new Callback<List<Audio>>() {
+                    @Override
+                    public void onResponse(Call<List<Audio>> call, Response<List<Audio>> response) {
+                        ArrayList<Audio> audios = (ArrayList<Audio>) response.body();
+                        CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_AUDIOS_LIST, audios.toString());
+                        iAudio.loadAudioData(audios, 1);
+                        iAudio.progressBarVisibility(View.GONE);
+                        iAudio.recyclerViewVisibility(View.VISIBLE);
+                        iAudio.stopRefreshing(true);
+                        iAudio.modifyBarHeader("Recherche d'audios", "TOTAL : "+audios.size()+" | MOT CLÉ : "+keyWord);
+                    }
 
-                @Override
-                public void onFailure(Call<List<Audio>> call, Throwable t) {
-                    iAudio.progressBarVisibility(View.GONE);
-                    iAudio.recyclerViewVisibility(View.VISIBLE);
-                    iAudio.stopRefreshing(true);
-                    iAudio.modifyBarHeader("Recherche d'audios", "Aucun audio trouvé | MOT CLÉ : "+keyWord);
-                }
-            });
+                    @Override
+                    public void onFailure(Call<List<Audio>> call, Throwable t) {
+                        iAudio.progressBarVisibility(View.GONE);
+                        iAudio.recyclerViewVisibility(View.VISIBLE);
+                        iAudio.stopRefreshing(true);
+                        iAudio.modifyBarHeader("Recherche d'audios", "Aucun audio trouvé | MOT CLÉ : "+keyWord);
+                    }
+                });
+            }
         }
+        catch (Exception ex){}
     }
 
     // Reload audio data
     public void reLoadAudioData(Context context, Intent intent){
-        iAudio.stopNotificationAudio();
-        MediaPlayer mediaPlayer = iAudio.getInstanceMediaPlayer();
-        closeAudioMediaPlayer(mediaPlayer);
-        stopMediaPlayer(mediaPlayer);
-        loadAudioData(context, intent);
-        iAudio.progressBarVisibility(View.GONE);
+        try {
+            iAudio.stopNotificationAudio();
+            MediaPlayer mediaPlayer = iAudio.getInstanceMediaPlayer();
+            closeAudioMediaPlayer(mediaPlayer);
+            stopMediaPlayer(mediaPlayer);
+            loadAudioData(context, intent);
+            iAudio.progressBarVisibility(View.GONE);
+        }
+        catch (Exception ex){}
     }
 
 
@@ -156,7 +162,10 @@ public class AudioPresenter implements AudioView.IStreamAudio {
      * @param position
      */
     public void srcollAudioDataItemsToPosition(int position){
-        iAudio.scrollAudioDataToPosition(position);
+        try {
+            iAudio.scrollAudioDataToPosition(position);
+        }
+        catch (Exception ex){}
     }
 
     /**
@@ -164,9 +173,12 @@ public class AudioPresenter implements AudioView.IStreamAudio {
      * @param iAudioRecycler
      */
     public void playNextAudioInPlayer(AudioView.IAudioRecycler iAudioRecycler){
-        if(iAudioRecycler != null){
-            iAudioRecycler.playNextAudio();
+        try {
+            if(iAudioRecycler != null){
+                iAudioRecycler.playNextAudio();
+            }
         }
+        catch (Exception ex){}
     }
 
     /**
@@ -174,16 +186,22 @@ public class AudioPresenter implements AudioView.IStreamAudio {
      * @param iAudioRecycler
      */
     public void playPreviousAudioInPlayer(AudioView.IAudioRecycler iAudioRecycler){
-        if(iAudioRecycler != null){
-            iAudioRecycler.playPreviousAudio();
+        try {
+            if(iAudioRecycler != null){
+                iAudioRecycler.playPreviousAudio();
+            }
         }
+        catch (Exception ex){}
     }
     
     // Set AudioActivity AudioRecyclerAdapteur Attribute
     public void retrieveAndSetIAudioRecyclerReference(AudioView.IAudioRecycler iAudioRecycler){
-        if(iAudio != null){
-            iAudio.instanciateIAudioRecycler(iAudioRecycler);
+        try {
+            if(iAudio != null){
+                iAudio.instanciateIAudioRecycler(iAudioRecycler);
+            }
         }
+        catch (Exception ex){}
     }
 
     /**
@@ -193,47 +211,56 @@ public class AudioPresenter implements AudioView.IStreamAudio {
      * @param position
      */
     public void playLVEAudioPlayer(Context context, Audio audio, int position){
-        // Save audio selected
-        CommonPresenter.saveDataInSharePreferences(context, KEY_AUDIO_SELECTED, audio.toString());
-        //--
-        if(CommonPresenter.isMobileConnected(context)){
-            iAudio.audioPlayerVisibility(View.VISIBLE);
-            loadStreamAudio = new LoadStreamAudio();
-            loadStreamAudio.initializeData(audio, this);
-            loadStreamAudio.execute();
-            // Save for notification data
-            CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_SELECTED, ""+position);
-            ArrayList<Audio> mList = CommonPresenter.getAllAudiosByKey(context, KEY_NOTIF_AUDIOS_LIST);
-            int previousPosition = CommonPresenter.getNotifPlayerPreviousValue(position, mList.size());
-            CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_PREVIOUS, ""+previousPosition);
-            int nextPosition = CommonPresenter.getNotifPlayerNextValue(position, mList.size());
-            CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_NEXT, ""+nextPosition);
+        try {
+            // Save audio selected
+            CommonPresenter.saveDataInSharePreferences(context, KEY_AUDIO_SELECTED, audio.toString());
+            //--
+            if(CommonPresenter.isMobileConnected(context)){
+                iAudio.audioPlayerVisibility(View.VISIBLE);
+                loadStreamAudio = new LoadStreamAudio();
+                loadStreamAudio.initializeData(audio, this);
+                loadStreamAudio.execute();
+                // Save for notification data
+                CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_SELECTED, ""+position);
+                ArrayList<Audio> mList = CommonPresenter.getAllAudiosByKey(context, KEY_NOTIF_AUDIOS_LIST);
+                int previousPosition = CommonPresenter.getNotifPlayerPreviousValue(position, mList.size());
+                CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_PREVIOUS, ""+previousPosition);
+                int nextPosition = CommonPresenter.getNotifPlayerNextValue(position, mList.size());
+                CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_NEXT, ""+nextPosition);
+            }
+            else{
+                // Show no connection message
+                CommonPresenter.showNoConnectionMessage(context, false);
+            }
         }
-        else{
-            // Show no connection message
-            CommonPresenter.showNoConnectionMessage(context, false);
-        }
+        catch (Exception ex){}
     }
 
     // Manage menu Item
     public void retrieveUserAction(MenuItem item){
-        switch (item.getItemId()){
-            case android.R.id.home:
-                iAudio.closeActivity();
-                break;
+        try {
+            switch (item.getItemId()){
+                case android.R.id.home:
+                    iAudio.closeActivity();
+                    break;
+            }
         }
+        catch (Exception ex){}
     }
 
     // When user clicks to play/Pause
     public void retrievePlayPauseAction(MediaPlayer mediaPlayer, ImageButton imageButton){
-        if(mediaPlayer.isPlaying()){
-            mediaPlayer.pause();
-            imageButton.setBackgroundResource(R.drawable.btn_media_player_play);
+        try {
+            if(mediaPlayer.isPlaying()){
+                mediaPlayer.pause();
+                imageButton.setBackgroundResource(R.drawable.btn_media_player_play);
+            }
+            else{
+                mediaPlayer.start();
+                imageButton.setBackgroundResource(R.drawable.btn_media_player_pause);
+            }
         }
-        else{
-            mediaPlayer.start();
-            imageButton.setBackgroundResource(R.drawable.btn_media_player_pause);
-        }
+        catch (Exception ex){}
     }
 
     // Manage audio player button
@@ -255,23 +282,29 @@ public class AudioPresenter implements AudioView.IStreamAudio {
 
     // Play audio notification
     private void playAudioNotification(Context context, MediaPlayer mediaPlayer){
-        CommonPresenter.saveDataInSharePreferences(context, KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED, ""+mediaPlayer.getCurrentPosition());
-        closeAudioMediaPlayer(mediaPlayer);
-        iAudio.playNotificationAudio();
+        try {
+            CommonPresenter.saveDataInSharePreferences(context, KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED, ""+mediaPlayer.getCurrentPosition());
+            closeAudioMediaPlayer(mediaPlayer);
+            iAudio.playNotificationAudio();
+        }
+        catch (Exception ex){}
     }
 
     // Close media player
     private void closeAudioMediaPlayer(MediaPlayer mediaPlayer){
-        if(mediaPlayer.isPlaying()){
-            mediaPlayer.stop();
+        try {
+            if(mediaPlayer.isPlaying()){
+                mediaPlayer.stop();
+            }
+            iAudio.audioPlayerVisibility(View.GONE);
         }
-        iAudio.audioPlayerVisibility(View.GONE);
+        catch (Exception ex){}
     }
 
     // Manage audio player button
     public void retrieveUserAction(View view){
-        Audio audioSelected = CommonPresenter.getAudioSelected(view.getContext());
         try {
+            Audio audioSelected = CommonPresenter.getAudioSelected(view.getContext());
             switch (view.getId()){
                 // Play next audio
                 case R.id.audio_player_next:
@@ -330,28 +363,34 @@ public class AudioPresenter implements AudioView.IStreamAudio {
 
     // When the audio is finished
     public void retrieveOnCompletionAction(Context context){
-        Setting mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, KEY_SETTING_CONCATENATE_AUDIO_READING);
-        if(mSetting.getChoice()) {
-            iAudio.playNextAudio();
+        try {
+            Setting mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, KEY_SETTING_CONCATENATE_AUDIO_READING);
+            if(mSetting.getChoice()) {
+                iAudio.playNextAudio();
+            }
         }
+        catch (Exception ex){}
     }
 
     // Download audio
     private void downloadThisAudio(Context context){
-        Audio audioSelected = CommonPresenter.getAudioSelected(context);
-        if(audioSelected != null){
-            if(CommonPresenter.isStorageDownloadFileAccepted(context)){
-                String url = audioSelected.getUrlacces()+audioSelected.getSrc();
-                String filename = audioSelected.getSrc();
-                String description = "LVE-APP-DOWNLOADER ("+audioSelected.getDuree()+" | "+audioSelected.getAuteur()+")";
-                CommonPresenter.getFileByDownloadManager(context, url, filename, description, "audio");
-                View view = CommonPresenter.getViewInTermsOfContext(context);
-                CommonPresenter.showMessageSnackBar(view, context.getResources().getString(R.string.lb_downloading));
-            }
-            else{
-                iAudio.askPermissionToSaveFile();
+        try {
+            Audio audioSelected = CommonPresenter.getAudioSelected(context);
+            if(audioSelected != null){
+                if(CommonPresenter.isStorageDownloadFileAccepted(context)){
+                    String url = audioSelected.getUrlacces()+audioSelected.getSrc();
+                    String filename = audioSelected.getSrc();
+                    String description = "LVE-APP-DOWNLOADER ("+audioSelected.getDuree()+" | "+audioSelected.getAuteur()+")";
+                    CommonPresenter.getFileByDownloadManager(context, url, filename, description, "audio");
+                    View view = CommonPresenter.getViewInTermsOfContext(context);
+                    CommonPresenter.showMessageSnackBar(view, context.getResources().getString(R.string.lb_downloading));
+                }
+                else{
+                    iAudio.askPermissionToSaveFile();
+                }
             }
         }
+        catch (Exception ex){}
     }
 
     /**
@@ -359,9 +398,12 @@ public class AudioPresenter implements AudioView.IStreamAudio {
      * @param enable
      */
     public void activateAllWidgets(boolean enable){
-        iAudio.activateAudioPlayerWidgets(enable);
-        // Stop Notification
-        iAudio.stopNotificationAudio();
+        try {
+            iAudio.activateAudioPlayerWidgets(enable);
+            // Stop Notification
+            iAudio.stopNotificationAudio();
+        }
+        catch (Exception ex){}
     }
 
     /**
@@ -369,7 +411,10 @@ public class AudioPresenter implements AudioView.IStreamAudio {
      * @param mediaPlayer
      */
     public void stopMediaPlayer(MediaPlayer mediaPlayer){
-        CommonPresenter.stopMediaPlayer(mediaPlayer);
+        try {
+            CommonPresenter.stopMediaPlayer(mediaPlayer);
+        }
+        catch (Exception ex){}
     }
 
     /**
@@ -377,28 +422,40 @@ public class AudioPresenter implements AudioView.IStreamAudio {
      * @param audio
      */
     public void stopAllOtherMediaSound(Audio audio){
-        iAudio.stopOtherMediaPlayerSound(audio);
+        try {
+            iAudio.stopOtherMediaPlayerSound(audio);
+        }
+        catch (Exception ex){}
     }
 
     // Config before load stream audio
     @Override
     public void streamAudioBeforeLoading() {
-        iAudio.progressBarAudioPlayerVisibility(View.VISIBLE);
-        iAudio.textMediaPlayInfoLoading();
-        iAudio.activateAudioPlayerWidgets(false);
+        try {
+            iAudio.progressBarAudioPlayerVisibility(View.VISIBLE);
+            iAudio.textMediaPlayInfoLoading();
+            iAudio.activateAudioPlayerWidgets(false);
+        }
+        catch (Exception ex){}
     }
 
     // When stream audio is loading
     @Override
     public void streamAudioLoading(Audio audio) {
-        iAudio.loadAudioPlayerAndPlay(audio);
+        try {
+            iAudio.loadAudioPlayerAndPlay(audio);
+        }
+        catch (Exception ex){}
     }
 
     // When load stream audio is finished
     @Override
     public void streamAudioLoadingFinished() {
-        iAudio.progressBarAudioPlayerVisibility(View.GONE);
-        iAudio.activateAudioPlayerWidgets(true);
+        try {
+            iAudio.progressBarAudioPlayerVisibility(View.GONE);
+            iAudio.activateAudioPlayerWidgets(true);
+        }
+        catch (Exception ex){}
     }
 
     // When load stream audio makes error

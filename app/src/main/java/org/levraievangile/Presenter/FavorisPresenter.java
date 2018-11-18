@@ -52,16 +52,22 @@ public class FavorisPresenter {
 
     // Load favoris data
     public void loadFavorisData(Context context){
-        iFravoris.initialize();
-        iFravoris.events();
+        try {
+            iFravoris.initialize();
+            iFravoris.events();
+        }
+        catch (Exception ex){}
     }
 
     public void loadPlaceHolderData(Context context, View rootView, int positionFrag){
-        iPlaceholder.initialize(rootView);
-        iPlaceholder.events();
-        iPlaceholder.progressBarVisibility(View.VISIBLE);
-        //--
-        loadFragmentData(context, positionFrag);
+        try {
+            iPlaceholder.initialize(rootView);
+            iPlaceholder.events();
+            iPlaceholder.progressBarVisibility(View.VISIBLE);
+            //--
+            loadFragmentData(context, positionFrag);
+        }
+        catch (Exception ex){}
     }
 
     // Refresh all data
@@ -101,16 +107,22 @@ public class FavorisPresenter {
 
     // Manage menu Item
     public void retrieveUserAction(MenuItem item){
-        switch (item.getItemId()){
-            case android.R.id.home:
-                iFravoris.closeActivity();
-                break;
+        try {
+            switch (item.getItemId()){
+                case android.R.id.home:
+                    iFravoris.closeActivity();
+                    break;
+            }
         }
+        catch (Exception ex){}
     }
 
     // Launch activity
     public void launchActivity(String value){
-        iPlaceholder.launchActivity(value);
+        try {
+            iPlaceholder.launchActivity(value);
+        }
+        catch (Exception ex){}
     }
 
     /**
@@ -120,14 +132,17 @@ public class FavorisPresenter {
      * @param position
      */
     public void playLVEVideoPlayer(Context context, Video video, int position){
-        if(CommonPresenter.isMobileConnected(context)){
-            iPlaceholder.launchVideoToPlay(video, position);
+        try {
+            if(CommonPresenter.isMobileConnected(context)){
+                iPlaceholder.launchVideoToPlay(video, position);
+            }
+            else{
+                String title = context.getResources().getString(R.string.no_connection);
+                String message = context.getResources().getString(R.string.detail_no_connection);
+                CommonPresenter.showMessage(context, title.toUpperCase(), message, false);
+            }
         }
-        else{
-            String title = context.getResources().getString(R.string.no_connection);
-            String message = context.getResources().getString(R.string.detail_no_connection);
-            CommonPresenter.showMessage(context, title.toUpperCase(), message, false);
-        }
+        catch (Exception ex){}
     }
 
     /**
@@ -135,7 +150,10 @@ public class FavorisPresenter {
      * @param position
      */
     public void srcollVideoDataItemsToPosition(int position){
-        iPlaceholder.scrollVideoDataToPosition(position);
+        try {
+            iPlaceholder.scrollVideoDataToPosition(position);
+        }
+        catch (Exception ex){}
     }
 
     /**
@@ -143,10 +161,13 @@ public class FavorisPresenter {
      * @param iFavorisRecycler
      */
     public void playNextVideoInPlayer(FavorisView.IFavorisRecycler iFavorisRecycler){
-        if(iFavorisRecycler != null){
-            iFavorisRecycler.playNextVideo();
-            Log.i("TAG_NEXT_VIDEO", "TAG_NEXT_VIDEO : iFavorisRecycler != null");
+        try {
+            if(iFavorisRecycler != null){
+                iFavorisRecycler.playNextVideo();
+                Log.i("TAG_NEXT_VIDEO", "TAG_NEXT_VIDEO : iFavorisRecycler != null");
+            }
         }
+        catch (Exception ex){}
     }
 
     /**
@@ -154,21 +175,27 @@ public class FavorisPresenter {
      * @param iFavorisRecycler
      */
     public void playPreviousVideoInPlayer(FavorisView.IFavorisRecycler iFavorisRecycler){
-        if(iFavorisRecycler != null){
-            iFavorisRecycler.playPreviousVideo();
-            Log.i("TAG_PREVIOUS_VIDEO", "TAG_PREVIOUS_VIDEO : iFavorisRecycler != null");
+        try {
+            if(iFavorisRecycler != null){
+                iFavorisRecycler.playPreviousVideo();
+                Log.i("TAG_PREVIOUS_VIDEO", "TAG_PREVIOUS_VIDEO : iFavorisRecycler != null");
+            }
         }
+        catch (Exception ex){}
     }
 
     // Set FavorisActivity FavorisRecyclerAdapter Attribute
     public void retrieveAndSetIFavorisRecyclerReference(FavorisView.IFavorisRecycler iFavorisRecycler){
-        if(iPlaceholder != null){
-            iPlaceholder.instanciateIFavorisRecycler(iFavorisRecycler);
+        try {
+            if(iPlaceholder != null){
+                iPlaceholder.instanciateIFavorisRecycler(iFavorisRecycler);
+            }
+            else if(iFravoris != null){
+                iFravoris.instanciateIFavorisRecycler(iFavorisRecycler);
+            }
+            else{}
         }
-        else if(iFravoris != null){
-            iFravoris.instanciateIFavorisRecycler(iFavorisRecycler);
-        }
-        else{}
+        catch (Exception ex){}
     }
 
     // Manage audio player button
@@ -225,28 +252,34 @@ public class FavorisPresenter {
 
     // When the audio is finished
     public void retrieveOnCompletionAction(Context context){
-        Setting mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, KEY_SETTING_CONCATENATE_AUDIO_READING);
-        if(mSetting.getChoice()) {
-            iFravoris.playNextAudio();
+        try {
+            Setting mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, KEY_SETTING_CONCATENATE_AUDIO_READING);
+            if(mSetting.getChoice()) {
+                iFravoris.playNextAudio();
+            }
         }
+        catch (Exception ex){}
     }
 
     // Download audio
     private void downloadThisAudio(Context context){
-        Audio audioSelected = CommonPresenter.getAudioSelected(context);
-        if(audioSelected != null){
-            if(CommonPresenter.isStorageDownloadFileAccepted(context)){
-                String url = audioSelected.getUrlacces()+audioSelected.getSrc();
-                String filename = audioSelected.getSrc();
-                String description = "LVE-APP-DOWNLOADER ("+audioSelected.getDuree()+" | "+audioSelected.getAuteur()+")";
-                CommonPresenter.getFileByDownloadManager(context, url, filename, description, "audio");
-                View view = CommonPresenter.getViewInTermsOfContext(context);
-                CommonPresenter.showMessageSnackBar(view, context.getResources().getString(R.string.lb_downloading));
-            }
-            else{
-                iFravoris.askPermissionToSaveFile();
+        try {
+            Audio audioSelected = CommonPresenter.getAudioSelected(context);
+            if(audioSelected != null){
+                if(CommonPresenter.isStorageDownloadFileAccepted(context)){
+                    String url = audioSelected.getUrlacces()+audioSelected.getSrc();
+                    String filename = audioSelected.getSrc();
+                    String description = "LVE-APP-DOWNLOADER ("+audioSelected.getDuree()+" | "+audioSelected.getAuteur()+")";
+                    CommonPresenter.getFileByDownloadManager(context, url, filename, description, "audio");
+                    View view = CommonPresenter.getViewInTermsOfContext(context);
+                    CommonPresenter.showMessageSnackBar(view, context.getResources().getString(R.string.lb_downloading));
+                }
+                else{
+                    iFravoris.askPermissionToSaveFile();
+                }
             }
         }
+        catch (Exception ex){}
     }
 
     /**
@@ -254,9 +287,12 @@ public class FavorisPresenter {
      * @param enable
      */
     public void activateAllWidgets(boolean enable){
-        iFravoris.activateAudioPlayerWidgets(enable);
-        // Stop Notification
-        iFravoris.stopNotificationAudio();
+        try {
+            iFravoris.activateAudioPlayerWidgets(enable);
+            // Stop Notification
+            iFravoris.stopNotificationAudio();
+        }
+        catch (Exception ex){}
     }
 
 
@@ -265,7 +301,10 @@ public class FavorisPresenter {
      * @param audio
      */
     public void stopAllOtherMediaSound(Audio audio){
-        iFravoris.stopOtherMediaPlayerSound(audio);
+        try {
+            iFravoris.stopOtherMediaPlayerSound(audio);
+        }
+        catch (Exception ex){}
     }
 
     /**
@@ -273,15 +312,21 @@ public class FavorisPresenter {
      * @param mediaPlayer
      */
     public void stopMediaPlayer(MediaPlayer mediaPlayer){
-        CommonPresenter.stopMediaPlayer(mediaPlayer);
+        try {
+            CommonPresenter.stopMediaPlayer(mediaPlayer);
+        }
+        catch (Exception ex){}
     }
 
     // Close media player
     private void closeAudioMediaPlayer(MediaPlayer mediaPlayer){
-        if(mediaPlayer.isPlaying()){
-            mediaPlayer.stop();
+        try {
+            if(mediaPlayer.isPlaying()){
+                mediaPlayer.stop();
+            }
+            iFravoris.audioPlayerVisibility(View.GONE);
         }
-        iFravoris.audioPlayerVisibility(View.GONE);
+        catch (Exception ex){}
     }
 
     /**
@@ -289,9 +334,12 @@ public class FavorisPresenter {
      * @param position
      */
     public void srcollAudioDataItemsToPosition(int position){
-        if(iPlaceholder != null) {
-            iPlaceholder.scrollAudioDataToPosition(position);
+        try {
+            if(iPlaceholder != null) {
+                iPlaceholder.scrollAudioDataToPosition(position);
+            }
         }
+        catch (Exception ex){}
     }
 
     /**
@@ -299,9 +347,12 @@ public class FavorisPresenter {
      * @param iFavorisRecycler
      */
     public void playNextAudioInPlayer(FavorisView.IFavorisRecycler iFavorisRecycler){
-        if(iFavorisRecycler != null){
-            iFavorisRecycler.playNextAudio();
+        try {
+            if(iFavorisRecycler != null){
+                iFavorisRecycler.playNextAudio();
+            }
         }
+        catch (Exception ex){}
     }
 
     /**
@@ -309,50 +360,59 @@ public class FavorisPresenter {
      * @param iFavorisRecycler
      */
     public void playPreviousAudioInPlayer(FavorisView.IFavorisRecycler iFavorisRecycler){
-        if(iFavorisRecycler != null){
-            iFavorisRecycler.playPreviousAudio();
+        try {
+            if(iFavorisRecycler != null){
+                iFavorisRecycler.playPreviousAudio();
+            }
         }
+        catch (Exception ex){}
     }
 
     // Play audio notification
     private void playAudioNotification(Context context, MediaPlayer mediaPlayer){
-        CommonPresenter.saveDataInSharePreferences(context, KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED, ""+mediaPlayer.getCurrentPosition());
-        closeAudioMediaPlayer(mediaPlayer);
-        iFravoris.playNotificationAudio();
+        try {
+            CommonPresenter.saveDataInSharePreferences(context, KEY_PLAYER_AUDIO_TO_NOTIF_AUDIO_TIME_ELAPSED, ""+mediaPlayer.getCurrentPosition());
+            closeAudioMediaPlayer(mediaPlayer);
+            iFravoris.playNotificationAudio();
+        }
+        catch (Exception ex){}
     }
 
 
     // Retrieve position page
     public void retrieveUserAction(int pagePosition, ImageButton playButton, boolean isAudioSelected){
-        MediaPlayer mediaPlayer = iFravoris.getInstanceMediaPlayer();
-        switch (pagePosition){
-            // PDFS
-            case 0:
-                if(mediaPlayer != null && mediaPlayer.isPlaying()){
-                    playButton.performClick();
-                }
-                iFravoris.audioPlayerVisibility(View.GONE);
-                break;
-            // AUDIOS
-            case 1:
-                if(mediaPlayer != null && !mediaPlayer.isPlaying()){
-                    if(isAudioSelected){
+        try {
+            MediaPlayer mediaPlayer = iFravoris.getInstanceMediaPlayer();
+            switch (pagePosition){
+                // PDFS
+                case 0:
+                    if(mediaPlayer != null && mediaPlayer.isPlaying()){
                         playButton.performClick();
-                        iFravoris.audioPlayerVisibility(View.VISIBLE);
                     }
-                }
-                else{
                     iFravoris.audioPlayerVisibility(View.GONE);
-                }
-                break;
-            // VIDEOS
-            case 2:
-                if(mediaPlayer != null && mediaPlayer.isPlaying()){
-                    playButton.performClick();
-                }
-                iFravoris.audioPlayerVisibility(View.GONE);
-                break;
+                    break;
+                // AUDIOS
+                case 1:
+                    if(mediaPlayer != null && !mediaPlayer.isPlaying()){
+                        if(isAudioSelected){
+                            playButton.performClick();
+                            iFravoris.audioPlayerVisibility(View.VISIBLE);
+                        }
+                    }
+                    else{
+                        iFravoris.audioPlayerVisibility(View.GONE);
+                    }
+                    break;
+                // VIDEOS
+                case 2:
+                    if(mediaPlayer != null && mediaPlayer.isPlaying()){
+                        playButton.performClick();
+                    }
+                    iFravoris.audioPlayerVisibility(View.GONE);
+                    break;
+            }
         }
+        catch (Exception ex){}
     }
 
     // Manage audio player button
@@ -374,39 +434,45 @@ public class FavorisPresenter {
 
     // When user clicks to play/Pause
     public void retrievePlayPauseAction(MediaPlayer mediaPlayer, ImageButton imageButton){
-        if(mediaPlayer.isPlaying()){
-            mediaPlayer.pause();
-            imageButton.setBackgroundResource(R.drawable.btn_media_player_play);
+        try {
+            if(mediaPlayer.isPlaying()){
+                mediaPlayer.pause();
+                imageButton.setBackgroundResource(R.drawable.btn_media_player_play);
+            }
+            else{
+                mediaPlayer.start();
+                imageButton.setBackgroundResource(R.drawable.btn_media_player_pause);
+            }
         }
-        else{
-            mediaPlayer.start();
-            imageButton.setBackgroundResource(R.drawable.btn_media_player_pause);
-        }
+        catch (Exception ex){}
     }
 
     // Activate audio player and play
     public void playLVEAudioPlayer(Context context, Audio audio, int position){
-        // Save audio selected
-        CommonPresenter.saveDataInSharePreferences(context, KEY_AUDIO_SELECTED, audio.toString());
-        if(iFravoris != null){
-            iFravoris.notifyThatAudioIsSelected();
-            if(CommonPresenter.isMobileConnected(context)){
-                loadAudioMediaPlayer = new LoadAudioMediaPlayer();
-                loadAudioMediaPlayer.initLoadAudioMediaPlayer(audio, position, iFravoris);
-                loadAudioMediaPlayer.execute();
-                // Save for notification data
-                CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_SELECTED, ""+position);
-                ArrayList<Audio> mList = CommonPresenter.getAllAudiosByKey(context, KEY_NOTIF_AUDIOS_LIST);
-                int previousPosition = CommonPresenter.getNotifPlayerPreviousValue(position, mList.size());
-                CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_PREVIOUS, ""+previousPosition);
-                int nextPosition = CommonPresenter.getNotifPlayerNextValue(position, mList.size());
-                CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_NEXT, ""+nextPosition);
-            }
-            else{
-                String title = context.getResources().getString(R.string.no_connection);
-                String message = context.getResources().getString(R.string.detail_no_connection);
-                CommonPresenter.showMessage(context, title.toUpperCase(), message, false);
+        try {
+            // Save audio selected
+            CommonPresenter.saveDataInSharePreferences(context, KEY_AUDIO_SELECTED, audio.toString());
+            if(iFravoris != null){
+                iFravoris.notifyThatAudioIsSelected();
+                if(CommonPresenter.isMobileConnected(context)){
+                    loadAudioMediaPlayer = new LoadAudioMediaPlayer();
+                    loadAudioMediaPlayer.initLoadAudioMediaPlayer(audio, position, iFravoris);
+                    loadAudioMediaPlayer.execute();
+                    // Save for notification data
+                    CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_SELECTED, ""+position);
+                    ArrayList<Audio> mList = CommonPresenter.getAllAudiosByKey(context, KEY_NOTIF_AUDIOS_LIST);
+                    int previousPosition = CommonPresenter.getNotifPlayerPreviousValue(position, mList.size());
+                    CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_PREVIOUS, ""+previousPosition);
+                    int nextPosition = CommonPresenter.getNotifPlayerNextValue(position, mList.size());
+                    CommonPresenter.saveDataInSharePreferences(context, KEY_NOTIF_PLAYER_PLAY_NEXT, ""+nextPosition);
+                }
+                else{
+                    String title = context.getResources().getString(R.string.no_connection);
+                    String message = context.getResources().getString(R.string.detail_no_connection);
+                    CommonPresenter.showMessage(context, title.toUpperCase(), message, false);
+                }
             }
         }
+        catch (Exception ex){}
     }
 }

@@ -40,30 +40,33 @@ public class LoadDownloadPdf extends AsyncTask<Void, Void, ArrayList<DownloadFil
     private ArrayList<DownloadFile> pdfsFiles(Context context) {
         // Get Lve pdf saved
         pdfList = new ArrayList<>();
-        DAOFavoris daoFavoris = new DAOFavoris(context);
-        ArrayList<Favoris> mList = daoFavoris.getAllData("download_pdf");
-        if(mList != null && mList.size() > 0){
-            for (int i=0; i < mList.size(); i++){
-                Favoris favoris = mList.get(i);
-                String data = CommonPresenter.getPdfPath()+"/"+favoris.getSrc();
-                // Verify if file is always in the mobile
-                if(CommonPresenter.isFileExists(data)) {
-                    String title = favoris.getTitre();
-                    String album = favoris.getType_libelle();
-                    String artist = favoris.getAuteur();
-                    String duration = favoris.getDuree();
-                    String shortcode = favoris.getType_shortcode();
-                    int mipmap = CommonPresenter.getMipmapByTypeShortcode(shortcode);
-                    String date = favoris.getDate();
-                    pdfList.add(new DownloadFile(data, title, album, artist, duration, mipmap, date, shortcode, 0, null));
-                }
-                else{
-                    // Delete in the list
-                    DAOFavoris mFavorisItem = new DAOFavoris(context);
-                    mFavorisItem.deleteDataBy(favoris.getId());
+        try {
+            DAOFavoris daoFavoris = new DAOFavoris(context);
+            ArrayList<Favoris> mList = daoFavoris.getAllData("download_pdf");
+            if(mList != null && mList.size() > 0){
+                for (int i=0; i < mList.size(); i++){
+                    Favoris favoris = mList.get(i);
+                    String data = CommonPresenter.getPdfPath()+"/"+favoris.getSrc();
+                    // Verify if file is always in the mobile
+                    if(CommonPresenter.isFileExists(data)) {
+                        String title = favoris.getTitre();
+                        String album = favoris.getType_libelle();
+                        String artist = favoris.getAuteur();
+                        String duration = favoris.getDuree();
+                        String shortcode = favoris.getType_shortcode();
+                        int mipmap = CommonPresenter.getMipmapByTypeShortcode(shortcode);
+                        String date = favoris.getDate();
+                        pdfList.add(new DownloadFile(data, title, album, artist, duration, mipmap, date, shortcode, 0, null));
+                    }
+                    else{
+                        // Delete in the list
+                        DAOFavoris mFavorisItem = new DAOFavoris(context);
+                        mFavorisItem.deleteDataBy(favoris.getId());
+                    }
                 }
             }
         }
+        catch (Exception ex){}
         //--
         return pdfList;
     }

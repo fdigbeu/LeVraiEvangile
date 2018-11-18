@@ -123,7 +123,6 @@ public class AudioRecyclerAdapter extends RecyclerView.Adapter<AudioRecyclerAdap
             container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     audioSelected = audioItems.get(positionItem);
                     if(iPlaceholder != null){
                         HomePresenter homePresenter = new HomePresenter(iPlaceholder);

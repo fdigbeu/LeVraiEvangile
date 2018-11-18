@@ -26,32 +26,38 @@ public class SettingPresenter {
 
     // Load Setting data
     public void loadSettingsData(Context context){
-        iSettings.initialize();
-        iSettings.events();
-        // Load All setting data
-        Setting mSetting = null;
-        List<Setting> settingList = new ArrayList<>();
-        mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_CONFIRM_BEFORE_QUIT_APP);
-        settingList.add(mSetting);
-        mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_AUDIO_NOTIFICATION);
-        settingList.add(mSetting);
-        mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_VIDEO_NOTIFICATION);
-        settingList.add(mSetting);
-        mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_CONCATENATE_AUDIO_READING);
-        settingList.add(mSetting);
-        mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_CONCATENATE_VIDEO_READING);
-        settingList.add(mSetting);
-        mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_WIFI_EXCLUSIF);
-        settingList.add(mSetting);
-        iSettings.loadSettingData(settingList, 1, 0);
+        try {
+            iSettings.initialize();
+            iSettings.events();
+            // Load All setting data
+            Setting mSetting = null;
+            List<Setting> settingList = new ArrayList<>();
+            mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_CONFIRM_BEFORE_QUIT_APP);
+            settingList.add(mSetting);
+            mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_AUDIO_NOTIFICATION);
+            settingList.add(mSetting);
+            mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_VIDEO_NOTIFICATION);
+            settingList.add(mSetting);
+            mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_CONCATENATE_AUDIO_READING);
+            settingList.add(mSetting);
+            mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_CONCATENATE_VIDEO_READING);
+            settingList.add(mSetting);
+            mSetting = CommonPresenter.getSettingObjectFromSharePreferences(context, CommonPresenter.KEY_SETTING_WIFI_EXCLUSIF);
+            settingList.add(mSetting);
+            iSettings.loadSettingData(settingList, 1, 0);
+        }
+        catch (Exception ex){}
     }
 
     // Retrieve event when user clicks
     public void retrieveUserAction(MenuItem item){
-        switch (item.getItemId()){
-            case android.R.id.home:
-                iSettings.closeActivity();
-                break;
+        try {
+            switch (item.getItemId()){
+                case android.R.id.home:
+                    iSettings.closeActivity();
+                    break;
+            }
         }
+        catch (Exception ex){}
     }
 }

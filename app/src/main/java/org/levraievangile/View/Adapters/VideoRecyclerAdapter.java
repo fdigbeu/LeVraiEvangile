@@ -125,6 +125,7 @@ public class VideoRecyclerAdapter extends RecyclerView.Adapter<VideoRecyclerAdap
                 @Override
                 public void onClick(View view) {
                     videoSelected = videoItems.get(positionItem);
+                    Log.e("TAG_URL_VIDEO", videoSelected.getUrlacces()+videoSelected.getSrc());
                     if(iPlaceholder != null){
                         HomePresenter homePresenter = new HomePresenter(iPlaceholder);
                         homePresenter.launchActivity(videoSelected.getType_shortcode(), VideoActivity.class);
